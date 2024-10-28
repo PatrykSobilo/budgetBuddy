@@ -13,55 +13,196 @@
 
 <body>
   <header>
-    <div class="px-3 py-2 text-bg-dark border-bottom">
+    <section id="navbar" class="px-3 py-2 text-bg-dark border-bottom">
       <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
             <li>
-              <a href="#" class="nav-link text-secondary">
+              <a href="mainPage.html" class="nav-link text-secondary">
                 Home
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white">
-                Dashboard
+                Expenses
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white">
-                Orders
+                Incomes
+              </a>
+            </li>
+            <li>
+              <a href="dashboards.htm" class="nav-link text-white">
+                Dashboards
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white">
-                Products
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link text-white">
-                Customers
+                Planner & Analyzer
               </a>
             </li>
           </ul>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="text-end d-flex justify-content-center p-4">
-      <button type="button" class="btn btn-primary m-1">+ Add Expense</button>
-      <button type="button" class="btn btn-primary m-1">+ Add Income</button>
-    </div>
+    <section id="actionButtons" class="text-end d-flex justify-content-center p-4">
+      <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addExpenseDialogBox">+ Add Expense</button>
 
-    <div class="px-3 py-2 border-bottom mb-3">
-      <div class="container d-flex flex-wrap justify-content-center">
-        <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search">
+      <div class="modal fade" id="addExpenseDialogBox" tabindex="-1" aria-labelledby="addExpenseDialogBoxLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addExpenseDialogBoxLabel">Add Expense</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <form>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingPassword" placeholder="Name">
+                  <label for="floatingPassword">Expense Type</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingPassword" placeholder="Surname">
+                  <label for="floatingPassword">Description</label>
+                </div>
+                <div class="form-floating">
+                  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                  <label for="floatingInput">Amount</label>
+                </div>
+                <div class="form-floating">
+                  <input type="date" class="form-control" id="floatingPassword" placeholder="mm/dd/yyyy">
+                  <label for="floatingPassword">Date</label>
+                </div>  
+              </form>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addIncomeDialogBox">+ Add Income</button>
+
+      <div class="modal fade" id="addIncomeDialogBox" tabindex="-1" aria-labelledby="addIncomeDialogBoxLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addIncomeDialogBoxLabel">Add Income</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <form>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingPassword" placeholder="Name">
+                  <label for="floatingPassword">Income Type</label>
+                </div>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingPassword" placeholder="Surname">
+                  <label for="floatingPassword">Description</label>
+                </div>
+                <div class="form-floating">
+                  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                  <label for="floatingInput">Amount</label>
+                </div>
+                <div class="form-floating">
+                  <input type="date" class="form-control" id="floatingPassword" placeholder="mm/dd/yyyy">
+                  <label for="floatingPassword">Date</label>
+                </div>
+              </form>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="historyPanel" class="py-3 mb-4">
+      <div class="container d-flex flex-wrap border">
+        <h4 class="mt-2">History</h4>
+
+        <form class="col-12 col-lg-auto mt-1 mb-3 mb-lg-0" role="search">
           <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
         </form>
 
-        
+        <div id="history" class="container border mb-2">
+          <div class="container d-flex flex-row border mb-2">
+            <fieldset class="flex-grow-1">Type</fieldset>
+            <fieldset class="flex-grow-1">Description</fieldset>
+            <fieldset class="flex-grow-1">Amount</fieldset>
+            <fieldset class="flex-grow-1">Date</fieldset>
+          </div>
+
+          <div class="container d-flex flex-row border mb-2 ">
+            <div id="transatcionsTypes">
+              <ul>
+                <li class="mainMenuHistoryElement">Expense</li>
+                <li class="mainMenuHistoryElement">Income</li>
+                <li class="mainMenuHistoryElement">Expense</li>
+                <li class="mainMenuHistoryElement">Income</li>
+                <li class="mainMenuHistoryElement">Expense</li>
+                <li class="mainMenuHistoryElement">Expense</li>
+              </ul>
+            </div>
+
+            <div id="transatcionsDescriptions">
+              <ul>
+                <li class="mainMenuHistoryElement">MC Donald's Restaurant</li>
+                <li class="mainMenuHistoryElement">January Payroll</li>
+                <li class="mainMenuHistoryElement">AutoParts Workshop</li>
+                <li class="mainMenuHistoryElement">Birthday Gift - Mom</li>
+                <li class="mainMenuHistoryElement">Regatta - new jacket</li>
+                <li class="mainMenuHistoryElement">Dino - shoping</li>
+              </ul>
+            </div>
+
+            <div id="transatcionsAmounts">
+              <ul>
+                <li class="mainMenuHistoryElement">- 87$</li>
+                <li class="mainMenuHistoryElement">+ 5 000$</li>
+                <li class="mainMenuHistoryElement">- 230$</li>
+                <li class="mainMenuHistoryElement">+ 100$</li>
+                <li class="mainMenuHistoryElement">- 300$</li>
+                <li class="mainMenuHistoryElement">- 60$</li>
+              </ul>
+            </div>
+
+            <div id="transatcionsDates">
+              <ul>
+                <li class="mainMenuHistoryElement">10.10.2024</li>
+                <li class="mainMenuHistoryElement">10.10.2024</li>
+                <li class="mainMenuHistoryElement">10.10.2024</li>
+                <li class="mainMenuHistoryElement">10.10.2024</li>
+                <li class="mainMenuHistoryElement">10.10.2024</li>
+                <li class="mainMenuHistoryElement">10.10.2024</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   </header>
+
+  <section id="footer"></section>
+    <div class="container">
+      <footer class="py-3">
+        <p class="text-center text-body-secondary mt-5">© 2024 BudgetBuddy Sp. z o.o.</p>
+      </footer>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>
