@@ -33,3 +33,7 @@
   padding-right: 30%;
   padding-top: 12%;
 }
+
+.mainMenuHistoryElement {
+  list-style: none;
+}
