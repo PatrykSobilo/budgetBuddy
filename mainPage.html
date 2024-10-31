@@ -23,12 +23,12 @@
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
+              <a href="expenses.html" class="nav-link text-white">
                 Expenses
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
+              <a href="incomes.html" class="nav-link text-white">
                 Incomes
               </a>
             </li>
@@ -48,9 +48,11 @@
     </section>
 
     <section id="actionButtons" class="text-end d-flex justify-content-center p-4">
-      <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addExpenseDialogBox">+ Add Expense</button>
+      <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addExpenseDialogBox">+
+        Add Expense</button>
 
-      <div class="modal fade" id="addExpenseDialogBox" tabindex="-1" aria-labelledby="addExpenseDialogBoxLabel" aria-hidden="true">
+      <div class="modal fade" id="addExpenseDialogBox" tabindex="-1" aria-labelledby="addExpenseDialogBoxLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -75,7 +77,7 @@
                 <div class="form-floating">
                   <input type="date" class="form-control" id="floatingPassword" placeholder="mm/dd/yyyy">
                   <label for="floatingPassword">Date</label>
-                </div>  
+                </div>
               </form>
             </div>
 
@@ -87,9 +89,11 @@
         </div>
       </div>
 
-      <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addIncomeDialogBox">+ Add Income</button>
+      <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addIncomeDialogBox">+
+        Add Income</button>
 
-      <div class="modal fade" id="addIncomeDialogBox" tabindex="-1" aria-labelledby="addIncomeDialogBoxLabel" aria-hidden="true">
+      <div class="modal fade" id="addIncomeDialogBox" tabindex="-1" aria-labelledby="addIncomeDialogBoxLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -129,76 +133,73 @@
 
     <section id="historyPanel" class="py-3 mb-4">
       <div class="container d-flex flex-wrap border">
-        <h4 class="mt-2">History</h4>
-
-        <form class="col-12 col-lg-auto mt-1 mb-3 mb-lg-0" role="search">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-        </form>
-
-        <div id="history" class="container border mb-2">
-          <div class="container d-flex flex-row border mb-2">
-            <fieldset class="flex-grow-1">Type</fieldset>
-            <fieldset class="flex-grow-1">Description</fieldset>
-            <fieldset class="flex-grow-1">Amount</fieldset>
-            <fieldset class="flex-grow-1">Date</fieldset>
-          </div>
-
-          <div class="container d-flex flex-row border mb-2 ">
-            <div id="transatcionsTypes">
-              <ul>
-                <li class="mainMenuHistoryElement">Expense</li>
-                <li class="mainMenuHistoryElement">Income</li>
-                <li class="mainMenuHistoryElement">Expense</li>
-                <li class="mainMenuHistoryElement">Income</li>
-                <li class="mainMenuHistoryElement">Expense</li>
-                <li class="mainMenuHistoryElement">Expense</li>
-              </ul>
-            </div>
-
-            <div id="transatcionsDescriptions">
-              <ul>
-                <li class="mainMenuHistoryElement">MC Donald's Restaurant</li>
-                <li class="mainMenuHistoryElement">January Payroll</li>
-                <li class="mainMenuHistoryElement">AutoParts Workshop</li>
-                <li class="mainMenuHistoryElement">Birthday Gift - Mom</li>
-                <li class="mainMenuHistoryElement">Regatta - new jacket</li>
-                <li class="mainMenuHistoryElement">Dino - shoping</li>
-              </ul>
-            </div>
-
-            <div id="transatcionsAmounts">
-              <ul>
-                <li class="mainMenuHistoryElement">- 87$</li>
-                <li class="mainMenuHistoryElement">+ 5 000$</li>
-                <li class="mainMenuHistoryElement">- 230$</li>
-                <li class="mainMenuHistoryElement">+ 100$</li>
-                <li class="mainMenuHistoryElement">- 300$</li>
-                <li class="mainMenuHistoryElement">- 60$</li>
-              </ul>
-            </div>
-
-            <div id="transatcionsDates">
-              <ul>
-                <li class="mainMenuHistoryElement">10.10.2024</li>
-                <li class="mainMenuHistoryElement">10.10.2024</li>
-                <li class="mainMenuHistoryElement">10.10.2024</li>
-                <li class="mainMenuHistoryElement">10.10.2024</li>
-                <li class="mainMenuHistoryElement">10.10.2024</li>
-                <li class="mainMenuHistoryElement">10.10.2024</li>
-              </ul>
-            </div>
-          </div>
+        <div class="container mt-5">
+          <h2 class="mb-4">Previous Incomes/Expenses</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Expense</td>
+                <td>Counter Strike 2.0</td>
+                <td>200 PLN</td>
+                <td>2024-10-01</td>
+              </tr>
+              <tr>
+                <td>Income</td>
+                <td>PlayStation 4</td>
+                <td>1500 PLN</td>
+                <td>2024-10-05</td>
+              </tr>
+              <tr>
+                <td>Expense</td>
+                <td>Hosting fee</td>
+                <td>100 PLN</td>
+                <td>2024-10-10</td>
+              </tr>
+              <tr>
+                <td>Income</td>
+                <td>Payroll correction</td>
+                <td>3000 PLN</td>
+                <td>2024-10-15</td>
+              </tr>
+              <tr>
+                <td>Expense</td>
+                <td>Nvidia GeForce 3060Ti</td>
+                <td>2500 PLN</td>
+                <td>2024-10-20</td>
+              </tr>
+              <tr>
+                <td>Income</td>
+                <td>Intrests - Credit Agricole</td>
+                <td>5000 PLN</td>
+                <td>2024-10-25</td>
+              </tr>
+              <tr>
+                <td>Expense</td>
+                <td>Garage Rent Fee</td>
+                <td>800 PLN</td>
+                <td>2024-10-30</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
   </header>
 
   <section id="footer"></section>
-    <div class="container">
-      <footer class="py-3">
-        <p class="text-center text-body-secondary mt-5">© 2024 BudgetBuddy Sp. z o.o.</p>
-      </footer>
-    </div>
+  <div class="container">
+    <footer class="py-3">
+      <p class="text-center text-body-secondary mt-5">© 2024 BudgetBuddy Sp. z o.o.</p>
+    </footer>
+  </div>
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
