@@ -23,22 +23,22 @@
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
             <li>
-              <a href="mainPage.html" class="nav-link text-secondary">
+              <a href="mainPage.php" class="nav-link text-secondary">
                 Home
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
+              <a href="expenses.php" class="nav-link text-white">
                 Expenses
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
+              <a href="incomes.php" class="nav-link text-white">
                 Incomes
               </a>
             </li>
             <li>
-              <a href="dashboards.htm" class="nav-link text-white">
+              <a href="dashboards.php" class="nav-link text-white">
                 Dashboards
               </a>
             </li>
