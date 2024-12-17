@@ -1,3 +1,13 @@
+<?php
+	session_start();
+
+	if ((isset($_SESSION['zalogowany'])) && ($_SESSION['zalogowany']==true))
+	{
+		header('Location: mainPage.php');
+		exit();
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,15 +24,15 @@
 <body class="align-items-center py-4 bg-body-tertiary">
   <main class="form-signin w-100 m-auto">
     <div class="loginFormTable mb-5">
-      <form>
+      <form action="zaloguj.php" method="post">
         <h1 class="h3 mb-3 fw-normal">Sign in</h1>
 
         <div class="form-floating">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-          <label for="floatingInput">Email address</label>
+          <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name="login">
+          <label for="floatingInput">Username</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="haslo">
           <label for="floatingPassword">Password</label>
         </div>
 
