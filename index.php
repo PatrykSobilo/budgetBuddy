@@ -17,13 +17,13 @@
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
 
         <ul class="nav col-12 col-md-auto mb-2 mb-md-0">
-          <li><a href="index.html" class="nav-link px-2 link-secondary">Home</a></li>
-          <li><a href="about.html" class="nav-link px-2">About</a></li>
+          <li><a href="index.php" class="nav-link px-2 link-secondary">Home</a></li>
+          <li><a href="about.php" class="nav-link px-2">About</a></li>
         </ul>
 
         <div class="col-md-3 text-end">
-          <button type="button" class="btn btn-outline-primary me-2"><a href="loginForm.html">Login</a></button>
-          <button type="button" class="btn btn-outline-primary"><a href="registerForm.html">Register</a></button>
+          <button type="button" class="btn btn-outline-primary me-2"><a href="loginForm.php">Login</a></button>
+          <button type="button" class="btn btn-outline-primary"><a href="registerForm.php">Register</a></button>
         </div>
       </header>
     </div>
@@ -38,9 +38,9 @@
           finances anytime, anywhere, without the need for downloads or installations.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
           <button type="button" class="btn btn-outline-primary btn-lg px-4 me-sm-3"><a
-              href="loginForm.html">Login</a></button>
+              href="loginForm.php">Login</a></button>
           <button type="button" class="btn btn-outline-secondary btn-lg px-4"><a
-              href="registerForm.html">Register</a></button>
+              href="registerForm.php">Register</a></button>
         </div>
       </div>
       <div class="overflow-hidden" style="max-height: 45vh;">

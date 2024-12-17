@@ -18,22 +18,22 @@
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
             <li>
-              <a href="mainPage.html" class="nav-link text-secondary">
+              <a href="mainPage.php" class="nav-link text-secondary">
                 Home
               </a>
             </li>
             <li>
-              <a href="expenses.html" class="nav-link text-white">
+              <a href="expenses.php" class="nav-link text-white">
                 Expenses
               </a>
             </li>
             <li>
-              <a href="incomes.html" class="nav-link text-white">
+              <a href="incomes.php" class="nav-link text-white">
                 Incomes
               </a>
             </li>
             <li>
-              <a href="dashboards.htm" class="nav-link text-white">
+              <a href="dashboards.php" class="nav-link text-white">
                 Dashboards
               </a>
             </li>
@@ -47,10 +47,10 @@
       </div>
     </section>
 
-    <section id="historyExpensesPanel" class="py-3 mb-4">
+    <section id="historyPanel" class="py-3 mb-4">
       <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
-          <h2 class="mb-4">Expenses</h2>
+          <h2 class="mb-4">Incomes</h2>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -61,32 +61,22 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Expense</td>
-                <td>Counter Strike 2.0</td>
-                <td>200 PLN</td>
-                <td>2024-10-01</td>
+                <td>Income</td>
+                <td>PlayStation 4</td>
+                <td>1500 PLN</td>
+                <td>2024-10-05</td>
               </tr>
-              
               <tr>
-                <td>Expense</td>
-                <td>Hosting fee</td>
-                <td>100 PLN</td>
-                <td>2024-10-10</td>
+                <td>Income</td>
+                <td>Payroll correction</td>
+                <td>3000 PLN</td>
+                <td>2024-10-15</td>
               </tr>
-              
               <tr>
-                <td>Expense</td>
-                <td>Nvidia GeForce 3060Ti</td>
-                <td>2500 PLN</td>
-                <td>2024-10-20</td>
-              </tr>
-              
-              <tr>
-                <td>Expense</td>
-                <td>Garage Rent Fee</td>
-                <td>800 PLN</td>
-                <td>2024-10-30</td>
+                <td>Income</td>
+                <td>Intrests - Credit Agricole</td>
+                <td>5000 PLN</td>
+                <td>2024-10-25</td>
               </tr>
             </tbody>
           </table>
