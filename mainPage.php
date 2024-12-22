@@ -36,8 +36,26 @@ try {
     while ($row = $userPaymentMethodQuery->fetch_assoc()) {
       $paymentMethods[] = $row;
     }
+    //koniec wyswietlania metod platnosci
 
+    $recentExpensesQuery = $polaczenie->query("SELECT id, 'EXPENSE' AS type, amount, date_of_expense AS date, expense_comment AS description FROM expenses WHERE user_id = '$user_id' ORDER BY date_of_expense DESC LIMIT 10");
+    if (!$recentExpensesQuery) throw new Exception($polaczenie->error);
 
+    $recentIncomesQuery = $polaczenie->query("SELECT id, 'INCOME' AS type, amount, date_of_income AS date, income_comment AS description FROM incomes WHERE user_id = '$user_id' ORDER BY date DESC LIMIT 10");
+    if (!$recentIncomesQuery) throw new Exception($polaczenie->error);
+
+    $recentTransactions = [];
+    while ($row = $recentExpensesQuery->fetch_assoc()) {
+      $recentTransactions[] = $row;
+    }
+    while ($row = $recentIncomesQuery->fetch_assoc()) {
+      $recentTransactions[] = $row;
+    }
+
+    usort($recentTransactions, function($a, $b) {
+      return strtotime($b['date']) - strtotime($a['date']);
+    });
+    
     $polaczenie->close();
   }
 } catch (Exception $e) {
@@ -206,8 +224,8 @@ try {
     <section id="historyPanel" class="py-3 mb-4">
       <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
-          <h2 class="mb-4">Previous Incomes/Expenses</h2>
-          <table class="table table-bordered">
+          <h2 class="mb-4">Previous 10 Incomes/Expenses</h2>
+          <table class="table table-bordered" name="balance">
             <thead>
               <tr>
                 <th>Type</th>
@@ -217,48 +235,14 @@ try {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Expense</td>
-                <td>Counter Strike 2.0</td>
-                <td>200 PLN</td>
-                <td>2024-10-01</td>
-              </tr>
-              <tr>
-                <td>Income</td>
-                <td>PlayStation 4</td>
-                <td>1500 PLN</td>
-                <td>2024-10-05</td>
-              </tr>
-              <tr>
-                <td>Expense</td>
-                <td>Hosting fee</td>
-                <td>100 PLN</td>
-                <td>2024-10-10</td>
-              </tr>
-              <tr>
-                <td>Income</td>
-                <td>Payroll correction</td>
-                <td>3000 PLN</td>
-                <td>2024-10-15</td>
-              </tr>
-              <tr>
-                <td>Expense</td>
-                <td>Nvidia GeForce 3060Ti</td>
-                <td>2500 PLN</td>
-                <td>2024-10-20</td>
-              </tr>
-              <tr>
-                <td>Income</td>
-                <td>Intrests - Credit Agricole</td>
-                <td>5000 PLN</td>
-                <td>2024-10-25</td>
-              </tr>
-              <tr>
-                <td>Expense</td>
-                <td>Garage Rent Fee</td>
-                <td>800 PLN</td>
-                <td>2024-10-30</td>
-              </tr>
+              <?php foreach (array_slice($recentTransactions, 0, 10)as $transaction): ?>
+                <tr>
+                  <td><?php echo $transaction['type']; ?></td>
+                  <td><?php echo $transaction['description']; ?></td>
+                  <td><?php echo $transaction['amount']; ?></td>
+                  <td><?php echo $transaction['date']; ?></td>
+                </tr>
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div>
