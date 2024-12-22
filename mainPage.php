@@ -1,3 +1,53 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['zalogowany'])) {
+  header('Location: loginForm.php');
+  exit();
+}
+
+require_once "connect.php";
+$user_id = $_SESSION['id'];
+
+try {
+  $polaczenie = new mysqli($host, $db_user, $db_password, $db_name);
+  if ($polaczenie->connect_errno != 0) {
+    throw new Exception(mysqli_connect_errno());
+  } else {
+    //wyswietlanie kategorii
+    $userExpenseCategoryQuery = $polaczenie->query("SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = '$user_id'");
+    if (!$userExpenseCategoryQuery) throw new Exception($polaczenie->error);
+    $expensesCategories = [];
+    while ($row = $userExpenseCategoryQuery->fetch_assoc()) {
+      $expensesCategories[] = $row;
+    }
+
+    $userIncomeCategoryQuery = $polaczenie->query("SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = '$user_id'");
+    if (!$userIncomeCategoryQuery) throw new Exception($polaczenie->error);
+    $incomesCategories = [];
+    while ($row = $userIncomeCategoryQuery->fetch_assoc()) {
+      $incomesCategories[] = $row;
+    }
+    //koniec wyswietlania kategorii
+
+    $userPaymentMethodQuery = $polaczenie->query("SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = '$user_id'");
+    if (!$userPaymentMethodQuery) throw new Exception($polaczenie->error);
+    $paymentMethods = [];
+    while ($row = $userPaymentMethodQuery->fetch_assoc()) {
+      $paymentMethods[] = $row;
+    }
+
+
+    $polaczenie->close();
+  }
+} catch (Exception $e) {
+  echo '<span style="color:red;">Błąd serwera!</span>';
+  echo '<br />Informacja developerska: ' . $e;
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,6 +92,11 @@
                 Planner & Analyzer
               </a>
             </li>
+            <li>
+              <a href="logout.php" class="nav-link text-white">
+                Logout
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -61,29 +116,43 @@
             </div>
 
             <div class="modal-body">
-              <form>
+              <form action="addExpense.php" method="post">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingPassword" placeholder="Name">
-                  <label for="floatingPassword">Expense Type</label>
+                  <select class="form-control" id="expensesCategory" name="expensesCategory">
+                    <?php foreach ($expensesCategories as $expensesCategory): ?>
+                      <option value="<?php echo $expensesCategory['id']; ?>"><?php echo $expensesCategory['name']; ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                  <label for="expenseCategory">Expense Category</label>
+                </div>
+
+                <div class="form-floating">
+                  <select class="form-control" id="paymentMethods" name="paymentMethods">
+                    <?php foreach ($paymentMethods as $paymentMethods): ?>
+                      <option value="<?php echo $paymentMethods['id']; ?>"><?php echo $paymentMethods['name']; ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                  <label for="expenseCategory">Payment Method</label>
+                </div>
+
+                <div class="form-floating">
+                  <input type="number" class="form-control" id="floatingInput" name="amount" placeholder="Amount">
+                  <label for="amount">Amount</label>
                 </div>
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingPassword" placeholder="Surname">
-                  <label for="floatingPassword">Description</label>
+                  <input type="date" class="form-control" id="floatingDate" name="date" placeholder="mm/dd/yyyy">
+                  <label for="date">Date</label>
                 </div>
                 <div class="form-floating">
-                  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                  <label for="floatingInput">Amount</label>
+                  <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+                  <label for="description">Description</label>
                 </div>
-                <div class="form-floating">
-                  <input type="date" class="form-control" id="floatingPassword" placeholder="mm/dd/yyyy">
-                  <label for="floatingPassword">Date</label>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
               </form>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save Changes</button>
             </div>
           </div>
         </div>
@@ -102,29 +171,32 @@
             </div>
 
             <div class="modal-body">
-              <form>
+              <form action="addIncome.php" method="post">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingPassword" placeholder="Name">
-                  <label for="floatingPassword">Income Type</label>
+                  <select class="form-control" id="incomesCategory" name="incomesCategory">
+                    <?php foreach ($incomesCategories as $incomesCategory): ?>
+                      <option value="<?php echo $incomesCategory['id']; ?>"><?php echo $incomesCategory['name']; ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                  <label for="incomesCategory">Income Category</label>
                 </div>
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingPassword" placeholder="Surname">
-                  <label for="floatingPassword">Description</label>
+                  <input type="number" class="form-control" id="floatingInput" name="amount" placeholder="Amount">
+                  <label for="amount">Amount</label>
                 </div>
                 <div class="form-floating">
-                  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                  <label for="floatingInput">Amount</label>
+                  <input type="date" class="form-control" id="floatingPassword" name="date" placeholder="mm/dd/yyyy">
+                  <label for="date">Date</label>
                 </div>
                 <div class="form-floating">
-                  <input type="date" class="form-control" id="floatingPassword" placeholder="mm/dd/yyyy">
-                  <label for="floatingPassword">Date</label>
+                  <input type="text" class="form-control" id="floatingPassword" name="description" placeholder="Surname">
+                  <label for="description">Description</label>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
               </form>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save Changes</button>
             </div>
           </div>
         </div>
