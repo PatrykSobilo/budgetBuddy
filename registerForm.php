@@ -51,7 +51,7 @@ if (isset($_POST['email'])) {
       $ile_takich_maili = $rezultat->num_rows;
       if ($ile_takich_maili > 0) {
         $wszystko_OK = false;
-        $_SESSION['e_email'] = "Istnieje juz konto przypisane do tego adresu email!";
+        $_SESSION['e_email'] = "Istnieje już konto przypisane do tego adresu email!";
       }
 
       $rezultat = $polaczenie->query("SELECT id FROM users WHERE username = '$username'");
@@ -60,13 +60,31 @@ if (isset($_POST['email'])) {
       $ile_takich_nickow = $rezultat->num_rows;
       if ($ile_takich_nickow > 0) {
         $wszystko_OK = false;
-        $_SESSION['e_nick'] = "Istnieje juz gracz o takim nicku!";
+        $_SESSION['e_nick'] = "Istnieje już gracz o takim nicku!";
       }
 
       if ($wszystko_OK == true) {
-        if ($polaczenie->query("INSERT INTO users VALUES (NULL, '$username', '$haslo_hash', '$email')")) {
+        if ($polaczenie->query("INSERT INTO users (username, password, email) VALUES ('$username', '$haslo_hash', '$email')")) {
           $_SESSION['udanarejestracja'] = true;
-          header('Location: mainPage.php');
+
+          $result = $polaczenie->query("SELECT id FROM users WHERE email = '$email'");
+          if (!$result) throw new Exception($polaczenie->error);
+          $row = $result->fetch_assoc();
+          $registeredUserId = $row['id'];
+
+          $polaczenie->query("INSERT INTO expenses_category_assigned_to_users (user_id, name)
+                              SELECT '$registeredUserId' AS user_id, name 
+                              FROM expenses_category_default");
+
+          $polaczenie->query("INSERT INTO incomes_category_assigned_to_users (user_id, name)
+                              SELECT '$registeredUserId' AS user_id, name 
+                              FROM incomes_category_default");
+
+          $polaczenie->query("INSERT INTO payment_methods_assigned_to_users (user_id, name)
+                              SELECT '$registeredUserId' AS user_id, name 
+                              FROM payment_methods_default");
+
+          header('Location: loginForm.php');
         } else {
           throw new Exception($polaczenie->error);
         }
@@ -156,7 +174,6 @@ if (isset($_POST['email'])) {
           ?>
           <label for="floatingInput">Email address</label>
         </div>
-
 
         <button class="btn btn-primary w-100 py-2 mt-5" type="submit">Register</button>
       </form>
