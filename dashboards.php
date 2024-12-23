@@ -1,3 +1,45 @@
+<?php 
+session_start();
+
+if (!isset($_SESSION['zalogowany'])) {
+  header('Location: loginForm.php');
+  exit();
+}
+
+require_once "connect.php";
+$user_id = $_SESSION['id'];
+
+$startingDate = isset($_POST['startingDate']) ? $_POST['startingDate'] : null;
+$endingDate = isset($_POST['endingDate']) ? $_POST['endingDate'] : null;
+
+try {
+  $polaczenie = new mysqli($host, $db_user, $db_password, $db_name);
+  if ($polaczenie->connect_errno != 0) {
+    throw new Exception(mysqli_connect_errno());
+  } else {
+    if ($startingDate && $endingDate) {
+      $recentExpensesQuery = $polaczenie->query("SELECT SUM(amount) AS expensesSummary FROM expenses WHERE user_id = '$user_id' AND date_of_expense BETWEEN '$startingDate' AND '$endingDate'");
+      if (!$recentExpensesQuery) throw new Exception($polaczenie->error);
+      $expensesSummary = $recentExpensesQuery->fetch_assoc()['expensesSummary'];
+
+      $recentIncomesQuery = $polaczenie->query("SELECT SUM(amount) AS incomesSummary FROM incomes WHERE user_id = '$user_id' AND date_of_income BETWEEN '$startingDate' AND '$endingDate'");
+      if (!$recentIncomesQuery) throw new Exception($polaczenie->error);
+      $incomesSummary = $recentIncomesQuery->fetch_assoc()['incomesSummary'];
+
+      $balance = $incomesSummary - $expensesSummary;
+    } else {
+      $expensesSummary = 0;
+      $incomesSummary = 0;
+      $balance = 0;
+    }
+    $polaczenie->close();
+  }
+} catch (Exception $e) {
+  echo '<span style="color:red;">Błąd serwera!</span>';
+  echo '<br />Informacja developerska: ' . $e;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,11 +49,12 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <title>Document</title>
+  <title>Balance Summary</title>
   <style>
     #myPieChart {
       max-width: 400px;
       max-height: 400px;
+      margin-bottom: 100px;
     }
   </style>
 </head>
@@ -53,70 +96,52 @@
     </section>
   </header>
 
-  <section id="pieChartDisplay" class="d-flex justify-content-center mt-5">
-    <div class="text-center">
-      <h2 class="mb-4">Incomes and Expenses</h2>
-      <canvas id="myPieChart"></canvas>
+  <section id="userParameters" name="userParameters">
+    <div class="container">
+      <form id="dateForm" method="post" action="dashboards.php" class="d-flex flex-wrap align-items-center justify-content-center">
+        <div class="m-5 text-center">
+          <label for="startingDate">Starting Date</label>
+          <input type="date" class="form-control" id="startingDate" name="startingDate" placeholder="mm/dd/yyyy">
+        </div>
+        <div class="m-5 text-center">
+          <label for="endingDate">Ending Date</label>
+          <input type="date" class="form-control" id="endingDate" name="endingDate" placeholder="mm/dd/yyyy">
+        </div>
+        <div class="m-5 text-center">
+          <button type="submit" class="btn btn-primary">Show Balance</button>
+        </div>
+      </form>
     </div>
   </section>
 
-  <section id="historyDisplay" class="d-flex justify-content-center mt-5 mb-5">
+  <section id="summary" name="summary">
+    <div class="container d-flex flex-wrap border">
+      <div class="container mt-5">
+        <h2 class="mb-4 justify-content-center">Balance</h2>
+        <table class="table table-bordered" name="balance">
+          <thead>
+            <tr>
+              <th>Expenses</th>
+              <th>Incomes</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><?php echo $expensesSummary; ?></td>
+              <td><?php echo $incomesSummary; ?></td>
+              <td><?php echo $balance; ?></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="pieChartDisplay" class="d-flex justify-content-center mt-5">
     <div class="text-center">
-      <h2 class="mb-4">Income and Expenses History</h2>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Expense</td>
-            <td>Counter Strike 2.0</td>
-            <td>200 PLN</td>
-            <td>2024-10-01</td>
-          </tr>
-          <tr>
-            <td>Income</td>
-            <td>PlayStation 4</td>
-            <td>1500 PLN</td>
-            <td>2024-10-05</td>
-          </tr>
-          <tr>
-            <td>Expense</td>
-            <td>Hosting fee</td>
-            <td>100 PLN</td>
-            <td>2024-10-10</td>
-          </tr>
-          <tr>
-            <td>Income</td>
-            <td>Payroll correction</td>
-            <td>3000 PLN</td>
-            <td>2024-10-15</td>
-          </tr>
-          <tr>
-            <td>Expense</td>
-            <td>Nvidia GeForce 3060Ti</td>
-            <td>2500 PLN</td>
-            <td>2024-10-20</td>
-          </tr>
-          <tr>
-            <td>Income</td>
-            <td>Intrests - Credit Agricole</td>
-            <td>5000 PLN</td>
-            <td>2024-10-25</td>
-          </tr>
-          <tr>
-            <td>Expense</td>
-            <td>Garage Rent</td>
-            <td>800 PLN</td>
-            <td>2024-10-30</td>
-          </tr>
-        </tbody>
-      </table>
+      <h2 class="mb-4">Expenses/Incomes Summary</h2>
+      <canvas id="myPieChart"></canvas>
     </div>
   </section>
 
@@ -134,7 +159,33 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="index.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      var ctx = document.getElementById('myPieChart').getContext('2d');
+      var myPieChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ['Expenses', 'Incomes'],
+              datasets: [{
+                  data: [<?php echo $expensesSummary; ?>, <?php echo $incomesSummary; ?>],
+                  backgroundColor: ['#ff9999','#66b3ff'],
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'top',
+                  },
+                  title: {
+                      display: true,
+                      text: 'Incomes/Expenses PieChart'
+                  }
+              }
+          },
+      });
+    });
+  </script>
 </body>
 
 </html>
