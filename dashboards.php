@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 if (!isset($_SESSION['zalogowany'])) {
@@ -18,6 +18,23 @@ try {
     throw new Exception(mysqli_connect_errno());
   } else {
     if ($startingDate && $endingDate) {
+      $recentExpensesQuery = $polaczenie->query("SELECT expenses_category_assigned_to_users.name AS category_name, SUM(expenses.amount) AS expensesSummary FROM expenses LEFT JOIN expenses_category_assigned_to_users ON expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id WHERE expenses.user_id = '$user_id' AND expenses.date_of_expense BETWEEN '$startingDate' AND '$endingDate' GROUP BY expenses_category_assigned_to_users.name
+      ");
+      if (!$recentExpensesQuery) throw new Exception($polaczenie->error);
+
+      $expensesByCategory = [];
+      while ($row = $recentExpensesQuery->fetch_assoc()) {
+        $expensesByCategory[$row['category_name']] = $row['expensesSummary'];
+      }
+
+      $recentIncomesQuery = $polaczenie->query("SELECT incomes_category_assigned_to_users.name AS category_name, SUM(incomes.amount) AS incomesSummary FROM incomes LEFT JOIN incomes_category_assigned_to_users ON incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id WHERE incomes.user_id = '$user_id' AND incomes.date_of_income BETWEEN '$startingDate' AND '$endingDate' GROUP BY incomes_category_assigned_to_users.name
+      ");
+      if (!$recentIncomesQuery) throw new Exception($polaczenie->error);
+
+      $incomesByCategory = [];
+      while ($row = $recentIncomesQuery->fetch_assoc()) {
+        $incomesByCategory[$row['category_name']] = $row['incomesSummary'];
+      }
       $recentExpensesQuery = $polaczenie->query("SELECT SUM(amount) AS expensesSummary FROM expenses WHERE user_id = '$user_id' AND date_of_expense BETWEEN '$startingDate' AND '$endingDate'");
       if (!$recentExpensesQuery) throw new Exception($polaczenie->error);
       $expensesSummary = $recentExpensesQuery->fetch_assoc()['expensesSummary'];
@@ -31,6 +48,8 @@ try {
       $expensesSummary = 0;
       $incomesSummary = 0;
       $balance = 0;
+      $expensesByCategory = [];
+      $incomesByCategory = [];
     }
     $polaczenie->close();
   }
@@ -50,18 +69,11 @@ try {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <title>Balance Summary</title>
-  <style>
-    #myPieChart {
-      max-width: 400px;
-      max-height: 400px;
-      margin-bottom: 100px;
-    }
-  </style>
 </head>
 
 <body>
   <header>
-    <section id="navbar" class="px-3 py-2 text-bg-dark border-bottom">
+  <section id="navbar" class="px-3 py-2 text-bg-dark border-bottom">
       <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
@@ -90,6 +102,11 @@ try {
                 Planner & Analyzer
               </a>
             </li>
+            <li>
+              <a href="logout.php" class="nav-link text-white">
+                Logout
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -115,33 +132,64 @@ try {
   </section>
 
   <section id="summary" name="summary">
-    <div class="container d-flex flex-wrap border">
-      <div class="container mt-5">
-        <h2 class="mb-4 justify-content-center">Balance</h2>
-        <table class="table table-bordered" name="balance">
-          <thead>
-            <tr>
-              <th>Expenses</th>
-              <th>Incomes</th>
-              <th>Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><?php echo $expensesSummary; ?></td>
-              <td><?php echo $incomesSummary; ?></td>
-              <td><?php echo $balance; ?></td>
-            </tr>
-          </tbody>
-        </table>
+    <div id="generalSummary" class="generalSummary container d-flex flex-wrap border">
+      <div class="d-flex flex-row w-100">
+        <div class="table-container">
+          <div class="container mt-5">
+            <h2 class="mb-4 justify-content-center">Balance</h2>
+            <table class="table table-bordered" name="balance">
+              <thead>
+                <tr>
+                  <th>Expenses</th>
+                  <th>Incomes</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><?php echo $expensesSummary; ?></td>
+                  <td><?php echo $incomesSummary; ?></td>
+                  <td><?php echo $balance; ?></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="chart-container mt-5 mb-5 ms-5">
+          <div class="text-center">
+            <h2 class="mb-4">Expenses/Incomes Summary</h2>
+            <canvas id="myPieChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="pieChartDisplay" class="d-flex justify-content-center mt-5">
-    <div class="text-center">
-      <h2 class="mb-4">Expenses/Incomes Summary</h2>
-      <canvas id="myPieChart"></canvas>
+  <section id="summaryByCategories" name="summaryByCategories" class="mt-5 mb-5">
+    <div class="container d-flex flex-wrap border">
+      <div class="container mt-5">
+        <h2 class="mb-4 justify-content-center">Balance by Categories</h2>
+        <table class="table table-bordered" name="balance">
+          <thead>
+            <tr>
+              <th>Category Type</th>
+              <th>Category</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            foreach ($expensesByCategory as $categoryName => $expenseAmount) {
+              echo "<tr><td>Expense</td><td>{$categoryName}</td><td>{$expenseAmount}</td></tr>";
+            }
+            foreach ($incomesByCategory as $categoryName => $incomeAmount) {
+              echo "<tr><td>Income</td><td>{$categoryName}</td><td>{$incomeAmount}</td></tr>";
+            }
+            ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -163,26 +211,26 @@ try {
     document.addEventListener('DOMContentLoaded', (event) => {
       var ctx = document.getElementById('myPieChart').getContext('2d');
       var myPieChart = new Chart(ctx, {
-          type: 'pie',
-          data: {
-              labels: ['Expenses', 'Incomes'],
-              datasets: [{
-                  data: [<?php echo $expensesSummary; ?>, <?php echo $incomesSummary; ?>],
-                  backgroundColor: ['#ff9999','#66b3ff'],
-              }]
-          },
-          options: {
-              responsive: true,
-              plugins: {
-                  legend: {
-                      position: 'top',
-                  },
-                  title: {
-                      display: true,
-                      text: 'Incomes/Expenses PieChart'
-                  }
-              }
-          },
+        type: 'pie',
+        data: {
+          labels: ['Expenses', 'Incomes'],
+          datasets: [{
+            data: [<?php echo $expensesSummary; ?>, <?php echo $incomesSummary; ?>],
+            backgroundColor: ['#ff9999', '#66b3ff'],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Incomes/Expenses PieChart'
+            }
+          }
+        },
       });
     });
   </script>

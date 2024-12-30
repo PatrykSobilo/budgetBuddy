@@ -1,3 +1,35 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['zalogowany'])) {
+  header('Location: loginForm.php');
+  exit();
+}
+
+require_once "connect.php";
+$user_id = $_SESSION['id'];
+
+try {
+  $polaczenie = new mysqli($host, $db_user, $db_password, $db_name);
+  if ($polaczenie->connect_errno != 0) {
+    throw new Exception(mysqli_connect_errno());
+  } else {
+    $expensesQuery = $polaczenie->query("SELECT id, amount, date_of_expense AS date, expense_comment AS description, expense_category_assigned_to_user_id FROM expenses WHERE user_id = '$user_id' ORDER BY date_of_expense DESC");
+    if (!$expensesQuery) throw new Exception($polaczenie->error);
+
+    $expenses = [];
+    while ($row = $expensesQuery->fetch_assoc()) {
+      $expenses[] = $row;
+    }
+
+    $polaczenie->close();
+  }
+} catch (Exception $e) {
+  echo '<span style="color:red;">Błąd serwera!</span>';
+  echo '<br />Informacja developerska: ' . $e;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,8 +39,7 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-  <title>Document</title>
+  <title>Expenses</title>
 </head>
 
 <body>
@@ -33,13 +64,18 @@
               </a>
             </li>
             <li>
-              <a href="dashboards.htm" class="nav-link text-white">
+              <a href="dashboards.php" class="nav-link text-white">
                 Dashboards
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white">
                 Planner & Analyzer
+              </a>
+            </li>
+            <li>
+              <a href="logout.php" class="nav-link text-white">
+                Logout
               </a>
             </li>
           </ul>
@@ -61,33 +97,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Expense</td>
-                <td>Counter Strike 2.0</td>
-                <td>200 PLN</td>
-                <td>2024-10-01</td>
-              </tr>
-              
-              <tr>
-                <td>Expense</td>
-                <td>Hosting fee</td>
-                <td>100 PLN</td>
-                <td>2024-10-10</td>
-              </tr>
-              
-              <tr>
-                <td>Expense</td>
-                <td>Nvidia GeForce 3060Ti</td>
-                <td>2500 PLN</td>
-                <td>2024-10-20</td>
-              </tr>
-              
-              <tr>
-                <td>Expense</td>
-                <td>Garage Rent Fee</td>
-                <td>800 PLN</td>
-                <td>2024-10-30</td>
-              </tr>
+              <?php foreach ($expenses as $expense): ?>
+                <tr>
+                  <td>Expense</td>
+                  <td><?php echo htmlspecialchars($expense['description']); ?></td>
+                  <td><?php echo number_format($expense['amount'], 2); ?> PLN</td>
+                  <td><?php echo date('Y-m-d', strtotime($expense['date'])); ?></td>
+                </tr>
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div>

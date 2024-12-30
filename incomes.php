@@ -1,3 +1,35 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['zalogowany'])) {
+  header('Location: loginForm.php');
+  exit();
+}
+
+require_once "connect.php";
+$user_id = $_SESSION['id'];
+
+try {
+  $polaczenie = new mysqli($host, $db_user, $db_password, $db_name);
+  if ($polaczenie->connect_errno != 0) {
+    throw new Exception(mysqli_connect_errno());
+  } else {
+    $incomesQuery = $polaczenie->query("SELECT id, amount, date_of_income AS date, income_comment AS description, income_category_assigned_to_user_id FROM incomes WHERE user_id = '$user_id' ORDER BY date_of_income DESC");
+    if (!$incomesQuery) throw new Exception($polaczenie->error);
+
+    $incomes = [];
+    while ($row = $incomesQuery->fetch_assoc()) {
+      $incomes[] = $row;
+    }
+
+    $polaczenie->close();
+  }
+} catch (Exception $e) {
+  echo '<span style="color:red;">Błąd serwera!</span>';
+  echo '<br />Informacja developerska: ' . $e;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,7 +40,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-  <title>Document</title>
+  <title>Incomes</title>
 </head>
 
 <body>
@@ -42,6 +74,11 @@
                 Planner & Analyzer
               </a>
             </li>
+            <li>
+              <a href="logout.php" class="nav-link text-white">
+                Logout
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -61,23 +98,14 @@
               </tr>
             </thead>
             <tbody>
-                <td>Income</td>
-                <td>PlayStation 4</td>
-                <td>1500 PLN</td>
-                <td>2024-10-05</td>
-              </tr>
-              <tr>
-                <td>Income</td>
-                <td>Payroll correction</td>
-                <td>3000 PLN</td>
-                <td>2024-10-15</td>
-              </tr>
-              <tr>
-                <td>Income</td>
-                <td>Intrests - Credit Agricole</td>
-                <td>5000 PLN</td>
-                <td>2024-10-25</td>
-              </tr>
+              <?php foreach ($incomes as $income): ?>
+                <tr>
+                  <td>Income</td>
+                  <td><?php echo htmlspecialchars($income['description']); ?></td>
+                  <td><?php echo number_format($income['amount'], 2); ?> PLN</td>
+                  <td><?php echo date('Y-m-d', strtotime($income['date'])); ?></td>
+                </tr>
+              <?php endforeach; ?>
             </tbody>
           </table>
         </div>
