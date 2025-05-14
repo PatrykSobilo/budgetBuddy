@@ -8,4 +8,8 @@ use Framework\App;
 
 $app = new App();
 
+$app->addRoute('/');
+
+var_dump($app);
+
 return $app;
