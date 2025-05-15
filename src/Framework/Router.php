@@ -8,7 +8,7 @@ class Router
 {
     private array $routes = [];
 
-    public function addRoute(string $httpMethod, string $sitePath, array $displayingController)
+    public function add(string $httpMethod, string $sitePath, array $displayingController)
     {
         $sitePath = $this->normalizePath($sitePath);
 
@@ -28,7 +28,7 @@ class Router
         return $sitePath;
     }
 
-    public function dispatchContent(string $sitePath, string $httpMethod)
+    public function dispatch(string $sitePath, string $httpMethod)
     {
         $sitePath = $this->normalizePath($sitePath);
         $httpMethod = strtoupper($httpMethod);
@@ -38,7 +38,10 @@ class Router
                 continue;
             }
 
-            echo "dupa";
+
+            [$controllerClass, $method] = $route['controller'];
+            $controller = new $controllerClass();
+            $controller->$method();
         }
     }
 }
