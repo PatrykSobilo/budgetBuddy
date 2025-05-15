@@ -13,8 +13,16 @@ class App
     $this->router = new Router();
   }
 
-  public function addRoute(string $path)
+  public function run() {
+    $sitePath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+    $httpMethod = $_SERVER['REQUEST_METHOD'];
+
+    $this->router->dispatchContent($sitePath, $httpMethod);
+  }
+
+  public function getRoute(string $sitePath, array $displayingController)
   {
-    $this->router->addRoute($path);
+    $this->router->addRoute('GET', $sitePath, $displayingController);
   }
 }

@@ -8,12 +8,37 @@ class Router
 {
     private array $routes = [];
 
-    public function addRoute(string $method, string $path)
+    public function addRoute(string $httpMethod, string $sitePath, array $displayingController)
     {
-        $this->routes[] = [
-            'path' => $path,
-            'method' => strtoupper($method),
+        $sitePath = $this->normalizePath($sitePath);
 
+        $this->routes[] = [
+            'path' => $sitePath,
+            'method' => strtoupper($httpMethod),
+            'controller' => $displayingController,
         ];
+    }
+
+    private function normalizePath($sitePath): string
+    {
+        $sitePath = trim($sitePath, '/');
+        $sitePath = "/{$sitePath}/";
+        $sitePath = preg_replace('#[/]{2,}#', '/', $sitePath);
+
+        return $sitePath;
+    }
+
+    public function dispatchContent(string $sitePath, string $httpMethod)
+    {
+        $sitePath = $this->normalizePath($sitePath);
+        $httpMethod = strtoupper($httpMethod);
+
+        foreach ($this->routes as $route) {
+            if (!preg_match("#^{$route['path']}$#", $sitePath) || $route['method'] !== $httpMethod) {
+                continue;
+            }
+
+            echo "dupa";
+        }
     }
 }
