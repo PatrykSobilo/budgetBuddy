@@ -8,39 +8,39 @@ class Router
 {
     private array $routes = [];
 
-    public function add(string $httpMethod, string $sitePath, array $displayingController)
+    public function add(string $method, string $path, array $displayingController)
     {
-        $sitePath = $this->normalizePath($sitePath);
+        $path = $this->normalizePath($path);
 
         $this->routes[] = [
-            'path' => $sitePath,
-            'method' => strtoupper($httpMethod),
+            'path' => $path,
+            'method' => strtoupper($method),
             'controller' => $displayingController,
         ];
     }
 
-    private function normalizePath($sitePath): string
+    private function normalizePath($path): string
     {
-        $sitePath = trim($sitePath, '/');
-        $sitePath = "/{$sitePath}/";
-        $sitePath = preg_replace('#[/]{2,}#', '/', $sitePath);
+        $path = trim($path, '/');
+        $path = "/{$path}/";
+        $path = preg_replace('#[/]{2,}#', '/', $path);
 
-        return $sitePath;
+        return $path;
     }
 
-    public function dispatch(string $sitePath, string $httpMethod)
+    public function dispatch(string $path, string $method, Container $container = null)
     {
-        $sitePath = $this->normalizePath($sitePath);
-        $httpMethod = strtoupper($httpMethod);
+        $path = $this->normalizePath($path);
+        $method = strtoupper($method);
 
         foreach ($this->routes as $route) {
-            if (!preg_match("#^{$route['path']}$#", $sitePath) || $route['method'] !== $httpMethod) {
+            if (!preg_match("#^{$route['path']}$#", $path) || $route['method'] !== $method) {
                 continue;
             }
 
 
-            [$controllerClass, $method] = $route['controller'];
-            $controller = new $controllerClass();
+            [$class, $method] = $route['controller'];
+            $controller = $container ? $container->resolve($class) : new $class();
             $controller->$method();
         }
     }
