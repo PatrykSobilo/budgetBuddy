@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Framework\Http;
+namespace Framework;
 
 function dd(mixed $value)
 {
@@ -20,6 +20,6 @@ function e(mixed $value): string
 function redirectTo(string $path)
 {
   header("Location: {$path}");
-  http_response_code(Http::REDIRECT_STATUS_CODE);
+ // http_response_code(Http::REDIRECT_STATUS_CODE);
   exit;
 }
