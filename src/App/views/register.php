@@ -18,26 +18,26 @@
                 <h1 class="h3 mb-3 fw-normal">Register</h1>
 
                 <div class="form-floating">
-                    <input type="email" value="" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                    <input type="email" value="" name="email" class="form-control" id="" placeholder="name@example.com">
                     <label for="floatingInput">Email address</label>
                 </div>
 
                 <div class="form-floating">
-                    <input type="text" value="" name="username" class="form-control" id="floatingPassword" placeholder="Username">
-                    <label for="floatingPassword">Username</label>
+                    <input type="number" value="" name="age" class="form-control" id="" placeholder="Age">
+                    <label for="floatingPassword">Age</label>
                 </div>
 
                 <div class="form-floating">
-                    <input type="password" value="" name="password1" class="form-control" id="floatingPassword" placeholder="Password">
+                    <input type="password" value="" name="password1" class="form-control" id="" placeholder="Password">
                     <label for="floatingPassword">Password</label>
                 </div>
 
                 <div class="form-floating">
-                    <input type="password" value="" name="password2" class="form-control" id="floatingPasswordRepeat" placeholder="Repeat Password">
+                    <input type="password" value="" name="password2" class="form-control" id="" placeholder="Repeat Password">
                     <label for="floatingPassword">Repeat Password</label>
                 </div>
 
-                <div class="block">
+                <div class="form-floating">
                     <div class="mt-2">
                         <div>
                             <label class="inline-flex items-center">
