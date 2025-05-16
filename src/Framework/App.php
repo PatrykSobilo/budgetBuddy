@@ -49,10 +49,10 @@ class App
     return $this;
   }
 
-  // public function addMiddleware(string $middleware)
-  // {
-  //   $this->router->addMiddleware($middleware);
-  // }
+  public function addMiddleware(string $middleware)
+  {
+    $this->router->addMiddleware($middleware);
+  }
 
   // public function add(string $middleware)
   // {
