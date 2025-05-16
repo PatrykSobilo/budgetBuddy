@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <title>Register Form</title>
+</head>
+
+<body class="align-items-center py-4 bg-body-tertiary">
+    <main class="form-register w-100 m-auto">
+        <div class="registerFormTable mb-5">
+            <form action="/register" method="POST">
+                <h1 class="h3 mb-3 fw-normal">Register</h1>
+
+                <div class="form-floating">
+                    <input type="email" value="" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                    <label for="floatingInput">Email address</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="text" value="" name="username" class="form-control" id="floatingPassword" placeholder="Username">
+                    <label for="floatingPassword">Username</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="password" value="" name="password1" class="form-control" id="floatingPassword" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="password" value="" name="password2" class="form-control" id="floatingPasswordRepeat" placeholder="Repeat Password">
+                    <label for="floatingPassword">Repeat Password</label>
+                </div>
+
+                <div class="block">
+                    <div class="mt-2">
+                        <div>
+                            <label class="inline-flex items-center">
+                                <input name="tos" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" type="checkbox" />
+                                <span class="ml-2">I accept the terms of service.</span>
+                            </label>
+                            <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100 py-2 mt-5" type="submit">Register</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous">
+    </script>
+
+    <?php include $this->resolve("partials/_footer.php"); ?>
+</body>
+
+</html>
