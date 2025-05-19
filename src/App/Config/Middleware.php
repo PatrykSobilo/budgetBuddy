@@ -20,6 +20,6 @@ use App\Middleware\{
 //   $app->addMiddleware(CsrfTokenMiddleware::class);
    $app->addMiddleware(TemplateDataMiddleware::class);
    $app->addMiddleware(ValidationExceptionMiddleware::class);
-//   $app->addMiddleware(FlashMiddleware::class);
-//   $app->addMiddleware(SessionMiddleware::class);
+   $app->addMiddleware(FlashMiddleware::class);
+   $app->addMiddleware(SessionMiddleware::class);
  }

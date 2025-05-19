@@ -14,6 +14,7 @@
 <body class="align-items-center py-4 bg-body-tertiary">
     <main class="form-register w-100 m-auto">
         <div class="registerFormTable mb-5">
+            <?php var_dump($errors); ?>
             <form action="/register" method="POST">
                 <h1 class="h3 mb-3 fw-normal">Register</h1>
 
