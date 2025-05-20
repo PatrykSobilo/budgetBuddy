@@ -3,7 +3,7 @@
     "description": "Aplikacja PHP - PrzyszlyProgramista",
     "type": "project",
     "require": {
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.6"
     },
     "autoload": {
         "psr-4": {
@@ -16,6 +16,6 @@
         ]
     },
     "scripts": {
-        "phpiggy": "php cli.php"
+        "budget_buddy": "php cli.php"
     }
 }
