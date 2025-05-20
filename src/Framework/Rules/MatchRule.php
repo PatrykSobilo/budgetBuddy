@@ -18,6 +18,6 @@ class MatchRule implements RuleInterface
 
   public function getMessage(array $data, string $field, array $params): string
   {
-    return "Does not match {$params[0]} field";
+    return "Both passwords needs to be the same!";
   }
 }

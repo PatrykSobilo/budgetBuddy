@@ -18,7 +18,7 @@
                 <h1 class="h3 mb-3 fw-normal">Register</h1>
 
                 <div class="form-floating">
-                    <input type="email" value="" name="email" class="form-control" id="" placeholder="name@example.com">
+                    <input type="email" value="<?php echo e($oldFormData['email'] ?? ''); ?>" name="email" class="form-control" id="" placeholder="name@example.com">
                     <?php if (array_key_exists('email', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-red-500">
                             <?php echo e($errors['email'][0]); ?>
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="form-floating">
-                    <input type="number" value="" name="age" class="form-control" id="" placeholder="Age">
+                    <input type="number" value="<?php echo e($oldFormData['age'] ?? ''); ?>" name="age" class="form-control" id="" placeholder="Age">
                     <?php if (array_key_exists('age', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-red-500">
                             <?php echo e($errors['age'][0]); ?>
@@ -61,7 +61,7 @@
                     <div class="mt-2">
                         <div>
                             <label class="inline-flex items-center">
-                                <input name="tos" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" type="checkbox" />
+                                <input <?php echo $oldFormData['tos'] ?? false ? 'checked' : ''; ?> name="tos" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" type="checkbox" />
                                 <span class="ml-2">I accept the terms of service.</span>
                             </label>
                             <?php if (array_key_exists('email', $errors)) : ?>
