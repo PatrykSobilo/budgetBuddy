@@ -14,27 +14,46 @@
 <body class="align-items-center py-4 bg-body-tertiary">
     <main class="form-register w-100 m-auto">
         <div class="registerFormTable mb-5">
-            <?php var_dump($errors); ?>
             <form action="/register" method="POST">
                 <h1 class="h3 mb-3 fw-normal">Register</h1>
 
                 <div class="form-floating">
                     <input type="email" value="" name="email" class="form-control" id="" placeholder="name@example.com">
+                    <?php if (array_key_exists('email', $errors)) : ?>
+                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                            <?php echo e($errors['email'][0]); ?>
+                        </div>
+                    <?php endif; ?>
                     <label for="floatingInput">Email address</label>
                 </div>
 
                 <div class="form-floating">
                     <input type="number" value="" name="age" class="form-control" id="" placeholder="Age">
+                    <?php if (array_key_exists('age', $errors)) : ?>
+                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                            <?php echo e($errors['age'][0]); ?>
+                        </div>
+                    <?php endif; ?>
                     <label for="floatingPassword">Age</label>
                 </div>
 
                 <div class="form-floating">
                     <input type="password" value="" name="password1" class="form-control" id="" placeholder="Password">
+                    <?php if (array_key_exists('password1', $errors)) : ?>
+                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                            <?php echo e($errors['password1'][0]); ?>
+                        </div>
+                    <?php endif; ?>
                     <label for="floatingPassword">Password</label>
                 </div>
 
                 <div class="form-floating">
                     <input type="password" value="" name="password2" class="form-control" id="" placeholder="Repeat Password">
+                    <?php if (array_key_exists('password2', $errors)) : ?>
+                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                            <?php echo e($errors['password2'][0]); ?>
+                        </div>
+                    <?php endif; ?>
                     <label for="floatingPassword">Repeat Password</label>
                 </div>
 
@@ -45,14 +64,18 @@
                                 <input name="tos" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" type="checkbox" />
                                 <span class="ml-2">I accept the terms of service.</span>
                             </label>
-                            <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                            </div>
+                            <?php if (array_key_exists('email', $errors)) : ?>
+                                <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                                    <?php echo e($errors['email'][0]); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
+        </div>
 
-                <button class="btn btn-primary w-100 py-2 mt-5" type="submit">Register</button>
-            </form>
+        <button class="btn btn-primary w-100 py-2 mt-5" type="submit">Register</button>
+        </form>
         </div>
     </main>
 

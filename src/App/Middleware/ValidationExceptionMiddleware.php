@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-
-use function Framework\redirectTo;
 use Framework\Contracts\MiddlewareInterface;
 use Framework\Exceptions\ValidationException;
-
-
-require_once __DIR__ . '/../functions.php';
-
 
 class ValidationExceptionMiddleware implements MiddlewareInterface
 {
