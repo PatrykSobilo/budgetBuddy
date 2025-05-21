@@ -6,7 +6,7 @@
 
         <div class="form-floating">
         <label for="floatingInput">E-mail</label>  
-        <input value="<?php echo e($oldFormData['email'] ?? ''); ?>" type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name="login">
+        <input value="<?php echo e($oldFormData['email'] ?? ''); ?>" type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
         <?php if(array_key_exists('email', $errors)) :  ?>
             <div class="bg-gray-100 mt-2 p-2 text-red-500">
               <?php echo e($errors['email'][0]); ?>
