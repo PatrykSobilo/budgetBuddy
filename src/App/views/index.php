@@ -17,7 +17,6 @@
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
 
         <ul class="nav col-12 col-md-auto mb-2 mb-md-0">
-          <li><a href="index.html" class="nav-link px-2 link-secondary">Home</a></li>
           <li><a href="about.php" class="nav-link px-2">About</a></li>
         </ul>
 
@@ -30,7 +29,8 @@
   </section>
 
   <section id="nameAndUserAccess">
-    <div class="px-4 pt-5 text-center">
+    <div class="px-4 pt-5 text-center"> 
+
       <h1 class="display-4 fw-bold text-body-emphasis">BudgetBuddy: Your Personal Finance Manager</h1>
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">BudgetBuddy is a user-friendly web application designed to help you manage your budget and

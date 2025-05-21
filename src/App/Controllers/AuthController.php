@@ -47,6 +47,6 @@ class AuthController
     {
         $this->userService->logout();
 
-        redirectTo('/login');
+        redirectTo('/');
     }
 }

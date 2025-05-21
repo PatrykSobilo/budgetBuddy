@@ -14,7 +14,10 @@
 <body class="align-items-center py-4 bg-body-tertiary">
     <main class="form-register w-100 m-auto">
         <div class="registerFormTable mb-5">
-            <form action="/register" method="POST">
+            <form method="POST">
+
+                <?php include $this->resolve('partials/_csrf.php'); ?>
+
                 <h1 class="h3 mb-3 fw-normal">Register</h1>
 
                 <div class="form-floating">

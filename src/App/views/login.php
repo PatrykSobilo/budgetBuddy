@@ -1,7 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <title>Document</title>
+</head>
+
 <body class="align-items-center py-4 bg-body-tertiary">
   <main class="form-signin w-100 m-auto">
     <div class="loginFormTable mb-5">
-      <form action="" method="POST">
+      <form method="POST">
+
+        <?php include $this->resolve('partials/_csrf.php'); ?>
+
         <h1 class="h3 mb-3 fw-normal">Sign in</h1>
 
         <div class="form-floating">
@@ -33,6 +49,8 @@
       </form>
     </div>
   </main>
+
+  <?php include $this->resolve("partials/_footer.php"); ?>
 
   <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
