@@ -1,32 +1,87 @@
-CREATE TABLE IF NOT EXISTS users(
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  CREATE TABLE IF NOT EXISTS users(
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
   email varchar(255) NOT NULL,
   password varchar(255) NOT NULL,
   age tinyint(3) unsigned NOT NULL,
-  created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY(id),
   UNIQUE KEY(email)
-);
+  );
 
-CREATE TABLE IF NOT EXISTS transactions(
-  id bigint(20) NOT NULL AUTO_INCREMENT,
-  description varchar(255) NOT NULL,
-  amount decimal(10,2) NOT NULL,
-  date datetime NOT NULL,
-  created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  user_id bigint(20) unsigned NOT NULL,
-  PRIMARY KEY(id),
-  FOREIGN KEY(user_id) REFERENCES users(id)
-);
+    CREATE TABLE IF NOT EXISTS incomes_category_default(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY(id)
+    );
 
-CREATE TABLE IF NOT EXISTS receipts(
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  original_filename varchar(255) NOT NULL,
-  storage_filename varchar(255) NOT NULL,
-  media_type varchar(255) NOT NULL,
-  transaction_id bigint(20) NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY(transaction_id) REFERENCES transactions (id) ON DELETE CASCADE
-);
+    CREATE TABLE IF NOT EXISTS expenses_category_default(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS payment_methods_default(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS incomes_category_assigned_to_users(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    user_id int(11) unsigned NOT NULL,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS expenses_category_assigned_to_users(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    user_id int(11) unsigned NOT NULL,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS payment_methods_assigned_to_users(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    user_id int(11) unsigned NOT NULL,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS incomes(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    user_id int(11) unsigned NOT NULL,
+    income_category_assigned_to_user_id int(11) NOT NULL,
+    amount decimal(8,2) NOT NULL,
+    date_of_income datetime NOT NULL,
+    income_comment varchar(100) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(income_category_assigned_to_user_id) REFERENCES incomes_category_assigned_to_users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS expenses(
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    user_id int(11) unsigned NOT NULL,
+    expense_category_assigned_to_user_id int(11) NOT NULL,
+    payment_method_assigned_to_user_id int(11) NOT NULL,
+    amount decimal(8,2) NOT NULL,
+    date_of_expense datetime NOT NULL,
+    expense_comment varchar(100) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(expense_category_assigned_to_user_id) REFERENCES expense_category_assigned_to_user(id),
+    FOREIGN KEY(payment_method_assigned_to_user_id) REFERENCES payment_method_assigned_to_user(id)
+    );
+
+
+
+
+
+
+
+
+
+
+
