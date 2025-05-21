@@ -15,8 +15,12 @@ class HomeController {
     public function home(){
         echo $this->view->render("index.php", [
             'title' => 'Home page'
+        ]);
+    }
 
-
+    public function mainPageView(){
+        echo $this->view->render("mainPage.php", [
+            'title' => 'Main page'
         ]);
     }
 }
