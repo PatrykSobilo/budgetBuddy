@@ -50,7 +50,7 @@
             </a>
           </li>
           <li>
-            <a href="" class="nav-link text-white">
+            <a href="logout" class="nav-link text-white">
               Logout
             </a>
           </li>

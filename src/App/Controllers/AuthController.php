@@ -11,16 +11,15 @@ use function Framework\dd;
 
 class AuthController
 {
-    public function __construct(private TemplateEngine $view, private ValidatorService $validatorService, private UserService $userService) 
+    public function __construct(private TemplateEngine $view, private ValidatorService $validatorService, private UserService $userService) {}
+
+    public function registerView()
     {
-
-    }
-
-    public function registerView() {
         echo $this->view->render("register.php");
     }
 
-    public function register() {
+    public function register()
+    {
         $this->validatorService->validateRegister($_POST);
 
         $this->userService->isEmailTaken($_POST['email']);
@@ -30,15 +29,24 @@ class AuthController
         redirectTo('/mainPage');
     }
 
-    public function loginView() {
+    public function loginView()
+    {
         echo $this->view->render("login.php");
     }
 
-    public function login() {
+    public function login()
+    {
         $this->validatorService->validateLogin($_POST);
 
         $this->userService->login($_POST);
 
         redirectTo('/mainPage');
+    }
+
+    public function logout()
+    {
+        $this->userService->logout();
+
+        redirectTo('/login');
     }
 }
