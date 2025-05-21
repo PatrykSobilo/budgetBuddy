@@ -20,7 +20,7 @@
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
           <li>
-            <a href="" class="nav-link text-secondary">
+            <a href="mainPage" class="nav-link text-secondary">
               Home
             </a>
           </li>

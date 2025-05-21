@@ -9,9 +9,7 @@ use Framework\Exceptions\ValidationException;
 
 class UserService
 {
-  public function __construct(private Database $db)
-  {
-  }
+  public function __construct(private Database $db) {}
 
   public function isEmailTaken(string $email)
   {
@@ -29,17 +27,15 @@ class UserService
 
   public function create(array $formData)
   {
-    $password = password_hash($formData['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+    $password = $formData['password1'] ?? null;
 
     $this->db->query(
-      "INSERT INTO users(email,password,age,country,social_media_url)
-      VALUES(:email, :password, :age, :country, :url)",
+      "INSERT INTO users(email,password,age)
+      VALUES(:email, :password, :age)",
       [
         'email' => $formData['email'],
         'password' => $password,
         'age' => $formData['age'],
-        'country' => $formData['country'],
-        'url' => $formData['socialMediaURL']
       ]
     );
 
