@@ -43,8 +43,8 @@ class ValidatorService
       'age' => ['required', 'min:18'],
       //'country' => ['required', 'in:USA,Canada,Mexico'],
       //'socialMediaURL' => ['required', 'url'],
-      'password1' => ['required'],
-      'password2' => ['required', 'match:password1'],
+      'password' => ['required'],
+      'passwordConfirmation' => ['required', 'match:password'],
       'tos' => ['required']
     ]);
   }

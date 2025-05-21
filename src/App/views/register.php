@@ -38,20 +38,20 @@
                 </div>
 
                 <div class="form-floating">
-                    <input type="password" value="" name="password1" class="form-control" id="" placeholder="Password">
-                    <?php if (array_key_exists('password1', $errors)) : ?>
+                    <input type="password" value="" name="password" class="form-control" id="" placeholder="Password">
+                    <?php if (array_key_exists('password', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                            <?php echo e($errors['password1'][0]); ?>
+                            <?php echo e($errors['password'][0]); ?>
                         </div>
                     <?php endif; ?>
                     <label for="floatingPassword">Password</label>
                 </div>
 
                 <div class="form-floating">
-                    <input type="password" value="" name="password2" class="form-control" id="" placeholder="Repeat Password">
-                    <?php if (array_key_exists('password2', $errors)) : ?>
+                    <input type="password" value="" name="passwordConfirmation" class="form-control" id="" placeholder="Repeat Password">
+                    <?php if (array_key_exists('passwordConfirmation', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                            <?php echo e($errors['password2'][0]); ?>
+                            <?php echo e($errors['passwordConfirmation'][0]); ?>
                         </div>
                     <?php endif; ?>
                     <label for="floatingPassword">Repeat Password</label>

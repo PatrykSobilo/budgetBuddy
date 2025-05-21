@@ -22,7 +22,7 @@
         </ul>
 
         <div class="col-md-3 text-end">
-          <button type="button" class="btn btn-outline-primary me-2"><a href="">Login</a></button>
+          <button type="button" class="btn btn-outline-primary me-2"><a href="login">Login</a></button>
           <button type="button" class="btn btn-outline-primary"><a href="register">Register</a></button>
         </div>
       </header>
@@ -38,7 +38,7 @@
           finances anytime, anywhere, without the need for downloads or installations.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
           <button type="button" class="btn btn-outline-primary btn-lg px-4 me-sm-3"><a
-              href="">Login</a></button>
+              href="login">Login</a></button>
           <button type="button" class="btn btn-outline-secondary btn-lg px-4"><a
               href="register">Register</a></button>
         </div>

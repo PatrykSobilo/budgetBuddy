@@ -18,10 +18,17 @@ use App\Middleware\{AuthRequiredMiddleware, GuestOnlyMiddleware};
 function registerRoutes(App $app)
 {
   $app->get('/', [HomeController::class, 'home']);
+
   $app->get('/about', [AboutController::class, 'about']);
+
   $app->get('/register', [AuthController::class, 'registerView']);
   $app->post('/register', [AuthController::class, 'register']);
+
+  $app->get('/login', [AuthController::class, 'loginView']);
+  $app->post('/login', [AuthController::class, 'login']);
+
   $app->get('/mainPage', [HomeController::class, 'mainPageView']);
+  
   $app->get('/expenses', [TransactionController::class, 'expensesView']);
   $app->get('/incomes', [TransactionController::class, 'incomesView']);
   $app->get('/dashboards', [TransactionController::class, 'dashboardsView']);

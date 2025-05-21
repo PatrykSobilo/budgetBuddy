@@ -32,13 +32,6 @@ class Database
 
   public function query(string $query, array $params = []): Database
   {
-
-    var_dump($query);
-    var_dump($params);
-    error_log('SQL query: ' . $query);
-    error_log('SQL params: ' . var_export($params, true));
-
-
     $this->stmt = $this->connection->prepare($query);
 
     $this->stmt->execute($params);
