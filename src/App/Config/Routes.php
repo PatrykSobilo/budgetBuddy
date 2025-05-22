@@ -29,7 +29,9 @@ function registerRoutes(App $app)
   $app->get('/about', [AboutController::class, 'about']);
 
   $app->get('/mainPage', [HomeController::class, 'mainPageView']);
-  
+
+  $app->post('/mainPage', [TransactionController::class, 'addIncome'])->add(AuthRequiredMiddleware::class);
+
   $app->get('/expenses', [TransactionController::class, 'expensesView']);
   $app->get('/incomes', [TransactionController::class, 'incomesView']);
   $app->get('/dashboards', [TransactionController::class, 'dashboardsView']);

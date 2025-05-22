@@ -1,5 +1,7 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 
+<?php include $this->resolve("transactions/_transactionButtons.php"); ?>
+
 <section id="userParameters" name="userParameters">
     <div class="container">
         <form id="dateForm" method="post" action="dashboards.php" class="d-flex flex-wrap align-items-center justify-content-center">

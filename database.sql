@@ -50,29 +50,29 @@
     );
 
     CREATE TABLE IF NOT EXISTS incomes(
-    id int(11) unsigned NOT NULL AUTO_INCREMENT,
-    user_id int(11) unsigned NOT NULL,
-    income_category_assigned_to_user_id int(11) NOT NULL,
-    amount decimal(8,2) NOT NULL,
-    date_of_income datetime NOT NULL,
-    income_comment varchar(100) NOT NULL,
-    PRIMARY KEY(id),
-    FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(income_category_assigned_to_user_id) REFERENCES incomes_category_assigned_to_users(id)
+	  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+	  user_id int(11) unsigned NOT NULL,
+	  income_category_assigned_to_user_id int(11) unsigned NOT NULL,
+	  amount decimal(8,2) NOT NULL,
+	  date_of_income datetime NOT NULL,
+	  income_comment varchar(100) NOT NULL,
+	  PRIMARY KEY(id),
+	  FOREIGN KEY(user_id) REFERENCES users(id),
+	  FOREIGN KEY(income_category_assigned_to_user_id) REFERENCES incomes_category_assigned_to_users(id)
     );
 
     CREATE TABLE IF NOT EXISTS expenses(
-    id int(11) unsigned NOT NULL AUTO_INCREMENT,
-    user_id int(11) unsigned NOT NULL,
-    expense_category_assigned_to_user_id int(11) NOT NULL,
-    payment_method_assigned_to_user_id int(11) NOT NULL,
-    amount decimal(8,2) NOT NULL,
-    date_of_expense datetime NOT NULL,
-    expense_comment varchar(100) NOT NULL,
-    PRIMARY KEY(id),
-    FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(expense_category_assigned_to_user_id) REFERENCES expense_category_assigned_to_user(id),
-    FOREIGN KEY(payment_method_assigned_to_user_id) REFERENCES payment_method_assigned_to_user(id)
+    id int(11) unsigned NOT NULL AUTO_INCREMENT, 
+    user_id int(11) unsigned NOT NULL, 
+    expense_category_assigned_to_user_id int(11) unsigned NOT NULL, 
+    payment_method_assigned_to_user_id int(11) unsigned NOT NULL, 
+    amount decimal(8,2) NOT NULL, 
+    date_of_expense datetime NOT NULL, 
+    expense_comment varchar(100) NOT NULL, 
+    PRIMARY KEY(id), 
+    FOREIGN KEY(user_id) REFERENCES users(id), 
+    FOREIGN KEY(expense_category_assigned_to_user_id) REFERENCES expenses_category_assigned_to_users(id), 
+    FOREIGN KEY(payment_method_assigned_to_user_id) REFERENCES payment_methods_assigned_to_users(id) 
     );
 
 

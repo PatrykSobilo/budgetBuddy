@@ -44,7 +44,7 @@ class ReceiptController
     redirectTo("/");
   }
 
-  public function download(array $params)
+  /*public function download(array $params)
   {
     $transaction = $this->transactionService->getUserTransaction(
       $params['transaction']
@@ -90,5 +90,5 @@ class ReceiptController
     $this->receiptService->delete($receipt);
 
     redirectTo('/');
-  }
+  }*/
 }

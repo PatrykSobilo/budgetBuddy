@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Framework\TemplateEngine;
-use App\Services\{/*ValidatorService, */TransactionService};
+use App\Services\{ValidatorService, TransactionService};
 
 class TransactionController
 {
   public function __construct(
     private TemplateEngine $view,
-    //private ValidatorService $validatorService,
-    //private TransactionService $transactionService
+    private ValidatorService $validatorService,
+    private TransactionService $transactionService
   ) {}
 
   public function expensesView()
@@ -20,29 +20,15 @@ class TransactionController
     echo $this->view->render("expenses.php");
   }
 
-    public function incomesView()
+  public function incomesView()
   {
     echo $this->view->render("incomes.php");
   }
 
-      public function dashboardsView()
+  public function dashboardsView()
   {
     echo $this->view->render("dashboards.php");
   }
-  
-  public function createView()
-  {
-    echo $this->view->render("transactions/create.php");
-  }
-
-  //   public function create()
-  //   {
-  //     $this->validatorService->validateTransaction($_POST);
-
-  //     $this->transactionService->create($_POST);
-
-  //     redirectTo('/');
-  //   }
 
   //   public function editView(array $params)
   //   {
@@ -82,4 +68,10 @@ class TransactionController
 
   //     redirectTo('/');
   //   }
+
+    public function addIncome()
+  {
+    $this->validatorService->validateTransaction($_POST);
+
+  }
 }

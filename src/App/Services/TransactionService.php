@@ -12,18 +12,37 @@ class TransactionService
   {
   }
 
-  public function create(array $formData)
+  public function createExpense(array $formData)
   {
     $formattedDate = "{$formData['date']} 00:00:00";
 
     $this->db->query(
-      "INSERT INTO transactions(user_id, description, amount, date)
-      VALUES(:user_id, :description, :amount, :date)",
+      "INSERT INTO expenses(user_id, expense_category_assigned_to_user_id, payment_method_assigned_to_user_id, amount, date_of_expense, expense_comment)
+      VALUES(:user_id, :expense_category_assigned_to_user_id, :payment_method_assigned_to_user_id, :amount, :date_of_expense, :expense_comment)",
       [
         'user_id' => $_SESSION['user'],
-        'description' => $formData['description'],
+        'expense_category_assigned_to_user_id' => $_SESSION['user'],
+        'payment_method_assigned_to_user_id' => $_SESSION['user'],
         'amount' => $formData['amount'],
-        'date' => $formattedDate
+        'date_of_expense' => $formattedDate,
+        'expense_comment' => $formData['description']
+      ]
+    );
+  }
+
+    public function createIncome(array $formData)
+  {
+    $formattedDate = "{$formData['date']} 00:00:00";
+
+    $this->db->query(
+      "INSERT INTO transactions(user_id, income_category_assigned_to_user_id, amount, date_of_income, income_comment)
+      VALUES(:user_id, :income_category_assigned_to_user_id, :amount, :date_of_income, :income_comment)",
+      [
+        'user_id' => $_SESSION['user'],
+        'income_category_assigned_to_user_id'=> $_SESSION['user'],
+        'amount' => $formData['amount'],
+        'date_of_income' => $formattedDate,
+        'income_comment' => $formData['description']
       ]
     );
   }
