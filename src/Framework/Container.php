@@ -7,6 +7,8 @@ namespace Framework;
 use ReflectionClass, ReflectionNamedType;
 use Framework\Exceptions\ContainerException;
 
+require_once __DIR__ . '/../App/functions.php';
+
 class Container
 {
   private array $definitions = [];

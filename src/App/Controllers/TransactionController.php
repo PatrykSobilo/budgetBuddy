@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+
+use Framework\Exceptions\ValidationException;
 use Framework\TemplateEngine;
 use App\Services\{ValidatorService, TransactionService};
 
@@ -29,6 +31,20 @@ class TransactionController
   {
     echo $this->view->render("dashboards.php");
   }
+
+  public function createView()
+  {
+    echo $this->view->render("transactions/create.php");
+  }
+
+  //   public function create()
+  //   {
+  //     $this->validatorService->validateTransaction($_POST);
+
+  //     $this->transactionService->create($_POST);
+
+  //     redirectTo('/');
+  //   }
 
   //   public function editView(array $params)
   //   {
@@ -69,9 +85,25 @@ class TransactionController
   //     redirectTo('/');
   //   }
 
-    public function addIncome()
+  public function addTransaction()
   {
-    $this->validatorService->validateTransaction($_POST);
+    try {
+      $this->validatorService->validateTransaction($_POST);
+      // Jeśli walidacja przejdzie, możesz dodać logikę zapisu do bazy
+      // redirectTo('/mainPage'); // tymczasowo nie przekierowujemy
+    } catch (\Framework\Exceptions\ValidationException $e) {
+      // Przekazujemy stare dane i błędy do widoku
+      echo $this->view->render('mainPage.php', [
+        'oldFormData' => $_POST,
+        'errors' => $e->errors
+      ]);
+      return;
+    }
 
+    // Jeśli wszystko OK, przekieruj lub wyświetl sukces
+    echo $this->view->render('mainPage.php', [
+      'oldFormData' => [],
+      'errors' => []
+    ]);
   }
 }

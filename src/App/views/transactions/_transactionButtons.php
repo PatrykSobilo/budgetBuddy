@@ -12,9 +12,9 @@
          </div>
 
          <div class="modal-body">
-           <form method="POST" class="grid grid-cols-1 gap-6">
-            
-            <?php include $this->resolve("partials/_csrf.php"); ?>
+           <form method="POST" action="/mainPage" class="grid grid-cols-1 gap-6">
+
+             <?php include $this->resolve("partials/_csrf.php"); ?>
              <div class="form-floating">
                <select class="form-control" id="expensesCategory" name="expensesCategory">
                  <option value="<?php echo e($oldFormData['expensesCategory'] ?? ''); ?>"></option>
@@ -92,51 +92,51 @@
          </div>
 
          <div class="modal-body">
-           <form method="POST">
+           <form method="POST" action="/mainPage" class="grid grid-cols-1 gap-6">
 
-            <?php include $this->resolve("partials/_csrf.php"); ?>
+             <?php include $this->resolve("partials/_csrf.php"); ?>
 
              <div class="form-floating">
                <select class="form-control" id="incomesCategory" name="incomesCategory">
                  <option value="<?php echo e($oldFormData['incomesCategory'] ?? ''); ?>"></option>
                </select>
                <?php if (array_key_exists('incomesCategory', $errors)) : ?>
-                <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                  <?php echo e($errors['incomesCategory'][0]); ?>
-                </div>
-              <?php endif; ?>
+                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                   <?php echo e($errors['incomesCategory'][0]); ?>
+                 </div>
+               <?php endif; ?>
                <label for="incomesCategory">Income Category</label>
              </div>
 
              <div class="form-floating">
                <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
                <?php if (array_key_exists('amount', $errors)) : ?>
-                <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                  <?php echo e($errors['amount'][0]); ?>
-                </div>
-              <?php endif; ?>
+                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                   <?php echo e($errors['amount'][0]); ?>
+                 </div>
+               <?php endif; ?>
                <label for="amount">Amount</label>
              </div>
 
              <div class="form-floating">
                <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
                <?php if (array_key_exists('date', $errors)) : ?>
-                <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                  <?php echo e($errors['date'][0]); ?>
-                </div>
-              <?php endif; ?>
+                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                   <?php echo e($errors['date'][0]); ?>
+                 </div>
+               <?php endif; ?>
                <label for="date">Date</label>
              </div>
 
              <div class="form-floating">
-              <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Surname">
-              <?php if (array_key_exists('description', $errors)) : ?>
-                <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                  <?php echo e($errors['description'][0]); ?>
-                </div>
-              <?php endif; ?>
-              <label for="description">Description</label>
-            </div>
+               <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Surname">
+               <?php if (array_key_exists('description', $errors)) : ?>
+                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                   <?php echo e($errors['description'][0]); ?>
+                 </div>
+               <?php endif; ?>
+               <label for="description">Description</label>
+             </div>
 
              <div class="modal-footer">
                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -149,5 +149,5 @@
    </div>
  </section>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

@@ -41,6 +41,8 @@ class ValidatorService
     $this->validator->validate($formData, [
       'email' => ['required', 'email'],
       'age' => ['required', 'min:18'],
+      //'country' => ['required', 'in:USA,Canada,Mexico'],
+      //'socialMediaURL' => ['required', 'url'],
       'password' => ['required'],
       'passwordConfirmation' => ['required', 'match:password'],
       'tos' => ['required']
@@ -54,17 +56,13 @@ class ValidatorService
       'password' => ['required']
     ]);
   }
-  
+
   public function validateTransaction(array $formData)
   {
     $this->validator->validate($formData, [
-      'expensesCategory' => ['required'],
-      'paymentMethods' => ['required'],
-      'incomesCategory' => ['required'],
-      'amount' => ['required'],
-      'date' => ['required'],
-      'description' => ['required']
+      'description' => ['required', 'lengthMax:255'],
+      'amount' => ['required', 'numeric'],
+      'date' => ['required', 'dateFormat:Y-m-d']
     ]);
   }
-
 }

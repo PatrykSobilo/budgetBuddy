@@ -18,4 +18,7 @@ $app = new App(Paths::SOURCE . "App/container-definitions.php");
 registerRoutes($app);
 registerMiddleware($app);
 
+// Register the error handler
+$app->setErrorHandler([\App\Controllers\ErrorController::class, 'notFound']);
+
 return $app;

@@ -61,7 +61,7 @@ class Router
         $container->resolve($class) :
         new $class;
 
-      $action = fn() => $controllerInstance->{$function}($params);
+      $action = fn () => $controllerInstance->{$function}($params);
 
       $allMiddleware = [...$route['middlewares'], ...$this->middlewares];
 
@@ -69,7 +69,7 @@ class Router
         $middlewareInstance = $container ?
           $container->resolve($middleware) :
           new $middleware;
-        $action = fn() => $middlewareInstance->process($action);
+        $action = fn () => $middlewareInstance->process($action);
       }
 
       $action();
@@ -102,11 +102,11 @@ class Router
 
     $controllerInstance = $container ? $container->resolve($class) : new $class;
 
-    $action = fn() => $controllerInstance->$function();
+    $action = fn () => $controllerInstance->$function();
 
     foreach ($this->middlewares as $middleware) {
       $middlewareInstance = $container ? $container->resolve($middleware) : new $middleware;
-      $action = fn() => $middlewareInstance->process($action);
+      $action = fn () => $middlewareInstance->process($action);
     }
 
     $action();

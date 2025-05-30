@@ -1,7 +1,5 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 
-<?php include $this->resolve("transactions/_transactionButtons.php"); ?>
-
 <section id="historyPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
