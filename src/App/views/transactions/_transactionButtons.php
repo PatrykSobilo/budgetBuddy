@@ -1,153 +1,123 @@
- <section id="actionButtons" class="text-end d-flex justify-content-center p-4">
-   <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addExpenseDialogBox">+
-     Add Expense</button>
+<!-- Custom Editable Modal for Add Expense -->
+<div id="customAddExpenseModal" class="custom-modal" style="display:none; position:fixed; z-index:1050; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div class="custom-modal-dialog" style="background:#fff; border-radius:8px; max-width:400px; width:100%; margin:auto; box-shadow:0 2px 16px rgba(0,0,0,0.2);">
+    <div class="custom-modal-header" style="padding:1rem; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+      <h5 style="margin:0;">Add Expense</h5>
+      <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddExpenseModal')">&times;</button>
+    </div>
+    <div class="custom-modal-body" style="padding:1rem;">
+      <form method="POST" action="/mainPage" class="grid grid-cols-1 gap-6">
+        <?php include $this->resolve("partials/_csrf.php"); ?>
 
-   <div class="modal fade" id="addExpenseDialogBox" tabindex="-1" aria-labelledby="addExpenseDialogBoxLabel"
-     aria-hidden="true">
-     <div class="modal-dialog">
-       <div class="modal-content">
-         <div class="modal-header">
-           <h5 class="modal-title" id="addExpenseDialogBoxLabel">Add Expense</h5>
-           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-         </div>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <select class="form-control" id="expensesCategory" name="expensesCategory">
+            <option value="Food">Food</option>
+            <option value="Rent">Rent</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
+          </select>
+          <label for="expenseCategory">Expense Category</label>
+        </div>
 
-         <div class="modal-body">
-           <form method="POST" action="/mainPage" class="grid grid-cols-1 gap-6">
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <select class="form-control" id="paymentMethods" name="paymentMethods">
+            <option value="Cash">Cash</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+          </select>
+          <label for="expenseCategory">Payment Method</label>
+        </div>
 
-             <?php include $this->resolve("partials/_csrf.php"); ?>
-             <div class="form-floating">
-               <select class="form-control" id="expensesCategory" name="expensesCategory">
-                 <option value="<?php echo e($oldFormData['expensesCategory'] ?? ''); ?>"></option>
-               </select>
-               <?php if (array_key_exists('expensesCategory', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['expensesCategory'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="expenseCategory">Expense Category</label>
-             </div>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
+          <label for="amount">Amount</label>
+        </div>
 
-             <div class="form-floating">
-               <select class="form-control" id="paymentMethods" name="paymentMethods">
-                 <option value="<?php echo e($oldFormData['paymentMethods'] ?? ''); ?>"></option>
-               </select>
-               <?php if (array_key_exists('paymentMethods', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['paymentMethods'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="expenseCategory">Payment Method</label>
-             </div>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
+          <label for="date">Date</label>
+        </div>
 
-             <div class="form-floating">
-               <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
-               <?php if (array_key_exists('amount', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['amount'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="amount">Amount</label>
-             </div>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Description">
+          <label for="description">Description</label>
+        </div>
 
-             <div class="form-floating">
-               <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
-               <?php if (array_key_exists('date', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['date'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="date">Date</label>
-             </div>
+        <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.5rem; padding-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeCustomModal('customAddExpenseModal')">Close</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-             <div class="form-floating">
-               <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Description">
-               <?php if (array_key_exists('description', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['description'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="description">Description</label>
-             </div>
+<!-- Custom Editable Modal for Add Income -->
+<div id="customAddIncomeModal" class="custom-modal" style="display:none; position:fixed; z-index:1050; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div class="custom-modal-dialog" style="background:#fff; border-radius:8px; max-width:400px; width:100%; margin:auto; box-shadow:0 2px 16px rgba(0,0,0,0.2);">
+    <div class="custom-modal-header" style="padding:1rem; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+      <h5 style="margin:0;">Add Income</h5>
+      <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddIncomeModal')">&times;</button>
+    </div>
+    <div class="custom-modal-body" style="padding:1rem;">
+      <form method="POST" action="/mainPage" class="grid grid-cols-1 gap-6">
+        <?php include $this->resolve("partials/_csrf.php"); ?>
 
-             <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               <button type="submit" class="btn btn-primary">Save Changes</button>
-             </div>
-           </form>
-         </div>
-       </div>
-     </div>
-   </div>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <select class="form-control" id="incomesCategory" name="incomesCategory">
+            <option value="Salary">Salary</option>
+            <option value="Gift">Gift</option>
+            <option value="Other">Other</option>
+          </select>
+          <label for="incomesCategory">Income Category</label>
+        </div>
 
-   <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#addIncomeDialogBox">+
-     Add Income</button>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
+          <label for="amount">Amount</label>
+        </div>
 
-   <div class="modal fade" id="addIncomeDialogBox" tabindex="-1" aria-labelledby="addIncomeDialogBoxLabel"
-     aria-hidden="true">
-     <div class="modal-dialog">
-       <div class="modal-content">
-         <div class="modal-header">
-           <h5 class="modal-title" id="addIncomeDialogBoxLabel">Add Income</h5>
-           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-         </div>
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
+          <label for="date">Date</label>
+        </div>
 
-         <div class="modal-body">
-           <form method="POST" action="/mainPage" class="grid grid-cols-1 gap-6">
+        <div class="form-floating" style="margin-bottom: 1rem;">
+          <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Surname">
+          <label for="description">Description</label>
+        </div>
 
-             <?php include $this->resolve("partials/_csrf.php"); ?>
+        <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.5rem; padding-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeCustomModal('customAddIncomeModal')">Close</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-             <div class="form-floating">
-               <select class="form-control" id="incomesCategory" name="incomesCategory">
-                 <option value="<?php echo e($oldFormData['incomesCategory'] ?? ''); ?>"></option>
-               </select>
-               <?php if (array_key_exists('incomesCategory', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['incomesCategory'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="incomesCategory">Income Category</label>
-             </div>
+<!-- Replace Bootstrap modal triggers with custom modal triggers -->
+<section id="actionButtons" class="text-end d-flex justify-content-center p-4">
+  <button type="button" class="btn btn-primary m-1" onclick="openCustomModal('customAddExpenseModal')">+
+    Add Expense</button>
+  <button type="button" class="btn btn-primary m-1" onclick="openCustomModal('customAddIncomeModal')">+
+    Add Income</button>
+</section>
 
-             <div class="form-floating">
-               <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
-               <?php if (array_key_exists('amount', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['amount'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="amount">Amount</label>
-             </div>
-
-             <div class="form-floating">
-               <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
-               <?php if (array_key_exists('date', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['date'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="date">Date</label>
-             </div>
-
-             <div class="form-floating">
-               <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Surname">
-               <?php if (array_key_exists('description', $errors)) : ?>
-                 <div class="bg-gray-100 mt-2 p-2 text-red-500">
-                   <?php echo e($errors['description'][0]); ?>
-                 </div>
-               <?php endif; ?>
-               <label for="description">Description</label>
-             </div>
-
-             <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               <button type="submit" class="btn btn-primary">Save Changes</button>
-             </div>
-           </form>
-         </div>
-       </div>
-     </div>
-   </div>
- </section>
-
- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+function openCustomModal(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+function closeCustomModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+// Zamknij modal po kliknięciu w tło
+window.addEventListener('click', function(e) {
+  document.querySelectorAll('.custom-modal').forEach(function(modal) {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+});
+</script>

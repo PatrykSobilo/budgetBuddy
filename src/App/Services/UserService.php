@@ -85,8 +85,25 @@ class UserService
     }
 
     session_regenerate_id();
-
     $_SESSION['user'] = $user['id'];
+
+    $incomesCategories = $this->db->query(
+      "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
+      ['user_id' => $user['id']]
+    )->findAll();
+    $_SESSION['incomes_categories'] = $incomesCategories;
+
+    $expensesCategories = $this->db->query(
+      "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
+      ['user_id' => $user['id']]
+    )->findAll();
+    $_SESSION['expenses_categories'] = $expensesCategories;
+
+    $paymentMethods = $this->db->query(
+      "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
+      ['user_id' => $user['id']]
+    )->findAll();
+    $_SESSION['payment_methods'] = $paymentMethods;
   }
 
   public function logout()
