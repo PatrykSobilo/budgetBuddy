@@ -87,7 +87,6 @@ class TransactionController
 
   public function addTransaction()
   {
-    // Rozpoznaj typ transakcji na podstawie obecności pola w POST
     $openModal = null;
     if (isset($_POST['expensesCategory'])) {
       $openModal = 'customAddExpenseModal';
@@ -109,6 +108,15 @@ class TransactionController
       return;
     }
 
+    // Dodawanie do bazy
+    if (isset($_POST['expensesCategory'])) {
+      $this->transactionService->createExpense($_POST);
+    } elseif (isset($_POST['incomesCategory'])) {
+      $this->transactionService->createIncome($_POST);
+    }
+
+    // Po sukcesie odśwież token i wyczyść formularz
+    $_SESSION['token'] = bin2hex(random_bytes(32));
     echo $this->view->render('mainPage.php', [
       'oldFormData' => [],
       'errors' => [],
