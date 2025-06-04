@@ -60,41 +60,38 @@ class TransactionService
     );
   }
 
-  public function getUserTransactions(int $length, int $offset)
+  /**
+   * Pobiera wszystkie transakcje (wydatki i przychody) użytkownika, posortowane malejąco po dacie.
+   * Zwraca tablicę z polami: type (Expense/Income), description, amount, date
+   * Jeśli $limit > 0, zwraca tylko $limit najnowszych.
+   */
+  public function getUserTransactions(int $limit = null)
   {
-    $searchTerm = addcslashes($_GET['s'] ?? '', '%_');
-    $params = [
-      'user_id' => $_SESSION['user'],
-      'description' => "%{$searchTerm}%"
-    ];
-
-    $transactions = $this->db->query(
-      "SELECT *, DATE_FORMAT(date, '%Y-%m-%d') as formatted_date
-      FROM transactions 
-      WHERE user_id = :user_id
-      AND description LIKE :description
-      LIMIT {$length} OFFSET {$offset}",
-      $params
+    $userId = $_SESSION['user'];
+    // Pobierz wydatki
+    $expenses = $this->db->query(
+      "SELECT 'Expense' AS type, expense_comment AS description, amount, date_of_expense AS date
+       FROM expenses
+       WHERE user_id = :user_id",
+      ['user_id' => $userId]
     )->findAll();
-
-    $transactions = array_map(function (array $transaction) {
-      $transaction['receipts'] = $this->db->query(
-        "SELECT * FROM receipts WHERE transaction_id = :transaction_id",
-        ['transaction_id' => $transaction['id']]
-      )->findAll();
-
-      return $transaction;
-    }, $transactions);
-
-    $transactionCount = $this->db->query(
-      "SELECT COUNT(*)
-      FROM transactions 
-      WHERE user_id = :user_id
-      AND description LIKE :description",
-      $params
-    )->count();
-
-    return [$transactions, $transactionCount];
+    // Pobierz przychody
+    $incomes = $this->db->query(
+      "SELECT 'Income' AS type, income_comment AS description, amount, date_of_income AS date
+       FROM incomes
+       WHERE user_id = :user_id",
+      ['user_id' => $userId]
+    )->findAll();
+    // Połącz i posortuj malejąco po dacie
+    $all = array_merge($expenses, $incomes);
+    usort($all, function($a, $b) {
+      return strtotime($b['date']) <=> strtotime($a['date']);
+    });
+    // Jeśli $limit > 0, zwróć tylko $limit najnowszych
+    if ($limit !== null && $limit > 0) {
+      return array_slice($all, 0, $limit);
+    }
+    return $all;
   }
 
   public function getUserTransaction(string $id)

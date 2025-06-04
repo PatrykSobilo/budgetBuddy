@@ -5,22 +5,32 @@
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
             <h2 class="mb-4">Expenses</h2>
-            <table class="table table-bordered">
+            <table class="table table-bordered" name="balance">
                 <thead>
                     <tr>
                         <th>Type</th>
                         <th>Description</th>
                         <th>Amount</th>
                         <th>Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                <?php if (!empty($expenses)): ?>
+                    <?php foreach ($expenses as $expense): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($expense['type']); ?></td>
+                            <td><?php echo htmlspecialchars($expense['description']); ?></td>
+                            <td><?php echo htmlspecialchars($expense['amount']); ?></td>
+                            <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
+                            <td><!-- Actions (edit/delete) can go here --></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
                     <tr>
-                        <td>Expense</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td colspan="5" class="text-center">No expenses found.</td>
                     </tr>
+                <?php endif; ?>
                 </tbody>
             </table>
         </div>

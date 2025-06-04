@@ -19,12 +19,26 @@ class TransactionController
 
   public function expensesView()
   {
-    echo $this->view->render("expenses.php");
+    $expenses = [];
+    if (isset($_SESSION['user'])) {
+      $all = $this->transactionService->getUserTransactions();
+      $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
+    }
+    echo $this->view->render("expenses.php", [
+      'expenses' => $expenses
+    ]);
   }
 
   public function incomesView()
   {
-    echo $this->view->render("incomes.php");
+    $incomes = [];
+    if (isset($_SESSION['user'])) {
+      $all = $this->transactionService->getUserTransactions();
+      $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
+    }
+    echo $this->view->render("incomes.php", [
+      'incomes' => $incomes
+    ]);
   }
 
   public function dashboardsView()

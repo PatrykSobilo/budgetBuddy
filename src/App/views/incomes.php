@@ -5,28 +5,37 @@
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
             <h2 class="mb-4">Incomes</h2>
-            <table class="table table-bordered">
+            <table class="table table-bordered" name="balance">
                 <thead>
                     <tr>
                         <th>Type</th>
                         <th>Description</th>
                         <th>Amount</th>
                         <th>Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                <?php if (!empty($incomes)): ?>
+                    <?php foreach ($incomes as $income): ?>
                         <tr>
-                            <td>Income</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td><?php echo htmlspecialchars($income['type']); ?></td>
+                            <td><?php echo htmlspecialchars($income['description']); ?></td>
+                            <td><?php echo htmlspecialchars($income['amount']); ?></td>
+                            <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
+                            <td><!-- Actions (edit/delete) can go here --></td>
                         </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="text-center">No incomes found.</td>
+                    </tr>
+                <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </section>
-</header>
 
 <?php include $this->resolve("partials/_footer.php"); ?>
 
