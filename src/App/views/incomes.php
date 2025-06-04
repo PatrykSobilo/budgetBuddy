@@ -1,11 +1,12 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+<?php include $this->resolve("partials/_searchForm.php"); ?>
 
 <section id="historyPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
             <h2 class="mb-4">Incomes</h2>
-            <table class="table table-bordered" name="balance">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Type</th>
@@ -23,12 +24,16 @@
                             <td><?php echo htmlspecialchars($income['description']); ?></td>
                             <td><?php echo htmlspecialchars($income['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
-                            <td><!-- Actions (edit/delete) can go here --></td>
+                            <td></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="5" class="text-center">No incomes found.</td>
+                        <td>Income</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 <?php endif; ?>
                 </tbody>

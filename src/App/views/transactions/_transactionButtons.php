@@ -1,4 +1,3 @@
-<!-- Custom Editable Modal for Add Expense -->
 <div id="customAddExpenseModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">
@@ -80,7 +79,6 @@
   </div>
 </div>
 
-<!-- Custom Editable Modal for Add Income -->
 <div id="customAddIncomeModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">

@@ -1162,3 +1162,13 @@ hr {
   border: 1.5px solid #ffd700;
   text-decoration: none;
 }
+/* Ujednolicone szerokości kolumn dla wszystkich tabelek transakcji */
+.table-transactions th.type-col, .table-transactions td.type-col { width: 12%; min-width: 90px; }
+.table-transactions th.description-col, .table-transactions td.description-col { width: 44%; min-width: 200px; }
+.table-transactions th.amount-col, .table-transactions td.amount-col { width: 16%; min-width: 90px; }
+.table-transactions th.date-col, .table-transactions td.date-col { width: 18%; min-width: 120px; }
+.table-transactions th.actions-col, .table-transactions td.actions-col { width: 10%; min-width: 70px; }
+
+.table-transactions {
+  table-layout: fixed;
+}

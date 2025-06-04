@@ -19,4 +19,9 @@ class AboutController
 
         ]);
     }
+    public function planner() {
+        echo $this->view->render('planner.php', [
+            'title' => 'Planner & Analyzer'
+        ]);
+    }
 }

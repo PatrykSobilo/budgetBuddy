@@ -88,13 +88,14 @@ class ReceiptService
     $filePath = Paths::STORAGE_UPLOADS . '/' . $receipt['storage_filename'];
 
     if (!file_exists($filePath)) {
-      redirectTo('/');
+      return null;
     }
 
-    header("Content-Disposition: inline;filename={$receipt['original_filename']}");
-    header("Content-Type: {$receipt['media_type']}");
-
-    readfile($filePath);
+    return [
+      'filePath' => $filePath,
+      'original_filename' => $receipt['original_filename'],
+      'media_type' => $receipt['media_type']
+    ];
   }
 
   public function delete(array $receipt)

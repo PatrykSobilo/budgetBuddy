@@ -60,34 +60,27 @@ class TransactionService
     );
   }
 
-  /**
-   * Pobiera wszystkie transakcje (wydatki i przychody) użytkownika, posortowane malejąco po dacie.
-   * Zwraca tablicę z polami: type (Expense/Income), description, amount, date
-   * Jeśli $limit > 0, zwraca tylko $limit najnowszych.
-   */
   public function getUserTransactions(int $limit = null)
   {
+    $searchTerm = $_GET['s'] ?? '';
+
     $userId = $_SESSION['user'];
-    // Pobierz wydatki
     $expenses = $this->db->query(
       "SELECT 'Expense' AS type, expense_comment AS description, amount, date_of_expense AS date
        FROM expenses
        WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
-    // Pobierz przychody
     $incomes = $this->db->query(
       "SELECT 'Income' AS type, income_comment AS description, amount, date_of_income AS date
        FROM incomes
        WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
-    // Połącz i posortuj malejąco po dacie
     $all = array_merge($expenses, $incomes);
     usort($all, function($a, $b) {
       return strtotime($b['date']) <=> strtotime($a['date']);
     });
-    // Jeśli $limit > 0, zwróć tylko $limit najnowszych
     if ($limit !== null && $limit > 0) {
       return array_slice($all, 0, $limit);
     }
@@ -137,5 +130,40 @@ class TransactionService
         'user_id' => $_SESSION['user']
       ]
     );
+  }
+
+  public function addTransaction(array $formData, ValidatorService $validatorService)
+  {
+    $openModal = null;
+    if (isset($formData['expensesCategory'])) {
+      $openModal = 'customAddExpenseModal';
+    } elseif (isset($formData['incomesCategory'])) {
+      $openModal = 'customAddIncomeModal';
+    }
+    try {
+      $validatorService->validateTransaction($formData);
+    } catch (\Framework\Exceptions\ValidationException $e) {
+      $csrfToken = bin2hex(random_bytes(32));
+      $_SESSION['token'] = $csrfToken;
+      return [
+        'oldFormData' => $formData,
+        'errors' => $e->errors,
+        'openModal' => $openModal,
+        'csrfToken' => $csrfToken
+      ];
+    }
+    if (isset($formData['expensesCategory'])) {
+      $this->createExpense($formData);
+    } elseif (isset($formData['incomesCategory'])) {
+      $this->createIncome($formData);
+    }
+    $csrfToken = bin2hex(random_bytes(32));
+    $_SESSION['token'] = $csrfToken;
+    return [
+      'oldFormData' => [],
+      'errors' => [],
+      'openModal' => null,
+      'csrfToken' => $csrfToken
+    ];
   }
 }

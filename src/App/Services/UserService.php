@@ -43,19 +43,16 @@ class UserService
     session_regenerate_id();
     $_SESSION['user'] = $user['id'];
 
-    // Fetch user's expense categories and store in session
     $_SESSION['expenseCategories'] = $this->db->query(
       "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
     )->findAll();
 
-    // Fetch user's income categories and store in session
     $_SESSION['incomeCategories'] = $this->db->query(
       "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
     )->findAll();
 
-    // Fetch user's payment methods and store in session
     $_SESSION['paymentMethods'] = $this->db->query(
       "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
@@ -105,7 +102,6 @@ class UserService
       );
     }
 
-    // Fetch all categories and methods for the new user and store in session
     $_SESSION['expenseCategories'] = $this->db->query(
       "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $userId]

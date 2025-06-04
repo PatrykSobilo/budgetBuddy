@@ -46,7 +46,7 @@ $errors = $errors ?? [];
             </a>
           </li>
           <li>
-            <a href="" class="nav-link text-white">
+            <a href="/planner" class="nav-link text-white">
               Planner & Analyzer
             </a>
           </li>

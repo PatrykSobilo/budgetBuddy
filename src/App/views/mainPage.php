@@ -2,7 +2,6 @@
 <?php include $this->resolve("transactions/_transactionButtons.php"); ?>
 
 <?php
-// Pobierz transakcje (wszystkie), ogranicz do 10 najnowszych
 $transactions = $transactions ?? [];
 if (empty($transactions) && isset($this->transactionService)) {
     $allTransactions = $this->transactionService->getUserTransactions();
@@ -14,14 +13,14 @@ if (empty($transactions) && isset($this->transactionService)) {
   <div class="container d-flex flex-wrap border">
     <div class="container mt-5">
       <h2 class="mb-4">Previous 10 Incomes/Expenses</h2>
-      <table class="table table-bordered" name="balance">
+      <table class="table table-bordered table-transactions" name="balance">
         <thead>
           <tr>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th class="type-col">Type</th>
+            <th class="description-col">Description</th>
+            <th class="amount-col">Amount</th>
+            <th class="date-col">Date</th>
+            <th class="actions-col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -32,7 +31,7 @@ if (empty($transactions) && isset($this->transactionService)) {
               <td><?php echo htmlspecialchars($transaction['description']); ?></td>
               <td><?php echo htmlspecialchars($transaction['amount']); ?></td>
               <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($transaction['date']))); ?></td>
-              <td><!-- Actions (edit/delete) can go here --></td>
+              <td></td>
             </tr>
           <?php endforeach; ?>
         <?php else: ?>
@@ -42,7 +41,6 @@ if (empty($transactions) && isset($this->transactionService)) {
         <?php endif; ?>
         </tbody>
       </table>
-
 
 <?php include $this->resolve("partials/_footer.php"); ?>
 
