@@ -1,4 +1,5 @@
 <?php include $this->resolve("partials/_header.php"); ?>
+<?php include $this->resolve("transactions/_transactionButtons.php"); ?>
 
 <section id="historyPanel" class="py-3 mb-4">
   <div class="container d-flex flex-wrap border">
@@ -22,6 +23,39 @@
           </tr>
         </tbody>
       </table>
+
+      <h3 class="mt-5">Twoje kategorie wydatków:</h3>
+      <ul>
+        <?php if (!empty($_SESSION['expenseCategories'])): ?>
+          <?php foreach ($_SESSION['expenseCategories'] as $cat): ?>
+            <li><?php echo e($cat['name']); ?></li>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <li>Brak kategorii do wyświetlenia.</li>
+        <?php endif; ?>
+      </ul>
+
+      <h3 class="mt-5">Twoje kategorie przychodów:</h3>
+      <ul>
+        <?php if (!empty($_SESSION['incomeCategories'])): ?>
+          <?php foreach ($_SESSION['incomeCategories'] as $cat): ?>
+            <li><?php echo e($cat['name']); ?></li>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <li>Brak kategorii do wyświetlenia.</li>
+        <?php endif; ?>
+      </ul>
+
+      <h3 class="mt-5">Twoje metody płatności:</h3>
+      <ul>
+        <?php if (!empty($_SESSION['paymentMethods'])): ?>
+          <?php foreach ($_SESSION['paymentMethods'] as $method): ?>
+            <li><?php echo e($method['name']); ?></li>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <li>Brak metod do wyświetlenia.</li>
+        <?php endif; ?>
+      </ul>
     </div>
   </div>
 </section>

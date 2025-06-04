@@ -1140,3 +1140,25 @@ hr {
     column-gap: 2.5rem;
   }
 }
+.logout-btn-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.logout-btn {
+  background: #fffbe6;
+  color: #b8860b;
+  border: 1.5px solid #ffe066;
+  font-weight: 600;
+  border-radius: 0.4rem;
+  padding: 0.45rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(255, 224, 102, 0.08);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.logout-btn:hover {
+  background: #ffe066;
+  color: #7c5c00;
+  border: 1.5px solid #ffd700;
+  text-decoration: none;
+}
