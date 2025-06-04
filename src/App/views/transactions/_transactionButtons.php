@@ -7,14 +7,14 @@
     </div>
     <div class="custom-modal-body">
       <form method="POST" action="/mainPage" class="modal-form">
-        <?php include $this->resolve("partials/_csrf.php"); ?>
+        <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
 
         <div class="form-floating">
           <select class="form-control" id="expensesCategory" name="expensesCategory">
             <option value="">-- Wybierz kategorię --</option>
             <?php if (!empty($_SESSION['expenseCategories'])): ?>
               <?php foreach ($_SESSION['expenseCategories'] as $cat): ?>
-                <option value="<?php echo htmlspecialchars($cat['id']); ?>">
+                <option value="<?php echo htmlspecialchars($cat['id']); ?>" <?php if (($oldFormData['expensesCategory'] ?? '') == $cat['id']) echo 'selected'; ?>>
                   <?php echo htmlspecialchars($cat['name']); ?>
                 </option>
               <?php endforeach; ?>
@@ -23,6 +23,9 @@
             <?php endif; ?>
           </select>
           <label for="expensesCategory">Expense Category</label>
+          <?php if (isset($errors['expensesCategory'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['expensesCategory'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
@@ -30,7 +33,7 @@
             <option value="">-- Wybierz metodę --</option>
             <?php if (!empty($_SESSION['paymentMethods'])): ?>
               <?php foreach ($_SESSION['paymentMethods'] as $method): ?>
-                <option value="<?php echo htmlspecialchars($method['id']); ?>">
+                <option value="<?php echo htmlspecialchars($method['id']); ?>" <?php if (($oldFormData['paymentMethods'] ?? '') == $method['id']) echo 'selected'; ?>>
                   <?php echo htmlspecialchars($method['name']); ?>
                 </option>
               <?php endforeach; ?>
@@ -39,21 +42,33 @@
             <?php endif; ?>
           </select>
           <label for="paymentMethods">Payment Method</label>
+          <?php if (isset($errors['paymentMethods'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['paymentMethods'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
           <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
           <label for="amount">Amount</label>
+          <?php if (isset($errors['amount'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['amount'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
           <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
           <label for="date">Date</label>
+          <?php if (isset($errors['date'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['date'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
           <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Description">
           <label for="description">Description</label>
+          <?php if (isset($errors['description'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['description'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="modal-footer">
@@ -74,14 +89,14 @@
     </div>
     <div class="custom-modal-body">
       <form method="POST" action="/mainPage" class="modal-form">
-        <?php include $this->resolve("partials/_csrf.php"); ?>
+        <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
 
         <div class="form-floating">
           <select class="form-control" id="incomesCategory" name="incomesCategory">
             <option value="">-- Wybierz kategorię --</option>
             <?php if (!empty($_SESSION['incomeCategories'])): ?>
               <?php foreach ($_SESSION['incomeCategories'] as $cat): ?>
-                <option value="<?php echo htmlspecialchars($cat['id']); ?>">
+                <option value="<?php echo htmlspecialchars($cat['id']); ?>" <?php if (($oldFormData['incomesCategory'] ?? '') == $cat['id']) echo 'selected'; ?>>
                   <?php echo htmlspecialchars($cat['name']); ?>
                 </option>
               <?php endforeach; ?>
@@ -90,21 +105,33 @@
             <?php endif; ?>
           </select>
           <label for="incomesCategory">Income Category</label>
+          <?php if (isset($errors['incomesCategory'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['incomesCategory'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
           <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
           <label for="amount">Amount</label>
+          <?php if (isset($errors['amount'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['amount'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
           <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
           <label for="date">Date</label>
+          <?php if (isset($errors['date'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['date'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="form-floating">
           <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Surname">
           <label for="description">Description</label>
+          <?php if (isset($errors['description'])): ?>
+            <div class="text-danger mt-1"><?php echo e($errors['description'][0]); ?></div>
+          <?php endif; ?>
         </div>
 
         <div class="modal-footer">

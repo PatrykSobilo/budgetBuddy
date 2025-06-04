@@ -87,23 +87,33 @@ class TransactionController
 
   public function addTransaction()
   {
+    // Rozpoznaj typ transakcji na podstawie obecności pola w POST
+    $openModal = null;
+    if (isset($_POST['expensesCategory'])) {
+      $openModal = 'customAddExpenseModal';
+    } elseif (isset($_POST['incomesCategory'])) {
+      $openModal = 'customAddIncomeModal';
+    }
     try {
       $this->validatorService->validateTransaction($_POST);
-      // Jeśli walidacja przejdzie, możesz dodać logikę zapisu do bazy
-      // redirectTo('/mainPage'); // tymczasowo nie przekierowujemy
     } catch (\Framework\Exceptions\ValidationException $e) {
-      // Przekazujemy stare dane i błędy do widoku
+      // Regeneruj token po nieudanym POST (walidacja)
+      $_SESSION['token'] = bin2hex(random_bytes(32));
+      $csrfToken = $_SESSION['token'];
       echo $this->view->render('mainPage.php', [
         'oldFormData' => $_POST,
-        'errors' => $e->errors
+        'errors' => $e->errors,
+        'openModal' => $openModal,
+        'csrfToken' => $csrfToken
       ]);
       return;
     }
 
-    // Jeśli wszystko OK, przekieruj lub wyświetl sukces
     echo $this->view->render('mainPage.php', [
       'oldFormData' => [],
-      'errors' => []
+      'errors' => [],
+      'openModal' => null,
+      'csrfToken' => $_SESSION['token']
     ]);
   }
 }
