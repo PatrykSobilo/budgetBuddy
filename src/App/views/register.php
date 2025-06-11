@@ -11,74 +11,89 @@
     <title>Register Form</title>
 </head>
 
-<body class="align-items-center py-4 bg-body-tertiary">
-    <main class="form-register w-100 m-auto">
-        <div class="registerFormTable mb-5">
+<body class="align-items-center py-2 bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <a href="/" class="btn btn-link text-decoration-none d-inline-flex align-items-center mt-2 ms-2"
+                    style="font-size:1rem;">
+                    <i class="bi bi-arrow-left" style="font-size:1.2rem;"></i>&nbsp;Back to main Page
+                </a>
+            </div>
+        </div>
+    </div>
+    <main class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
+        <div class="registerFormTable w-50"
+            style="min-width:320px; max-width:500px; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.07); border-radius:1rem; background:#fff;">
             <form method="POST">
 
                 <?php include $this->resolve('partials/_csrf.php'); ?>
 
-                <h1 class="h3 mb-3 fw-normal">Register</h1>
+                <h1 class="h4 mb-3 fw-normal text-center">Register</h1>
 
-                <div class="form-floating">
-                    <input type="email" value="<?php echo e($oldFormData['email'] ?? ''); ?>" name="email" class="form-control" id="" placeholder="name@example.com">
+                <div class="form-floating mb-2">
+                    <input type="email" value="<?php echo e($oldFormData['email'] ?? ''); ?>" name="email" class="form-control"
+                        id="" placeholder="name@example.com">
                     <?php if (array_key_exists('email', $errors)) : ?>
-                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                        <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['email'][0]); ?>
                         </div>
                     <?php endif; ?>
                     <label for="floatingInput">Email address</label>
                 </div>
 
-                <div class="form-floating">
-                    <input type="number" value="<?php echo e($oldFormData['age'] ?? ''); ?>" name="age" class="form-control" id="" placeholder="Age">
+                <div class="form-floating mb-2">
+                    <input type="number" value="<?php echo e($oldFormData['age'] ?? ''); ?>" name="age" class="form-control"
+                        id="" placeholder="Age">
                     <?php if (array_key_exists('age', $errors)) : ?>
-                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                        <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['age'][0]); ?>
                         </div>
                     <?php endif; ?>
                     <label for="floatingPassword">Age</label>
                 </div>
 
-                <div class="form-floating">
+                <div class="form-floating mb-2">
                     <input type="password" value="" name="password" class="form-control" id="" placeholder="Password">
                     <?php if (array_key_exists('password', $errors)) : ?>
-                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                        <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['password'][0]); ?>
                         </div>
                     <?php endif; ?>
                     <label for="floatingPassword">Password</label>
                 </div>
 
-                <div class="form-floating">
-                    <input type="password" value="" name="passwordConfirmation" class="form-control" id="" placeholder="Repeat Password">
+                <div class="form-floating mb-2">
+                    <input type="password" value="" name="passwordConfirmation" class="form-control" id=""
+                        placeholder="Repeat Password">
                     <?php if (array_key_exists('passwordConfirmation', $errors)) : ?>
-                        <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                        <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['passwordConfirmation'][0]); ?>
                         </div>
                     <?php endif; ?>
                     <label for="floatingPassword">Repeat Password</label>
                 </div>
 
-                <div class="form-floating">
+                <div class="form-floating mb-2">
                     <div class="mt-2">
                         <div>
                             <label class="inline-flex items-center">
-                                <input <?php echo $oldFormData['tos'] ?? false ? 'checked' : ''; ?> name="tos" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" type="checkbox" />
-                                <span class="ml-2">I accept the terms of service.</span>
+                                <input <?php echo $oldFormData['tos'] ?? false ? 'checked' : ''; ?> name="tos"
+                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
+                                    type="checkbox" />
+                                <span class="ms-2">I accept the terms of service.</span>
                             </label>
                             <?php if (array_key_exists('email', $errors)) : ?>
-                                <div class="bg-gray-100 mt-2 p-2 text-red-500">
+                                <div class="bg-gray-100 mt-2 p-2 text-danger">
                                     <?php echo e($errors['email'][0]); ?>
                                 </div>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
-        </div>
 
-        <button class="btn btn-primary w-100 py-2 mt-5" type="submit">Register</button>
-        </form>
+                <button class="btn btn-primary w-100 py-2 mt-2" type="submit">Register</button>
+            </form>
         </div>
     </main>
 

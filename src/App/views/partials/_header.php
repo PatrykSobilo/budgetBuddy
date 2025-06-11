@@ -42,13 +42,13 @@ $errors = $errors ?? [];
             </a>
           </li>
           <li>
-            <a href="about" class="nav-link text-white">
-              About
+            <a href="/planner" class="nav-link text-white">
+              Planner & Analyzer
             </a>
           </li>
           <li>
-            <a href="/planner" class="nav-link text-white">
-              Planner & Analyzer
+            <a href="about" class="nav-link text-white">
+              About
             </a>
           </li>
         </ul>
