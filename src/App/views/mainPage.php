@@ -31,7 +31,11 @@ if (empty($transactions) && isset($this->transactionService)) {
               <td><?php echo htmlspecialchars($transaction['description']); ?></td>
               <td><?php echo htmlspecialchars($transaction['amount']); ?></td>
               <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($transaction['date']))); ?></td>
-              <td></td>
+              <td>
+                <span title="Usuń" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($transaction['description']); ?>">
+                  <i class="bi bi-trash"></i>
+                </span>
+              </td>
             </tr>
           <?php endforeach; ?>
         <?php else: ?>
@@ -41,16 +45,8 @@ if (empty($transactions) && isset($this->transactionService)) {
         <?php endif; ?>
         </tbody>
       </table>
+  </div>
+</div>
+</section>
 
 <?php include $this->resolve("partials/_footer.php"); ?>
-
-<?php if (!empty($openModal)): ?>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    openCustomModal('<?php echo $openModal; ?>');
-  });
-</script>
-<?php endif; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

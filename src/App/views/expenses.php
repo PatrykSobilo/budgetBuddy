@@ -24,7 +24,11 @@
                             <td><?php echo htmlspecialchars($expense['description']); ?></td>
                             <td><?php echo htmlspecialchars($expense['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
-                            <td></td>
+                            <td>
+                                <span title="Usuń" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
+                                    <i class="bi bi-trash"></i>
+                                </span>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -43,6 +47,3 @@
 </section>
 
 <?php include $this->resolve("partials/_footer.php"); ?>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
