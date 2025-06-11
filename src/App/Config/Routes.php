@@ -35,7 +35,9 @@ function registerRoutes(App $app)
 
   $app->get('/expenses', [TransactionController::class, 'expensesView']);
   $app->get('/incomes', [TransactionController::class, 'incomesView']);
+
   $app->get('/dashboards', [TransactionController::class, 'dashboardsView']);
+  $app->post('/dashboards', [TransactionController::class, 'dashboardsView']);
 
   $app->get('/planner', [PlannerController::class, 'planner']);
 }

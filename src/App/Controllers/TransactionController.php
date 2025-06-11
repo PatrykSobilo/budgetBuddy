@@ -43,7 +43,18 @@ class TransactionController
 
   public function dashboardsView()
   {
-    echo $this->view->render("dashboards.php");
+    $startDate = $_POST['startingDate'] ?? null;
+    $endDate = $_POST['endingDate'] ?? null;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      $_SESSION['token'] = bin2hex(random_bytes(32));
+    }
+    $csrfToken = $_SESSION['token'] ?? '';
+    echo $this->view->render("dashboards.php", [
+      'transactionService' => $this->transactionService,
+      'startDate' => $startDate,
+      'endDate' => $endDate,
+      'csrfToken' => $csrfToken
+    ]);
   }
 
   public function createView()

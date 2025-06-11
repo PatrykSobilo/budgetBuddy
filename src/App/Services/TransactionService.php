@@ -77,14 +77,14 @@ class TransactionService
        WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
-    $all = array_merge($expenses, $incomes);
-    usort($all, function($a, $b) {
+    $allTransactions = array_merge($expenses, $incomes);
+    usort($allTransactions, function($a, $b) {
       return strtotime($b['date']) <=> strtotime($a['date']);
     });
     if ($limit !== null && $limit > 0) {
-      return array_slice($all, 0, $limit);
+      return array_slice($allTransactions, 0, $limit);
     }
-    return $all;
+    return $allTransactions;
   }
 
   public function getUserTransaction(string $id)
@@ -164,6 +164,31 @@ class TransactionService
       'errors' => [],
       'openModal' => null,
       'csrfToken' => $csrfToken
+    ];
+  }
+  
+  public function calculateTransactions($startDate = null, $endDate = null): array
+  {
+    $expenses = 0;
+    $incomes = 0;
+    $userId = $_SESSION['user'] ?? null;
+    if ($userId) {
+        $all = $this->getUserTransactions();
+        foreach ($all as $t) {
+            $date = $t['date'];
+            $inRange = true;
+            if ($startDate && $date < $startDate) $inRange = false;
+            if ($endDate && $date > $endDate) $inRange = false;
+            if ($inRange) {
+                if ($t['type'] === 'Expense') $expenses += $t['amount'];
+                if ($t['type'] === 'Income') $incomes += $t['amount'];
+            }
+        }
+    }
+    return [
+        'expenses' => $expenses,
+        'incomes' => $incomes,
+        'balance' => $incomes - $expenses
     ];
   }
 }
