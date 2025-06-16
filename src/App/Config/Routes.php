@@ -12,7 +12,8 @@ use App\Controllers\{
   TransactionController,
   ReceiptController,
   ErrorController,
-  PlannerController
+  PlannerController,
+  SettingsController
 };
 use App\Middleware\{AuthRequiredMiddleware, GuestOnlyMiddleware};
 
@@ -40,4 +41,6 @@ function registerRoutes(App $app)
   $app->post('/dashboards', [TransactionController::class, 'dashboardsView']);
 
   $app->get('/planner', [PlannerController::class, 'planner']);
+
+  $app->get('/settings', [SettingsController::class, 'settings']);
 }

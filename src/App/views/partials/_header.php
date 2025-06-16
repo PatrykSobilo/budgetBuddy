@@ -47,6 +47,11 @@ $errors = $errors ?? [];
             </a>
           </li>
           <li>
+            <a href="/settings" class="nav-link text-white">
+              Settings
+            </a>
+          </li>
+          <li>
             <a href="about" class="nav-link text-white">
               About
             </a>

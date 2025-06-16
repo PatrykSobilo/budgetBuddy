@@ -24,7 +24,7 @@ class AuthController
 
         $this->userService->isEmailTaken($_POST['email']);
 
-        $this->userService->create($_POST);
+        $this->userService->createUser($_POST);
 
         redirectTo('/mainPage');
     }

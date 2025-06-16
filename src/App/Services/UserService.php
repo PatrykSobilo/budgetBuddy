@@ -59,7 +59,7 @@ class UserService
     )->findAll();
   }
 
-  public function create(array $formData)
+  public function createUser(array $formData)
   {
     $password = password_hash($formData['password'], PASSWORD_BCRYPT, ['cost' => 12]);
 
@@ -132,5 +132,12 @@ class UserService
       $params['secure'],
       $params['httponly']
     );
+  }
+
+  public function getUserById(int $id)
+  {
+    return $this->db->query("SELECT email, age FROM users WHERE id = :id", [
+      'id' => $id
+    ])->find();
   }
 }
