@@ -250,7 +250,6 @@ label {
   </div>
 </div>
 
-<!-- Replace Bootstrap modal triggers with custom modal triggers -->
 <section id="actionButtons" class="text-end d-flex justify-content-center p-4">
   <button type="button" class="btn btn-primary m-1" onclick="openCustomModal('customAddExpenseModal')">+
     Add Expense</button>
