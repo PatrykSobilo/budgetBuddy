@@ -5,7 +5,7 @@
 <section id="historyExpensesPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
-            <h2 class="mb-4">Expenses</h2>
+            <h2 class="mb-4 text-center">Expenses</h2>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -25,7 +25,10 @@
                             <td><?php echo htmlspecialchars($expense['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
                             <td>
-                                <span title="Usuń" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
+                                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
+                                  <i class="bi bi-pencil"></i>
+                                </span>
+                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
                                     <i class="bi bi-trash"></i>
                                 </span>
                             </td>
