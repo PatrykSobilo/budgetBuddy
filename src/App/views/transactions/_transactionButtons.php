@@ -1,3 +1,112 @@
+<style>
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+.custom-modal-dialog {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  padding: 0;
+  animation: modalIn 0.2s;
+}
+@keyframes modalIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.custom-modal-header {
+  padding: 1.2rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.custom-modal-header h5 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.custom-modal-body {
+  padding: 1.5rem;
+}
+.modal-form .form-floating {
+  margin-bottom: 1.1rem;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+}
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: color 0.2s;
+}
+.btn-close:hover {
+  color: #d32f2f;
+}
+.btn.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.3rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn.btn-primary:hover {
+  background: #1746a2;
+}
+.btn.btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.3rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn.btn-secondary:hover {
+  background: #bdbdbd;
+}
+.form-control, select.form-control {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #bdbdbd;
+  border-radius: 0.3rem;
+  background: #fafbfc;
+  margin-bottom: 0.2rem;
+  transition: border 0.2s;
+}
+.form-control:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+label {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 0.2rem;
+}
+</style>
+
 <div id="customAddExpenseModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">
@@ -149,14 +258,23 @@
     Add Income</button>
 </section>
 
+<?php if (!empty($openModal)): ?>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    openCustomModal('<?php echo $openModal; ?>');
+    <?php $openModal = null; ?>
+  });
+</script>
+<?php endif; ?>
+
 <script>
 function openCustomModal(id) {
   document.getElementById(id).style.display = 'flex';
 }
 function closeCustomModal(id) {
   document.getElementById(id).style.display = 'none';
+  clearAllModalsErrorsAndFields();
 }
-// Zamknij modal po kliknięciu w tło
 window.addEventListener('click', function(e) {
   document.querySelectorAll('.custom-modal').forEach(function(modal) {
     if (e.target === modal) {
@@ -164,113 +282,21 @@ window.addEventListener('click', function(e) {
     }
   });
 });
-</script>
 
-<style>
-.custom-modal {
-  display: none;
-  position: fixed;
-  z-index: 1050;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.5);
-  justify-content: center;
-  align-items: center;
+function clearModalErrorsAndFields(modalId) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+  modal.querySelectorAll('.text-danger').forEach(el => el.innerHTML = '');
+  modal.querySelectorAll('input.form-control').forEach(input => {
+    if (input.type !== 'hidden') input.value = '';
+  });
+  modal.querySelectorAll('select.form-control').forEach(select => {
+    select.selectedIndex = 0;
+  });
 }
-.custom-modal-dialog {
-  background: #fff;
-  border-radius: 12px;
-  max-width: 420px;
-  width: 100%;
-  margin: auto;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-  padding: 0;
-  animation: modalIn 0.2s;
+
+function clearAllModalsErrorsAndFields() {
+  clearModalErrorsAndFields('customAddExpenseModal');
+  clearModalErrorsAndFields('customAddIncomeModal');
 }
-@keyframes modalIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.custom-modal-header {
-  padding: 1.2rem 1.5rem 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.custom-modal-header h5 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-.custom-modal-body {
-  padding: 1.5rem;
-}
-.modal-form .form-floating {
-  margin-bottom: 1.1rem;
-}
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding-top: 1rem;
-}
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  line-height: 1;
-  color: #888;
-  cursor: pointer;
-  padding: 0 0.5rem;
-  transition: color 0.2s;
-}
-.btn-close:hover {
-  color: #d32f2f;
-}
-.btn.btn-primary {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 0.3rem;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-.btn.btn-primary:hover {
-  background: #1746a2;
-}
-.btn.btn-secondary {
-  background: #e0e0e0;
-  color: #333;
-  border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 0.3rem;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-.btn.btn-secondary:hover {
-  background: #bdbdbd;
-}
-.form-control, select.form-control {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 1rem;
-  border: 1px solid #bdbdbd;
-  border-radius: 0.3rem;
-  background: #fafbfc;
-  margin-bottom: 0.2rem;
-  transition: border 0.2s;
-}
-.form-control:focus {
-  border-color: #2563eb;
-  outline: none;
-}
-label {
-  font-size: 0.95rem;
-  color: #444;
-  margin-bottom: 0.2rem;
-}
-</style>
+</script>
