@@ -30,6 +30,8 @@ class SettingsController
         // Obsługa dodawania kategorii wydatków/przychodów przez POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])) {
             $categoryName = trim($_POST['name'] ?? '');
+            // Normalizacja: pierwsza litera duża, reszta małe
+            $categoryName = mb_convert_case($categoryName, MB_CASE_TITLE, "UTF-8");
             $userId = $_SESSION['user'] ?? null;
             $errors = [];
             $old = [
