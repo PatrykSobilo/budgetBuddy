@@ -1,4 +1,5 @@
 <?php include $this->resolve("partials/_header.php"); ?>
+<?php $categoryErrors = $categoryErrors ?? []; $categoryOld = $categoryOld ?? []; ?>
 
 <div class="settings-ribbon py-3" style="background-color: #f5f6fa; border-bottom: 1px solid #e0e0e0;">
   <div class="container d-flex flex-wrap gap-4 justify-content-center">
@@ -97,9 +98,16 @@
       <div class="modal-body">
         <form id="addExpenseCategoryForm" method="POST" action="/settings" autocomplete="off">
           <div class="input-group">
-            <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;">
+            <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;" value="<?php echo htmlspecialchars($categoryOld['name'] ?? ''); ?>">
             <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
           </div>
+          <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'expense'): ?>
+            <div class="text-danger mt-2">
+              <?php foreach ($categoryErrors['name'] as $err): ?>
+                <div><?php echo htmlspecialchars($err); ?></div>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
           <input type="hidden" name="type" value="expense">
           <input type="hidden" name="token" value="<?php echo e($csrfToken); ?>">
         </form>
@@ -118,9 +126,16 @@
       <div class="modal-body">
         <form id="addIncomeCategoryForm" method="POST" action="/settings" autocomplete="off">
           <div class="input-group">
-            <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;">
+            <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;" value="<?php echo htmlspecialchars($categoryOld['name'] ?? ''); ?>">
             <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
           </div>
+          <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'income'): ?>
+            <div class="text-danger mt-2">
+              <?php foreach ($categoryErrors['name'] as $err): ?>
+                <div><?php echo htmlspecialchars($err); ?></div>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
           <input type="hidden" name="type" value="income">
           <input type="hidden" name="token" value="<?php echo e($csrfToken); ?>">
         </form>
@@ -159,6 +174,11 @@
         modal.show();
       });
     }
+    <?php if (!empty($categoryErrors['name'])): ?>
+      var modalId = <?php echo json_encode(($categoryOld['type'] ?? '') === 'income' ? 'addIncomeCategoryModal' : 'addExpenseCategoryModal'); ?>;
+      var modal = new bootstrap.Modal(document.getElementById(modalId));
+      modal.show();
+    <?php endif; ?>
   });
 </script>
 
