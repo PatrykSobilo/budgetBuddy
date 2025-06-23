@@ -97,6 +97,7 @@
       </div>
       <div class="modal-body">
         <form id="addExpenseCategoryForm" method="POST" action="/settings" autocomplete="off">
+          <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
           <div class="input-group">
             <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;" value="<?php echo htmlspecialchars($categoryOld['name'] ?? ''); ?>">
             <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
@@ -109,7 +110,6 @@
             </div>
           <?php endif; ?>
           <input type="hidden" name="type" value="expense">
-          <input type="hidden" name="token" value="<?php echo e($csrfToken); ?>">
         </form>
       </div>
     </div>
@@ -125,6 +125,7 @@
       </div>
       <div class="modal-body">
         <form id="addIncomeCategoryForm" method="POST" action="/settings" autocomplete="off">
+          <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
           <div class="input-group">
             <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;" value="<?php echo htmlspecialchars($categoryOld['name'] ?? ''); ?>">
             <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
@@ -137,7 +138,6 @@
             </div>
           <?php endif; ?>
           <input type="hidden" name="type" value="income">
-          <input type="hidden" name="token" value="<?php echo e($csrfToken); ?>">
         </form>
       </div>
     </div>

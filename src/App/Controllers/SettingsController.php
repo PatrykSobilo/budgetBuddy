@@ -50,6 +50,9 @@ class SettingsController
                 }
             } catch (\Framework\Exceptions\ValidationException $e) {
                 $errors = $e->errors;
+                // Odśwież token po błędzie walidacji
+                $_SESSION['token'] = bin2hex(random_bytes(32));
+                $csrfToken = $_SESSION['token'];
             }
             echo $this->view->render('settings.php', [
                 'title' => 'Settings',
