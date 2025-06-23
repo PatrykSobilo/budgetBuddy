@@ -140,4 +140,30 @@ class UserService
       'id' => $id
     ])->find();
   }
+
+  /**
+   * Pobiera kategorie wydatków przypisane do użytkownika
+   * @param int $userId
+   * @return array
+   */
+  public function getExpenseCategories(int $userId): array
+  {
+    return $this->db->query(
+      "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
+      ['user_id' => $userId]
+    )->findAll();
+  }
+
+  /**
+   * Pobiera kategorie przychodów przypisane do użytkownika
+   * @param int $userId
+   * @return array
+   */
+  public function getIncomeCategories(int $userId): array
+  {
+    return $this->db->query(
+      "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
+      ['user_id' => $userId]
+    )->findAll();
+  }
 }

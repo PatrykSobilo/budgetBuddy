@@ -8,7 +8,8 @@ use App\Services\{
   ValidatorService,
   UserService,
   TransactionService,
-  ReceiptService
+  ReceiptService,
+  SettingsService
 };
 
 return [
@@ -33,5 +34,9 @@ return [
     $db = $container->get(Database::class);
 
     return new ReceiptService($db);
+  },
+  SettingsService::class => function (Container $container) {
+    $db = $container->get(Database::class);
+    return new \App\Services\SettingsService($db);
   }
 ];

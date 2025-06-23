@@ -43,4 +43,5 @@ function registerRoutes(App $app)
   $app->get('/planner', [PlannerController::class, 'planner']);
 
   $app->get('/settings', [SettingsController::class, 'settings']);
+  $app->post('/settings', [SettingsController::class, 'settings'])->add(AuthRequiredMiddleware::class);
 }

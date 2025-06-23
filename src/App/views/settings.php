@@ -95,7 +95,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="addExpenseCategoryForm" method="POST" action="/settings/add-category" autocomplete="off">
+        <form id="addExpenseCategoryForm" method="POST" action="/settings" autocomplete="off">
           <div class="input-group">
             <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;">
             <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
@@ -116,7 +116,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="addIncomeCategoryForm" method="POST" action="/settings/add-category" autocomplete="off">
+        <form id="addIncomeCategoryForm" method="POST" action="/settings" autocomplete="off">
           <div class="input-group">
             <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;">
             <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
