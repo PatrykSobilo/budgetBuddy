@@ -14,8 +14,10 @@ use Framework\Rules\{
   MatchRule,
   LengthMaxRule,
   NumericRule,
-  DateFormatRule
+  DateFormatRule,
+  UniqueCategoryRule
 };
+use Framework\Database;
 
 class ValidatorService
 {
@@ -62,10 +64,13 @@ class ValidatorService
     ]);
   }
 
-  public function validateCategory(array $formData)
+  public function validateCategory(array $formData, string $type, int $userId, Database $db)
   {
+    // Dodaj regułę unikalności dynamicznie dla danego typu
+    $table = $type === 'income' ? 'incomes_category_assigned_to_users' : 'expenses_category_assigned_to_users';
+    $this->validator->add('uniqueCategory', new UniqueCategoryRule($db, $table, $userId));
     $this->validator->validate($formData, [
-      'name' => ['required', 'lengthMax:50']
+      'name' => ['required', 'lengthMax:50', 'uniqueCategory']
     ]);
   }
 }

@@ -8,6 +8,7 @@ use Framework\TemplateEngine;
 use App\Services\UserService;
 use App\Services\SettingsService;
 use App\Services\ValidatorService;
+use Framework\Database;
 
 class SettingsController
 {
@@ -36,7 +37,12 @@ class SettingsController
                 'type' => $_POST['type'] ?? ''
             ];
             try {
-                $this->validatorService->validateCategory(['name' => $categoryName]);
+                $this->validatorService->validateCategory(
+                    ['name' => $categoryName],
+                    $_POST['type'],
+                    (int)$userId,
+                    $this->settingsService->getDb() // poprawne pobranie instancji Database
+                );
                 if ($userId && $categoryName !== '') {
                     if ($_POST['type'] === 'expense') {
                         $this->settingsService->addExpenseCategory((int)$userId, $categoryName);

@@ -39,4 +39,9 @@ class SettingsService
         );
         return (int)$this->db->id();
     }
+    
+    public function getDb(): Database
+    {
+        return $this->db;
+    }
 }
