@@ -25,8 +25,13 @@
                             <td><?php echo htmlspecialchars($income['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
                             <td>
-                                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon" data-description="<?php echo htmlspecialchars($income['description']); ?>">
-                                    <i class="bi bi-pencil"></i>
+                                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-income-icon"
+                                    data-description="<?php echo htmlspecialchars($income['description']); ?>"
+                                    data-amount="<?php echo htmlspecialchars($income['amount']); ?>"
+                                    data-date="<?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?>"
+                                    data-category="<?php echo htmlspecialchars($income['income_category_assigned_to_user_id'] ?? ''); ?>"
+                                >
+                                  <i class="bi bi-pencil"></i>
                                 </span>
                                 <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($income['description']); ?>">
                                     <i class="bi bi-trash"></i>
@@ -48,5 +53,28 @@
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.edit-income-icon').forEach(function(icon) {
+    icon.addEventListener('click', function() {
+      const catSelect = document.getElementById('incomesCategory');
+      if (catSelect) {
+        catSelect.value = '';
+        Array.from(catSelect.options).forEach(opt => {
+          if (opt.value == this.dataset.category) opt.selected = true;
+        });
+      }
+      const amountInput = document.querySelector('#customAddIncomeModal #amount');
+      if (amountInput) amountInput.value = this.dataset.amount || '';
+      const dateInput = document.querySelector('#customAddIncomeModal #date');
+      if (dateInput) dateInput.value = this.dataset.date || '';
+      const descInput = document.querySelector('#customAddIncomeModal #description');
+      if (descInput) descInput.value = this.dataset.description || '';
+      openCustomModal('customAddIncomeModal');
+    });
+  });
+});
+</script>
 
 <?php include $this->resolve("partials/_footer.php"); ?>

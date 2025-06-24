@@ -72,7 +72,7 @@ class TransactionService
       ['user_id' => $userId]
     )->findAll();
     $incomes = $this->db->query(
-      "SELECT 'Income' AS type, income_comment AS description, amount, date_of_income AS date
+      "SELECT 'Income' AS type, income_comment AS description, amount, date_of_income AS date, income_category_assigned_to_user_id
        FROM incomes
        WHERE user_id = :user_id",
       ['user_id' => $userId]
