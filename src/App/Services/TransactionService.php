@@ -66,7 +66,7 @@ class TransactionService
 
     $userId = $_SESSION['user'];
     $expenses = $this->db->query(
-      "SELECT 'Expense' AS type, expense_comment AS description, amount, date_of_expense AS date
+      "SELECT 'Expense' AS type, id, expense_comment AS description, amount, date_of_expense AS date, expense_category_assigned_to_user_id, payment_method_assigned_to_user_id
        FROM expenses
        WHERE user_id = :user_id",
       ['user_id' => $userId]
@@ -98,27 +98,6 @@ class TransactionService
         'user_id' => $_SESSION['user']
       ]
     )->find();
-  }
-
-  public function update(array $formData, int $id)
-  {
-    $formattedDate = "{$formData['date']} 00:00:00";
-
-    $this->db->query(
-      "UPDATE transactions
-      SET description = :description,
-        amount = :amount,
-        date = :date
-      WHERE id = :id
-      AND user_id = :user_id",
-      [
-        'description' => $formData['description'],
-        'amount' => $formData['amount'],
-        'date' => $formattedDate,
-        'id' => $id,
-        'user_id' => $_SESSION['user']
-      ]
-    );
   }
 
   public function delete(int $id)

@@ -5,7 +5,7 @@
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddExpenseModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
-      <form method="POST" action="/mainPage" class="modal-form">
+      <form method="POST" action="/expenses" class="modal-form">
         <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
 
         <div class="form-floating">

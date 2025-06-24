@@ -25,7 +25,14 @@
                             <td><?php echo htmlspecialchars($expense['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
                             <td>
-                                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
+                                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon"
+                                    data-id="<?php echo htmlspecialchars($expense['id'] ?? ''); ?>"
+                                    data-description="<?php echo htmlspecialchars($expense['description']); ?>"
+                                    data-amount="<?php echo htmlspecialchars($expense['amount']); ?>"
+                                    data-date="<?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?>"
+                                    data-category="<?php echo htmlspecialchars($expense['expense_category_assigned_to_user_id'] ?? ''); ?>"
+                                    data-payment="<?php echo htmlspecialchars($expense['payment_method_assigned_to_user_id'] ?? ''); ?>"
+                                >
                                   <i class="bi bi-pencil"></i>
                                 </span>
                                 <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
@@ -50,3 +57,30 @@
 </section>
 
 <?php include $this->resolve("partials/_footer.php"); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.edit-icon').forEach(function(icon) {
+    icon.addEventListener('click', function() {
+      const catSelect = document.getElementById('expensesCategory');
+      if (catSelect) {
+        catSelect.value = '';
+        Array.from(catSelect.options).forEach(opt => {
+          if (opt.value == this.dataset.category) opt.selected = true;
+        });
+      }
+      const paySelect = document.getElementById('paymentMethods');
+      if (paySelect) {
+        paySelect.value = '';
+        Array.from(paySelect.options).forEach(opt => {
+          if (opt.value == this.dataset.payment) opt.selected = true;
+        });
+      }
+      document.getElementById('amount').value = this.dataset.amount || '';
+      document.getElementById('date').value = this.dataset.date || '';
+      document.getElementById('description').value = this.dataset.description || '';
+      
+      openCustomModal('customAddExpenseModal');
+    });
+  });
+});
+</script>

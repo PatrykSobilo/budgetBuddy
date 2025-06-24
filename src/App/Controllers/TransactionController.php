@@ -64,6 +64,11 @@ class TransactionController
 
   public function addTransaction()
   {
+    if (!isset($_SESSION['user'])) {
+      header('Location: /login');
+      exit;
+    }
+
     $result = $this->transactionService->addTransaction($_POST, $this->validatorService);
     echo $this->view->render('mainPage.php', $result);
   }
