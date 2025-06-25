@@ -6,11 +6,11 @@
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
             <h2 class="mb-4 text-center">Incomes</h2>
-            <table class="table table-bordered">
+            <table class="table table-bordered table-transactions">
                 <thead>
                     <tr>
-                        <th>Type</th>
                         <th>Description</th>
+                        <th>Category</th>
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Actions</th>
@@ -20,8 +20,19 @@
                 <?php if (!empty($incomes)): ?>
                     <?php foreach ($incomes as $income): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($income['type']); ?></td>
                             <td><?php echo htmlspecialchars($income['description']); ?></td>
+                            <td><?php
+                                $catName = '';
+                                if (!empty($_SESSION['incomeCategories'])) {
+                                    foreach ($_SESSION['incomeCategories'] as $cat) {
+                                        if ($cat['id'] == ($income['income_category_assigned_to_user_id'] ?? null)) {
+                                            $catName = $cat['name'];
+                                            break;
+                                        }
+                                    }
+                                }
+                                echo htmlspecialchars($catName);
+                            ?></td>
                             <td><?php echo htmlspecialchars($income['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
                             <td>
@@ -42,7 +53,7 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td>Income</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

@@ -6,11 +6,12 @@
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
             <h2 class="mb-4 text-center">Expenses</h2>
-            <table class="table table-bordered">
+            <table class="table table-bordered table-transactions">
                 <thead>
                     <tr>
-                        <th>Type</th>
                         <th>Description</th>
+                        <th>Category</th>
+                        <th>Payment Method</th>
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Actions</th>
@@ -20,8 +21,31 @@
                 <?php if (!empty($expenses)): ?>
                     <?php foreach ($expenses as $expense): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($expense['type']); ?></td>
                             <td><?php echo htmlspecialchars($expense['description']); ?></td>
+                            <td><?php
+                                $catName = '';
+                                if (!empty($_SESSION['expenseCategories'])) {
+                                    foreach ($_SESSION['expenseCategories'] as $cat) {
+                                        if ($cat['id'] == ($expense['expense_category_assigned_to_user_id'] ?? null)) {
+                                            $catName = $cat['name'];
+                                            break;
+                                        }
+                                    }
+                                }
+                                echo htmlspecialchars($catName);
+                            ?></td>
+                            <td><?php
+                                $payName = '';
+                                if (!empty($_SESSION['paymentMethods'])) {
+                                    foreach ($_SESSION['paymentMethods'] as $method) {
+                                        if ($method['id'] == ($expense['payment_method_assigned_to_user_id'] ?? null)) {
+                                            $payName = $method['name'];
+                                            break;
+                                        }
+                                    }
+                                }
+                                echo htmlspecialchars($payName);
+                            ?></td>
                             <td><?php echo htmlspecialchars($expense['amount']); ?></td>
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
                             <td>
@@ -43,7 +67,8 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td>Expense</td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
