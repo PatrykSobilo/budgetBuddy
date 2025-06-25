@@ -45,8 +45,8 @@
                                 >
                                   <i class="bi bi-pencil"></i>
                                 </span>
-                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($income['description'] ?? ''); ?>">
-                                    <i class="bi bi-trash"></i>
+                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-id="<?php echo htmlspecialchars($income['id'] ?? ''); ?>" data-description="<?php echo htmlspecialchars($income['description'] ?? ''); ?>" data-type="Income">
+                                  <i class="bi bi-trash"></i>
                                 </span>
                             </td>
                         </tr>
@@ -65,5 +65,10 @@
         </div>
     </div>
 </section>
+
+<form id="deleteIncomeForm" method="POST" action="/incomes/delete" style="display:none;">
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <input type="hidden" name="income_id" id="deleteIncomeId" value="">
+</form>
 
 <?php include $this->resolve("partials/_footer.php"); ?>

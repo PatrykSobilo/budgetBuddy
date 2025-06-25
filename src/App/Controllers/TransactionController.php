@@ -131,4 +131,40 @@ class TransactionController
     header('Location: /expenses');
     exit;
   }
+
+  public function deleteIncome()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income_id'])) {
+      $incomeId = $_POST['income_id'];
+      $this->transactionService->deleteIncomeById($incomeId);
+      header('Location: /incomes');
+      exit;
+    }
+    header('Location: /incomes');
+    exit;
+  }
+
+  public function deleteExpenseFromMainPage()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['expense_id'])) {
+      $expenseId = $_POST['expense_id'];
+      $this->transactionService->deleteExpenseById($expenseId);
+      header('Location: /mainPage');
+      exit;
+    }
+    header('Location: /mainPage');
+    exit;
+  }
+
+  public function deleteIncomeFromMainPage()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income_id'])) {
+      $incomeId = $_POST['income_id'];
+      $this->transactionService->deleteIncomeById($incomeId);
+      header('Location: /mainPage');
+      exit;
+    }
+    header('Location: /mainPage');
+    exit;
+  }
 }

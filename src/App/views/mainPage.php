@@ -47,7 +47,7 @@ if (empty($transactions) && isset($this->transactionService)) {
                 >
                   <i class="bi bi-pencil"></i>
                 </span>
-                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($transaction['description']); ?>">
+                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-id="<?php echo htmlspecialchars($transaction['id'] ?? ''); ?>" data-type="<?php echo htmlspecialchars($transaction['type']); ?>" data-description="<?php echo htmlspecialchars($transaction['description']); ?>">
                   <i class="bi bi-trash"></i>
                 </span>
               </td>
@@ -63,5 +63,14 @@ if (empty($transactions) && isset($this->transactionService)) {
   </div>
 </div>
 </section>
+
+<form id="deleteExpenseForm" method="POST" action="/mainPage/delete-expense" style="display:none;">
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <input type="hidden" name="expense_id" id="deleteExpenseId" value="">
+</form>
+<form id="deleteIncomeForm" method="POST" action="/mainPage/delete-income" style="display:none;">
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <input type="hidden" name="income_id" id="deleteIncomeId" value="">
+</form>
 
 <?php include $this->resolve("partials/_footer.php"); ?>

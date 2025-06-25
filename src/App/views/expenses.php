@@ -59,7 +59,7 @@
                                 >
                                   <i class="bi bi-pencil"></i>
                                 </span>
-                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-id="<?php echo htmlspecialchars($expense['id'] ?? ''); ?>" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
+                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-id="<?php echo htmlspecialchars($expense['id'] ?? ''); ?>" data-description="<?php echo htmlspecialchars($expense['description']); ?>" data-type="Expense">
   <i class="bi bi-trash"></i>
 </span>
                             </td>

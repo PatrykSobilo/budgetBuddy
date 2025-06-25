@@ -33,6 +33,8 @@ function registerRoutes(App $app)
   $app->get('/mainPage', [HomeController::class, 'mainPageView']);
   $app->post('/mainPage', [TransactionController::class, 'addTransaction'])->add(AuthRequiredMiddleware::class);
   $app->post('/transactions/add', [TransactionController::class, 'addTransaction'])->add(AuthRequiredMiddleware::class);
+    $app->post('/mainPage/delete-expense', [TransactionController::class, 'deleteExpenseFromMainPage'])->add(AuthRequiredMiddleware::class);
+  $app->post('/mainPage/delete-income', [TransactionController::class, 'deleteIncomeFromMainPage'])->add(AuthRequiredMiddleware::class);
 
   $app->get('/expenses', [TransactionController::class, 'expensesView']);
   $app->post('/expenses/edit', [TransactionController::class, 'editExpense'])->add(AuthRequiredMiddleware::class);
@@ -40,6 +42,7 @@ function registerRoutes(App $app)
 
   $app->get('/incomes', [TransactionController::class, 'incomesView']);
   $app->post('/incomes/edit', [TransactionController::class, 'editIncome'])->add(AuthRequiredMiddleware::class);
+  $app->post('/incomes/delete', [TransactionController::class, 'deleteIncome'])->add(AuthRequiredMiddleware::class);
 
   $app->get('/dashboards', [TransactionController::class, 'dashboardsView']);
   $app->post('/dashboards', [TransactionController::class, 'dashboardsView']);
@@ -48,4 +51,5 @@ function registerRoutes(App $app)
 
   $app->get('/settings', [SettingsController::class, 'settings']);
   $app->post('/settings', [SettingsController::class, 'settings'])->add(AuthRequiredMiddleware::class);
+
 }

@@ -122,6 +122,17 @@ class TransactionService
     );
   }
 
+  public function deleteIncomeById($incomeId)
+  {
+    $this->db->query(
+      "DELETE FROM incomes WHERE id = :id AND user_id = :user_id",
+      [
+        'id' => $incomeId,
+        'user_id' => $_SESSION['user']
+      ]
+    );
+  }
+
   public function addTransaction(array $formData, ValidatorService $validatorService)
   {
     $openModal = null;

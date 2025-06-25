@@ -125,15 +125,25 @@ document.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('click', function(e) {
     const icon = e.target.closest('.delete-icon');
     if (icon) {
-      const expenseId = icon.dataset.id;
+      const type = icon.dataset.type;
+      const id = icon.dataset.id;
       const description = icon.dataset.description;
-      if (expenseId && description !== undefined) {
+      if (id && description !== undefined) {
         if (confirm(`Are you sure you want to delete "${description}"?`)) {
-          const form = document.getElementById('deleteExpenseForm');
-          const input = document.getElementById('deleteExpenseId');
-          if (form && input) {
-            input.value = expenseId;
-            form.submit();
+          if (type === 'Income') {
+            const form = document.getElementById('deleteIncomeForm');
+            const input = document.getElementById('deleteIncomeId');
+            if (form && input) {
+              input.value = id;
+              form.submit();
+            }
+          } else if (type === 'Expense') {
+            const form = document.getElementById('deleteExpenseForm');
+            const input = document.getElementById('deleteExpenseId');
+            if (form && input) {
+              input.value = id;
+              form.submit();
+            }
           }
         }
       }
