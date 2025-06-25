@@ -22,22 +22,22 @@ $errors = $errors ?? [];
       <div class="d-flex flex-wrap align-items-center justify-content-between">
         <ul class="nav col-12 col-lg-auto my-2 justify-content-start my-md-0 text-small">
           <li>
-            <a href="mainPage" class="nav-link text-secondary">
+            <a href="/mainPage" class="nav-link text-secondary">
               Home
             </a>
           </li>
           <li>
-            <a href="expenses" class="nav-link text-white">
+            <a href="/expenses" class="nav-link text-white">
               Expenses
             </a>
           </li>
           <li>
-            <a href="incomes" class="nav-link text-white">
+            <a href="/incomes" class="nav-link text-white">
               Incomes
             </a>
           </li>
           <li>
-            <a href="dashboards" class="nav-link text-white">
+            <a href="/dashboards" class="nav-link text-white">
               Dashboards
             </a>
           </li>
@@ -52,7 +52,7 @@ $errors = $errors ?? [];
             </a>
           </li>
           <li>
-            <a href="about" class="nav-link text-white">
+            <a href="/about" class="nav-link text-white">
               About
             </a>
           </li>

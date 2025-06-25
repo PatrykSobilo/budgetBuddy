@@ -72,4 +72,44 @@ class TransactionController
     $result = $this->transactionService->addTransaction($_POST, $this->validatorService);
     echo $this->view->render('mainPage.php', $result);
   }
+
+  public function editExpense()
+  {
+    if (!isset($_SESSION['user'])) {
+      header('Location: /login');
+      exit;
+    }
+    $result = $this->transactionService->updateExpense($_POST, $this->validatorService);
+    if (empty($result['errors'])) {
+      $all = $this->transactionService->getUserTransactions();
+      $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
+      echo $this->view->render('expenses.php', [
+        'expenses' => $expenses
+      ]);
+    } else {
+      $all = $this->transactionService->getUserTransactions();
+      $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
+      echo $this->view->render('expenses.php', array_merge($result, ['expenses' => $expenses]));
+    }
+  }
+
+  public function editIncome()
+  {
+    if (!isset($_SESSION['user'])) {
+      header('Location: /login');
+      exit;
+    }
+    $result = $this->transactionService->updateIncome($_POST, $this->validatorService);
+    if (empty($result['errors'])) {
+      $all = $this->transactionService->getUserTransactions();
+      $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
+      echo $this->view->render('incomes.php', [
+        'incomes' => $incomes
+      ]);
+    } else {
+      $all = $this->transactionService->getUserTransactions();
+      $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
+      echo $this->view->render('incomes.php', array_merge($result, ['incomes' => $incomes]));
+    }
+  }
 }

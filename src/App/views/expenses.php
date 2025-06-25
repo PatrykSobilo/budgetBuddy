@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.edit-icon').forEach(function(icon) {
     icon.addEventListener('click', function() {
       setExpenseModalHeader(true, this.dataset.description);
+      const idInput = document.getElementById('expense_id');
+      if (idInput) idInput.value = this.dataset.id || '';
       const catSelect = document.getElementById('expensesCategory');
       if (catSelect) {
         catSelect.value = '';
@@ -85,6 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('[onclick*="openCustomModal(\'customAddExpenseModal\')"]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       setExpenseModalHeader(false);
+      const idInput = document.getElementById('expense_id');
+      if (idInput) idInput.value = '';
     });
   });
 });

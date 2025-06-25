@@ -26,14 +26,15 @@
                             <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
                             <td>
                                 <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-income-icon"
-                                    data-description="<?php echo htmlspecialchars($income['description']); ?>"
-                                    data-amount="<?php echo htmlspecialchars($income['amount']); ?>"
-                                    data-date="<?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?>"
+                                    data-description="<?php echo htmlspecialchars($income['description'] ?? ''); ?>"
+                                    data-amount="<?php echo htmlspecialchars($income['amount'] ?? ''); ?>"
+                                    data-date="<?php echo htmlspecialchars(isset($income['date']) ? date('Y-m-d', strtotime($income['date'])) : ''); ?>"
                                     data-category="<?php echo htmlspecialchars($income['income_category_assigned_to_user_id'] ?? ''); ?>"
+                                    data-id="<?php echo htmlspecialchars($income['id'] ?? ''); ?>"
                                 >
                                   <i class="bi bi-pencil"></i>
                                 </span>
-                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($income['description']); ?>">
+                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($income['description'] ?? ''); ?>">
                                     <i class="bi bi-trash"></i>
                                 </span>
                             </td>
@@ -59,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.edit-income-icon').forEach(function(icon) {
     icon.addEventListener('click', function() {
       setIncomeModalHeader(true, this.dataset.description);
+      // Ustaw id przychodu do ukrytego pola
+      const idInput = document.getElementById('income_id');
+      if (idInput) idInput.value = this.dataset.id || '';
       const catSelect = document.getElementById('incomesCategory');
       if (catSelect) {
         catSelect.value = '';
@@ -66,11 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
           if (opt.value == this.dataset.category) opt.selected = true;
         });
       }
-      const amountInput = document.querySelector('#customAddIncomeModal #amount');
+      const amountInput = document.getElementById('income_amount');
       if (amountInput) amountInput.value = this.dataset.amount || '';
-      const dateInput = document.querySelector('#customAddIncomeModal #date');
+      const dateInput = document.getElementById('income_date');
       if (dateInput) dateInput.value = this.dataset.date || '';
-      const descInput = document.querySelector('#customAddIncomeModal #description');
+      const descInput = document.getElementById('income_description');
       if (descInput) descInput.value = this.dataset.description || '';
       openCustomModal('customAddIncomeModal');
     });
@@ -78,6 +82,18 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('[onclick*="openCustomModal(\'customAddIncomeModal\')"]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       setIncomeModalHeader(false);
+      // Przy dodawaniu nowego czyść id
+      const idInput = document.getElementById('income_id');
+      if (idInput) idInput.value = '';
+      // Czyść pola
+      const amountInput = document.getElementById('income_amount');
+      if (amountInput) amountInput.value = '';
+      const dateInput = document.getElementById('income_date');
+      if (dateInput) dateInput.value = '';
+      const descInput = document.getElementById('income_description');
+      if (descInput) descInput.value = '';
+      const catSelect = document.getElementById('incomesCategory');
+      if (catSelect) catSelect.selectedIndex = 0;
     });
   });
 });

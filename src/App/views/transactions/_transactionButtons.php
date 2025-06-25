@@ -5,8 +5,9 @@
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddExpenseModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
-      <form method="POST" action="/expenses" class="modal-form">
+      <form method="POST" action="/expenses/edit" class="modal-form" id="expenseForm">
         <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+        <input type="hidden" id="expense_id" name="expense_id" value="<?php echo e($oldFormData['expense_id'] ?? ''); ?>">
 
         <div class="form-floating">
           <select class="form-control" id="expensesCategory" name="expensesCategory">
@@ -86,8 +87,9 @@
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddIncomeModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
-      <form method="POST" action="/mainPage" class="modal-form">
+      <form method="POST" action="/incomes/edit" class="modal-form" id="incomeForm">
         <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+        <input type="hidden" id="income_id" name="income_id" value="<?php echo e($oldFormData['income_id'] ?? ''); ?>">
 
         <div class="form-floating">
           <select class="form-control" id="incomesCategory" name="incomesCategory">
@@ -109,24 +111,24 @@
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
-          <label for="amount">Amount</label>
+          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="income_amount" name="amount" placeholder="Amount">
+          <label for="income_amount">Amount</label>
           <?php if (isset($errors['amount'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['amount'][0]); ?></div>
           <?php endif; ?>
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
-          <label for="date">Date</label>
+          <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="income_date" name="date" placeholder="mm/dd/yyyy">
+          <label for="income_date">Date</label>
           <?php if (isset($errors['date'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['date'][0]); ?></div>
           <?php endif; ?>
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="description" name="description" placeholder="Surname">
-          <label for="description">Description</label>
+          <input value="<?php echo e($oldFormData['description'] ?? ''); ?>" type="text" class="form-control" id="income_description" name="description" placeholder="Description">
+          <label for="income_description">Description</label>
           <?php if (isset($errors['description'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['description'][0]); ?></div>
           <?php endif; ?>

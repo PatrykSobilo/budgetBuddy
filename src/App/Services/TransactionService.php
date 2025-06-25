@@ -72,7 +72,7 @@ class TransactionService
       ['user_id' => $userId]
     )->findAll();
     $incomes = $this->db->query(
-      "SELECT 'Income' AS type, income_comment AS description, amount, date_of_income AS date, income_category_assigned_to_user_id
+      "SELECT 'Income' AS type, id, income_comment AS description, amount, date_of_income AS date, income_category_assigned_to_user_id
        FROM incomes
        WHERE user_id = :user_id",
       ['user_id' => $userId]
@@ -168,6 +168,97 @@ class TransactionService
         'expenses' => $expenses,
         'incomes' => $incomes,
         'balance' => $incomes - $expenses
+    ];
+  }
+
+  public function updateExpense(array $formData, $validatorService)
+  {
+    $openModal = null;
+    if (!isset($formData['expense_id'])) {
+      return [
+        'oldFormData' => $formData,
+        'errors' => ['global' => ['Brak ID wydatku do edycji']],
+        'openModal' => $openModal,
+        'csrfToken' => $_SESSION['token'] ?? ''
+      ];
+    }
+    try {
+      $validatorService->validateTransaction($formData);
+    } catch (\Framework\Exceptions\ValidationException $e) {
+      $csrfToken = bin2hex(random_bytes(32));
+      $_SESSION['token'] = $csrfToken;
+      return [
+        'oldFormData' => $formData,
+        'errors' => $e->errors,
+        'openModal' => $openModal,
+        'csrfToken' => $csrfToken
+      ];
+    }
+    $formattedDate = "{$formData['date']} 00:00:00";
+    $this->db->query(
+      "UPDATE expenses SET expense_category_assigned_to_user_id = :cat, payment_method_assigned_to_user_id = :pay, amount = :amount, date_of_expense = :date, expense_comment = :desc WHERE id = :id AND user_id = :user_id",
+      [
+        'cat' => $formData['expensesCategory'],
+        'pay' => $formData['paymentMethods'],
+        'amount' => $formData['amount'],
+        'date' => $formattedDate,
+        'desc' => $formData['description'],
+        'id' => $formData['expense_id'],
+        'user_id' => $_SESSION['user']
+      ]
+    );
+    $csrfToken = bin2hex(random_bytes(32));
+    $_SESSION['token'] = $csrfToken;
+    return [
+      'oldFormData' => [],
+      'errors' => [],
+      'openModal' => null,
+      'csrfToken' => $csrfToken
+    ];
+  }
+
+  public function updateIncome(array $formData, $validatorService)
+  {
+    $openModal = null;
+    if (!isset($formData['income_id'])) {
+      return [
+        'oldFormData' => $formData,
+        'errors' => ['global' => ['Brak ID przychodu do edycji']],
+        'openModal' => $openModal,
+        'csrfToken' => $_SESSION['token'] ?? ''
+      ];
+    }
+    try {
+      $validatorService->validateTransaction($formData);
+    } catch (\Framework\Exceptions\ValidationException $e) {
+      $csrfToken = bin2hex(random_bytes(32));
+      $_SESSION['token'] = $csrfToken;
+      return [
+        'oldFormData' => $formData,
+        'errors' => $e->errors,
+        'openModal' => $openModal,
+        'csrfToken' => $csrfToken
+      ];
+    }
+    $formattedDate = "{$formData['date']} 00:00:00";
+    $this->db->query(
+      "UPDATE incomes SET income_category_assigned_to_user_id = :cat, amount = :amount, date_of_income = :date, income_comment = :desc WHERE id = :id AND user_id = :user_id",
+      [
+        'cat' => $formData['incomesCategory'],
+        'amount' => $formData['amount'],
+        'date' => $formattedDate,
+        'desc' => $formData['description'],
+        'id' => $formData['income_id'],
+        'user_id' => $_SESSION['user']
+      ]
+    );
+    $csrfToken = bin2hex(random_bytes(32));
+    $_SESSION['token'] = $csrfToken;
+    return [
+      'oldFormData' => [],
+      'errors' => [],
+      'openModal' => null,
+      'csrfToken' => $csrfToken
     ];
   }
 }
