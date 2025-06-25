@@ -210,6 +210,87 @@ function setExpenseModalHeader(isEdit, description) {
     header.textContent = 'Expense - New';
   }
 }
+document.addEventListener('DOMContentLoaded', function() {
+  // Obsługa edycji Expense (dowolny widok)
+  document.querySelectorAll('.edit-icon').forEach(function(icon) {
+    icon.addEventListener('click', function() {
+      setExpenseModalHeader(true, this.dataset.description);
+      const idInput = document.getElementById('expense_id');
+      if (idInput) idInput.value = this.dataset.id || '';
+      const catSelect = document.getElementById('expensesCategory');
+      if (catSelect) {
+        catSelect.value = '';
+        Array.from(catSelect.options).forEach(opt => {
+          if (opt.value == this.dataset.category) opt.selected = true;
+        });
+      }
+      const paySelect = document.getElementById('paymentMethods');
+      if (paySelect) {
+        paySelect.value = '';
+        Array.from(paySelect.options).forEach(opt => {
+          if (opt.value == this.dataset.payment) opt.selected = true;
+        });
+      }
+      document.getElementById('amount').value = this.dataset.amount || '';
+      document.getElementById('date').value = this.dataset.date || '';
+      document.getElementById('description').value = this.dataset.description || '';
+      const form = document.getElementById('expenseForm');
+      if (form) form.action = '/expenses/edit';
+      openCustomModal('customAddExpenseModal');
+    });
+  });
+  // Obsługa edycji Income (dowolny widok)
+  document.querySelectorAll('.edit-income-icon, .edit-icon[data-type="Income"]').forEach(function(icon) {
+    icon.addEventListener('click', function() {
+      setIncomeModalHeader(true, this.dataset.description);
+      const idInput = document.getElementById('income_id');
+      if (idInput) idInput.value = this.dataset.id || '';
+      const catSelect = document.getElementById('incomesCategory');
+      if (catSelect) {
+        catSelect.value = '';
+        Array.from(catSelect.options).forEach(opt => {
+          if (opt.value == this.dataset.category) opt.selected = true;
+        });
+      }
+      const amountInput = document.getElementById('income_amount');
+      if (amountInput) amountInput.value = this.dataset.amount || '';
+      const dateInput = document.getElementById('income_date');
+      if (dateInput) dateInput.value = this.dataset.date || '';
+      const descInput = document.getElementById('income_description');
+      if (descInput) descInput.value = this.dataset.description || '';
+      const form = document.getElementById('incomeForm');
+      if (form) form.action = '/incomes/edit';
+      openCustomModal('customAddIncomeModal');
+    });
+  });
+  // Obsługa przycisków dodawania (czyści modal)
+  document.querySelectorAll('[onclick*="openCustomModal(\'customAddExpenseModal\')"]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setExpenseModalHeader(false);
+      const idInput = document.getElementById('expense_id');
+      if (idInput) idInput.value = '';
+      const form = document.getElementById('expenseForm');
+      if (form) form.action = '/transactions/add';
+    });
+  });
+  document.querySelectorAll('[onclick*="openCustomModal(\'customAddIncomeModal\')"]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setIncomeModalHeader(false);
+      const idInput = document.getElementById('income_id');
+      if (idInput) idInput.value = '';
+      const amountInput = document.getElementById('income_amount');
+      if (amountInput) amountInput.value = '';
+      const dateInput = document.getElementById('income_date');
+      if (dateInput) dateInput.value = '';
+      const descInput = document.getElementById('income_description');
+      if (descInput) descInput.value = '';
+      const catSelect = document.getElementById('incomesCategory');
+      if (catSelect) catSelect.selectedIndex = 0;
+      const form = document.getElementById('incomeForm');
+      if (form) form.action = '/transactions/add';
+    });
+  });
+});
 </script>
 
 <style>

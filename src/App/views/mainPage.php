@@ -32,7 +32,19 @@ if (empty($transactions) && isset($this->transactionService)) {
               <td><?php echo htmlspecialchars($transaction['amount']); ?></td>
               <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($transaction['date']))); ?></td>
               <td>
-                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon" data-description="<?php echo htmlspecialchars($transaction['description']); ?>">
+                <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon"
+                  data-type="<?php echo htmlspecialchars($transaction['type']); ?>"
+                  data-id="<?php echo htmlspecialchars($transaction['id'] ?? ''); ?>"
+                  data-description="<?php echo htmlspecialchars($transaction['description']); ?>"
+                  data-amount="<?php echo htmlspecialchars($transaction['amount']); ?>"
+                  data-date="<?php echo htmlspecialchars(date('Y-m-d', strtotime($transaction['date']))); ?>"
+                  <?php if ($transaction['type'] === 'Expense'): ?>
+                    data-category="<?php echo htmlspecialchars($transaction['expense_category_assigned_to_user_id'] ?? ''); ?>"
+                    data-payment="<?php echo htmlspecialchars($transaction['payment_method_assigned_to_user_id'] ?? ''); ?>"
+                  <?php elseif ($transaction['type'] === 'Income'): ?>
+                    data-category="<?php echo htmlspecialchars($transaction['income_category_assigned_to_user_id'] ?? ''); ?>"
+                  <?php endif; ?>
+                >
                   <i class="bi bi-pencil"></i>
                 </span>
                 <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($transaction['description']); ?>">

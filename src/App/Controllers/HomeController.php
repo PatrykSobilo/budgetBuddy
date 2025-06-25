@@ -23,7 +23,7 @@ class HomeController {
     public function mainPageView(){
         $transactions = null;
         if (isset($_SESSION['user'])) {
-            $transactions = $this->transactionService->getUserTransactions();
+            $transactions = $this->transactionService->getUserTransactions(10);
         }
         echo $this->view->render("mainPage.php", [
             'title' => 'Main page',

@@ -71,8 +71,16 @@ class TransactionController
 
     $result = $this->transactionService->addTransaction($_POST, $this->validatorService);
     if (empty($result['errors'])) {
-      $transactions = $this->transactionService->getUserTransactions();
-      echo $this->view->render('mainPage.php', array_merge($result, ['transactions' => $transactions]));
+      if (isset($_POST['expensesCategory'])) {
+        header('Location: /expenses');
+        exit;
+      }
+      if (isset($_POST['incomesCategory'])) {
+        header('Location: /incomes');
+        exit;
+      }
+      header('Location: /mainPage');
+      exit;
     } else {
       echo $this->view->render('mainPage.php', $result);
     }
