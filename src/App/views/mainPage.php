@@ -29,8 +29,8 @@ if (empty($transactions) && isset($this->transactionService)) {
             <tr>
               <td><?php echo htmlspecialchars($transaction['type']); ?></td>
               <td><?php echo htmlspecialchars($transaction['description']); ?></td>
-              <td><?php echo htmlspecialchars($transaction['amount']); ?></td>
-              <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($transaction['date']))); ?></td>
+              <td class="amount-col"><?php echo number_format($transaction['amount'], 2, '.', ' '); ?></td>
+              <td class="date-col"><?php echo htmlspecialchars(date('Y-m-d', strtotime($transaction['date']))); ?></td>
               <td>
                 <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon"
                   data-type="<?php echo htmlspecialchars($transaction['type']); ?>"

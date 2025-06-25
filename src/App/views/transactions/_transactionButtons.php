@@ -48,7 +48,7 @@
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
+          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="Amount">
           <label for="amount">Amount</label>
           <?php if (isset($errors['amount'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['amount'][0]); ?></div>
@@ -111,7 +111,7 @@
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" class="form-control" id="income_amount" name="amount" placeholder="Amount">
+          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" step="0.01" class="form-control" id="income_amount" name="amount" placeholder="Amount">
           <label for="income_amount">Amount</label>
           <?php if (isset($errors['amount'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['amount'][0]); ?></div>

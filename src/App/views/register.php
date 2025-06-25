@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="form-floating mb-2">
-                    <input type="number" value="<?php echo e($oldFormData['age'] ?? ''); ?>" name="age" class="form-control"
+                    <input type="number" step="1" value="<?php echo e($oldFormData['age'] ?? ''); ?>" name="age" class="form-control"
                         id="" placeholder="Age">
                     <?php if (array_key_exists('age', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-danger">

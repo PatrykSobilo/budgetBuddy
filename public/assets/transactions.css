@@ -104,3 +104,11 @@ label {
   color: #444;
   margin-bottom: 0.2rem;
 }
+.amount-col {
+  width: 110px;
+  text-align: right;
+}
+.date-col {
+  width: 120px;
+  white-space: nowrap;
+}

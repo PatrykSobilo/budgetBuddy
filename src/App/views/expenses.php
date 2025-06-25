@@ -12,9 +12,9 @@
                         <th>Description</th>
                         <th>Category</th>
                         <th>Payment Method</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th class="amount-col">Amount</th>
+                        <th class="date-col">Date</th>
+                        <th class="actions-col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,9 +46,9 @@
                                 }
                                 echo htmlspecialchars($payName);
                             ?></td>
-                            <td><?php echo htmlspecialchars($expense['amount']); ?></td>
-                            <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
-                            <td>
+                            <td class="amount-col"><?php echo number_format($expense['amount'], 2, '.', ' '); ?></td>
+                            <td class="date-col"><?php echo htmlspecialchars(date('Y-m-d', strtotime($expense['date']))); ?></td>
+                            <td class="actions-col">
                                 <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-icon"
                                     data-id="<?php echo htmlspecialchars($expense['id'] ?? ''); ?>"
                                     data-description="<?php echo htmlspecialchars($expense['description']); ?>"

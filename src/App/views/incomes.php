@@ -11,9 +11,9 @@
                     <tr>
                         <th>Description</th>
                         <th>Category</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th class="amount-col">Amount</th>
+                        <th class="date-col">Date</th>
+                        <th class="actions-col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,9 +33,9 @@
                                 }
                                 echo htmlspecialchars($catName);
                             ?></td>
-                            <td><?php echo htmlspecialchars($income['amount']); ?></td>
-                            <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
-                            <td>
+                            <td class="amount-col"><?php echo number_format($income['amount'], 2, '.', ' '); ?></td>
+                            <td class="date-col"><?php echo htmlspecialchars(date('Y-m-d', strtotime($income['date']))); ?></td>
+                            <td class="actions-col">
                                 <span title="Edit" style="cursor:pointer; color:#2563eb; margin-right:10px;" class="edit-income-icon"
                                     data-description="<?php echo htmlspecialchars($income['description'] ?? ''); ?>"
                                     data-amount="<?php echo htmlspecialchars($income['amount'] ?? ''); ?>"
