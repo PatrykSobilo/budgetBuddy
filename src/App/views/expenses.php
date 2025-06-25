@@ -61,6 +61,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.edit-icon').forEach(function(icon) {
     icon.addEventListener('click', function() {
+      setExpenseModalHeader(true, this.dataset.description);
       const catSelect = document.getElementById('expensesCategory');
       if (catSelect) {
         catSelect.value = '';
@@ -78,8 +79,12 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('amount').value = this.dataset.amount || '';
       document.getElementById('date').value = this.dataset.date || '';
       document.getElementById('description').value = this.dataset.description || '';
-      
       openCustomModal('customAddExpenseModal');
+    });
+  });
+  document.querySelectorAll('[onclick*="openCustomModal(\'customAddExpenseModal\')"]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setExpenseModalHeader(false);
     });
   });
 });

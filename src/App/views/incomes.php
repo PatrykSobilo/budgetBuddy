@@ -58,6 +58,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.edit-income-icon').forEach(function(icon) {
     icon.addEventListener('click', function() {
+      setIncomeModalHeader(true, this.dataset.description);
       const catSelect = document.getElementById('incomesCategory');
       if (catSelect) {
         catSelect.value = '';
@@ -72,6 +73,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const descInput = document.querySelector('#customAddIncomeModal #description');
       if (descInput) descInput.value = this.dataset.description || '';
       openCustomModal('customAddIncomeModal');
+    });
+  });
+  document.querySelectorAll('[onclick*="openCustomModal(\'customAddIncomeModal\')"]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setIncomeModalHeader(false);
     });
   });
 });

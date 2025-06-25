@@ -1,7 +1,7 @@
 <div id="customAddExpenseModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">
-      <h5>Add Expense</h5>
+      <h5 id="expenseModalHeader">Expense - New</h5>
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddExpenseModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
@@ -82,7 +82,7 @@
 <div id="customAddIncomeModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">
-      <h5>Add Income</h5>
+      <h5 id="incomeModalHeader">Income - New</h5>
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddIncomeModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
@@ -188,6 +188,25 @@ function clearModalErrorsAndFields(modalId) {
 function clearAllModalsErrorsAndFields() {
   clearModalErrorsAndFields('customAddExpenseModal');
   clearModalErrorsAndFields('customAddIncomeModal');
+}
+
+function setIncomeModalHeader(isEdit, description) {
+  const header = document.getElementById('incomeModalHeader');
+  if (!header) return;
+  if (isEdit) {
+    header.textContent = 'Income - ' + (description ? description : '');
+  } else {
+    header.textContent = 'Income - New';
+  }
+}
+function setExpenseModalHeader(isEdit, description) {
+  const header = document.getElementById('expenseModalHeader');
+  if (!header) return;
+  if (isEdit) {
+    header.textContent = 'Expense - ' + (description ? description : '');
+  } else {
+    header.textContent = 'Expense - New';
+  }
 }
 </script>
 
