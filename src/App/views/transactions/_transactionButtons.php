@@ -5,7 +5,7 @@
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddExpenseModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
-      <form method="POST" action="/expenses/edit" class="modal-form" id="expenseForm">
+      <form method="POST" action="/transactions/add" class="modal-form" id="expenseForm">
         <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
         <input type="hidden" id="expense_id" name="expense_id" value="<?php echo e($oldFormData['expense_id'] ?? ''); ?>">
 
@@ -87,7 +87,7 @@
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddIncomeModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
-      <form method="POST" action="/incomes/edit" class="modal-form" id="incomeForm">
+      <form method="POST" action="/transactions/add" class="modal-form" id="incomeForm">
         <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
         <input type="hidden" id="income_id" name="income_id" value="<?php echo e($oldFormData['income_id'] ?? ''); ?>">
 

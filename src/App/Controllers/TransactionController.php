@@ -70,7 +70,12 @@ class TransactionController
     }
 
     $result = $this->transactionService->addTransaction($_POST, $this->validatorService);
-    echo $this->view->render('mainPage.php', $result);
+    if (empty($result['errors'])) {
+      $transactions = $this->transactionService->getUserTransactions();
+      echo $this->view->render('mainPage.php', array_merge($result, ['transactions' => $transactions]));
+    } else {
+      echo $this->view->render('mainPage.php', $result);
+    }
   }
 
   public function editExpense()

@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (dateInput) dateInput.value = this.dataset.date || '';
       const descInput = document.getElementById('income_description');
       if (descInput) descInput.value = this.dataset.description || '';
+      // Ustaw action na edycję
+      const form = document.getElementById('incomeForm');
+      if (form) form.action = '/incomes/edit';
       openCustomModal('customAddIncomeModal');
     });
   });
@@ -94,6 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (descInput) descInput.value = '';
       const catSelect = document.getElementById('incomesCategory');
       if (catSelect) catSelect.selectedIndex = 0;
+      // Ustaw action na dodawanie
+      const form = document.getElementById('incomeForm');
+      if (form) form.action = '/transactions/add';
     });
   });
 });

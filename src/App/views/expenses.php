@@ -81,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('amount').value = this.dataset.amount || '';
       document.getElementById('date').value = this.dataset.date || '';
       document.getElementById('description').value = this.dataset.description || '';
+      // Ustaw action na edycję
+      const form = document.getElementById('expenseForm');
+      if (form) form.action = '/expenses/edit';
       openCustomModal('customAddExpenseModal');
     });
   });
@@ -89,6 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
       setExpenseModalHeader(false);
       const idInput = document.getElementById('expense_id');
       if (idInput) idInput.value = '';
+      // Ustaw action na dodawanie
+      const form = document.getElementById('expenseForm');
+      if (form) form.action = '/transactions/add';
     });
   });
 });
