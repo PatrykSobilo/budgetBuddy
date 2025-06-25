@@ -1,4 +1,3 @@
-// Modal & transaction logic for Budget Buddy
 function openCustomModal(id) {
   document.getElementById(id).style.display = 'flex';
 }
@@ -122,5 +121,22 @@ document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('incomeForm');
       if (form) form.action = '/transactions/add';
     });
+  });
+  document.body.addEventListener('click', function(e) {
+    const icon = e.target.closest('.delete-icon');
+    if (icon) {
+      const expenseId = icon.dataset.id;
+      const description = icon.dataset.description;
+      if (expenseId && description !== undefined) {
+        if (confirm(`Are you sure you want to delete "${description}"?`)) {
+          const form = document.getElementById('deleteExpenseForm');
+          const input = document.getElementById('deleteExpenseId');
+          if (form && input) {
+            input.value = expenseId;
+            form.submit();
+          }
+        }
+      }
+    }
   });
 });

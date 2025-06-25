@@ -111,6 +111,17 @@ class TransactionService
     );
   }
 
+  public function deleteExpenseById($expenseId)
+  {
+    $this->db->query(
+      "DELETE FROM expenses WHERE id = :id AND user_id = :user_id",
+      [
+        'id' => $expenseId,
+        'user_id' => $_SESSION['user']
+      ]
+    );
+  }
+
   public function addTransaction(array $formData, ValidatorService $validatorService)
   {
     $openModal = null;

@@ -59,9 +59,9 @@
                                 >
                                   <i class="bi bi-pencil"></i>
                                 </span>
-                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
-                                    <i class="bi bi-trash"></i>
-                                </span>
+                                <span title="Delete" style="cursor:pointer; color:#dc3545;" class="delete-icon" data-id="<?php echo htmlspecialchars($expense['id'] ?? ''); ?>" data-description="<?php echo htmlspecialchars($expense['description']); ?>">
+  <i class="bi bi-trash"></i>
+</span>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -80,5 +80,10 @@
         </div>
     </div>
 </section>
+
+<form id="deleteExpenseForm" method="POST" action="/expenses/delete" style="display:none;">
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <input type="hidden" name="expense_id" id="deleteExpenseId" value="">
+</form>
 
 <?php include $this->resolve("partials/_footer.php"); ?>

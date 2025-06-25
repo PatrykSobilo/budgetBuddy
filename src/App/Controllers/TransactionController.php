@@ -119,4 +119,16 @@ class TransactionController
       echo $this->view->render('incomes.php', array_merge($result, ['incomes' => $incomes]));
     }
   }
+
+  public function deleteExpense()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['expense_id'])) {
+      $expenseId = $_POST['expense_id'];
+      $this->transactionService->deleteExpenseById($expenseId);
+      header('Location: /expenses');
+      exit;
+    }
+    header('Location: /expenses');
+    exit;
+  }
 }
