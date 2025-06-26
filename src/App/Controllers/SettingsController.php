@@ -27,29 +27,28 @@ class SettingsController
         }
         $csrfToken = $_SESSION['token'] ?? '';
 
-        // Obsługa dodawania kategorii wydatków/przychodów przez POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])) {
-            $categoryName = trim($_POST['name'] ?? '');
-            // Normalizacja: pierwsza litera duża, reszta małe
+            $type = $_POST['type'];
+            $categoryName = trim($_POST['category_name'] ?? $_POST['name'] ?? '');
             $categoryName = mb_convert_case($categoryName, MB_CASE_TITLE, "UTF-8");
             $userId = $_SESSION['user'] ?? null;
             $errors = [];
             $old = [
                 'name' => $categoryName,
-                'type' => $_POST['type'] ?? ''
+                'type' => $type
             ];
             try {
                 $this->validatorService->validateCategory(
                     ['name' => $categoryName],
-                    $_POST['type'],
+                    ($type === 'expense_category' ? 'expense' : ($type === 'income_category' ? 'income' : $type)),
                     (int)$userId,
-                    $this->settingsService->getDb() // poprawne pobranie instancji Database
+                    $this->settingsService->getDb()
                 );
                 if ($userId && $categoryName !== '') {
-                    if ($_POST['type'] === 'expense') {
+                    if ($type === 'expense_category' || $type === 'expense') {
                         $this->settingsService->addExpenseCategory((int)$userId, $categoryName);
                         $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
-                    } elseif ($_POST['type'] === 'income') {
+                    } elseif ($type === 'income_category' || $type === 'income') {
                         $this->settingsService->addIncomeCategory((int)$userId, $categoryName);
                         $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
                     }
@@ -58,7 +57,6 @@ class SettingsController
                 }
             } catch (\Framework\Exceptions\ValidationException $e) {
                 $errors = $e->errors;
-                // Odśwież token po błędzie walidacji
                 $_SESSION['token'] = bin2hex(random_bytes(32));
                 $csrfToken = $_SESSION['token'];
             }

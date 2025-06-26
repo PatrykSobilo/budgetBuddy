@@ -108,15 +108,13 @@
     const newExpenseBtn = document.getElementById('newExpenseCategoryBtn');
     if (newExpenseBtn) {
       newExpenseBtn.addEventListener('click', function() {
-        const modal = new bootstrap.Modal(document.getElementById('addExpenseCategoryModal'));
-        modal.show();
+        openCustomModal('modalAddExpenseCategory');
       });
     }
     const newIncomeBtn = document.getElementById('newIncomeCategoryBtn');
     if (newIncomeBtn) {
       newIncomeBtn.addEventListener('click', function() {
-        const modal = new bootstrap.Modal(document.getElementById('addIncomeCategoryModal'));
-        modal.show();
+        openCustomModal('modalAddIncomeCategory');
       });
     }
     <?php if (!empty($categoryErrors['name'])): ?>

@@ -1,4 +1,3 @@
-<!-- Modal: Edit Email (custom-modal) -->
 <div id="modalEditEmail" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
@@ -22,7 +21,6 @@
   </div>
 </div>
 
-<!-- Modal: Edit Age (custom-modal) -->
 <div id="modalEditAge" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
@@ -46,7 +44,6 @@
   </div>
 </div>
 
-<!-- Modal: Edit Password (custom-modal) -->
 <div id="modalEditPassword" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
@@ -68,6 +65,52 @@
       </div>
       <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
         <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalEditPassword')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modalAddExpenseCategory" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <form class="modal-form" method="POST" action="/settings">
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <div class="custom-modal-header">
+        <h5>Add Expense Category</h5>
+        <button type="button" class="btn-close" onclick="closeCustomModal('modalAddExpenseCategory')">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <input type="hidden" name="type" value="expense_category">
+        <div class="mb-3">
+          <label for="addExpenseCategoryInput" class="form-label fw-bold">Category name</label>
+          <input type="text" class="form-control" id="addExpenseCategoryInput" name="category_name" placeholder="Type here..." maxlength="50" required>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
+        <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalAddExpenseCategory')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modalAddIncomeCategory" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <form class="modal-form" method="POST" action="/settings">
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <div class="custom-modal-header">
+        <h5>Add Income Category</h5>
+        <button type="button" class="btn-close" onclick="closeCustomModal('modalAddIncomeCategory')">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <input type="hidden" name="type" value="income_category">
+        <div class="mb-3">
+          <label for="addIncomeCategoryInput" class="form-label fw-bold">Category name</label>
+          <input type="text" class="form-control" id="addIncomeCategoryInput" name="category_name" placeholder="Type here..." maxlength="50" required>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
+        <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalAddIncomeCategory')">Cancel</button>
         <button type="submit" class="btn btn-primary">Save</button>
       </div>
     </form>
