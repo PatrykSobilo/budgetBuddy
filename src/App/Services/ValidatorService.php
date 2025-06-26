@@ -15,7 +15,8 @@ use Framework\Rules\{
   LengthMaxRule,
   NumericRule,
   DateFormatRule,
-  UniqueCategoryRule
+  UniqueCategoryRule,
+  CurrentPasswordRule
 };
 use Framework\Database;
 
@@ -72,5 +73,35 @@ class ValidatorService
     $this->validator->validate($formData, [
       'name' => ['required', 'lengthMax:50', 'uniqueCategory']
     ]);
+  }
+
+  public function validateEmail(array $formData)
+  {
+    $this->validator->validate($formData, [
+      'email' => ['required', 'email']
+    ]);
+  }
+
+  public function validateAge(array $formData)
+  {
+    $this->validator->validate($formData, [
+      'age' => ['required', 'min:1']
+    ]);
+  }
+
+  public function validatePasswordChange(array $formData, ?int $userId = null, ?Database $db = null)
+  {
+    if ($userId && $db) {
+      $this->validator->add('currentPassword', new CurrentPasswordRule($db, $userId));
+      $this->validator->validate($formData, [
+        'old_password' => ['required', 'currentPassword'],
+        'new_password' => ['required', 'min:6']
+      ]);
+    } else {
+      $this->validator->validate($formData, [
+        'old_password' => ['required'],
+        'new_password' => ['required', 'min:6']
+      ]);
+    }
   }
 }

@@ -122,6 +122,9 @@
       var modal = new bootstrap.Modal(document.getElementById(modalId));
       modal.show();
     <?php endif; ?>
+    <?php if (!empty($editUserErrors) && isset($editUserOld['type']) && $editUserOld['type'] === 'password'): ?>
+      openCustomModal('modalEditPassword');
+    <?php endif; ?>
   });
 </script>
 

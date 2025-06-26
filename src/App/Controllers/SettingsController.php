@@ -76,4 +76,42 @@ class SettingsController
             'csrfToken' => $csrfToken
         ]);
     }
+
+    public function editUser()
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $userId = $_SESSION['user'];
+        $type = $_POST['type'] ?? '';
+        $errors = [];
+        $old = $_POST;
+        $csrfToken = $_SESSION['token'] ?? '';
+        try {
+            if ($type === 'email') {
+                $this->userService->updateEmail($userId, $_POST['email'] ?? '', $this->validatorService);
+            } elseif ($type === 'age') {
+                $this->userService->updateAge($userId, $_POST['age'] ?? '', $this->validatorService);
+            } elseif ($type === 'password') {
+                $this->userService->updatePassword($userId, $_POST, $this->validatorService, $this->userService->getDb());
+            }
+            // Odśwież dane użytkownika w sesji
+            $userData = $this->userService->getUserById($userId);
+            $_SESSION['userData'] = $userData;
+            header('Location: /settings');
+            exit;
+        } catch (\Framework\Exceptions\ValidationException $e) {
+            $errors = $e->errors;
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+            $csrfToken = $_SESSION['token'];
+        }
+        echo $this->view->render('settings.php', [
+            'title' => 'Settings',
+            'user' => $this->userService->getUserById($userId),
+            'editUserErrors' => $errors,
+            'editUserOld' => $old,
+            'csrfToken' => $csrfToken
+        ]);
+    }
 }

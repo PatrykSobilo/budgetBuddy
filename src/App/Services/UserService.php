@@ -166,4 +166,51 @@ class UserService
       ['user_id' => $userId]
     )->findAll();
   }
+
+  public function updateEmail(int $userId, string $email, $validatorService)
+  {
+    $validatorService->validateEmail(['email' => $email]);
+    $this->isEmailTaken($email);
+    $this->db->query(
+      "UPDATE users SET email = :email WHERE id = :id",
+      [
+        'email' => $email,
+        'id' => $userId
+      ]
+    );
+  }
+
+  public function updateAge(int $userId, string $age, $validatorService)
+  {
+    $validatorService->validateAge(['age' => $age]);
+    $this->db->query(
+      "UPDATE users SET age = :age WHERE id = :id",
+      [
+        'age' => $age,
+        'id' => $userId
+      ]
+    );
+  }
+
+  public function updatePassword(int $userId, array $formData, $validatorService, $db = null)
+  {
+    $validatorService->validatePasswordChange($formData, $userId, $db ?? $this->db);
+    $user = $this->db->query("SELECT password FROM users WHERE id = :id", ['id' => $userId])->find();
+    if (!password_verify($formData['old_password'] ?? '', $user['password'] ?? '')) {
+      throw new ValidationException(['old_password' => ['Current password is incorrect']]);
+    }
+    $newPassword = password_hash($formData['new_password'], PASSWORD_BCRYPT, ['cost' => 12]);
+    $this->db->query(
+      "UPDATE users SET password = :password WHERE id = :id",
+      [
+        'password' => $newPassword,
+        'id' => $userId
+      ]
+    );
+  }
+
+  public function getDb()
+  {
+    return $this->db;
+  }
 }

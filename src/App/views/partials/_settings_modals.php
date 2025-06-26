@@ -1,6 +1,6 @@
 <div id="modalEditEmail" class="custom-modal">
   <div class="custom-modal-dialog">
-    <form class="modal-form" method="POST" action="/settings">
+    <form class="modal-form" method="POST" action="/settings/edit-user">
       <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
       <div class="custom-modal-header">
         <h5>Set new e-mail</h5>
@@ -23,7 +23,7 @@
 
 <div id="modalEditAge" class="custom-modal">
   <div class="custom-modal-dialog">
-    <form class="modal-form" method="POST" action="/settings">
+    <form class="modal-form" method="POST" action="/settings/edit-user">
       <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
       <div class="custom-modal-header">
         <h5>Set Age</h5>
@@ -46,7 +46,7 @@
 
 <div id="modalEditPassword" class="custom-modal">
   <div class="custom-modal-dialog">
-    <form class="modal-form" method="POST" action="/settings">
+    <form class="modal-form" method="POST" action="/settings/edit-user">
       <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
       <div class="custom-modal-header">
         <h5>Set new password</h5>
@@ -56,11 +56,17 @@
         <input type="hidden" name="type" value="password">
         <div class="mb-3">
           <label for="oldPasswordInput" class="form-label fw-bold">Enter old password</label>
-          <input type="password" class="form-control" id="oldPasswordInput" name="old_password" placeholder="Type here..." required>
+          <input type="password" class="form-control" id="oldPasswordInput" name="old_password" placeholder="Type here..." required value="<?php echo isset($editUserOld['old_password']) && $editUserOld['type']==='password' ? htmlspecialchars($editUserOld['old_password']) : ''; ?>">
+          <?php if (isset($editUserErrors['old_password'])): ?>
+            <div class="text-danger mt-1"><?php echo htmlspecialchars($editUserErrors['old_password'][0]); ?></div>
+          <?php endif; ?>
         </div>
         <div class="mb-3">
           <label for="newPasswordInput" class="form-label fw-bold">Enter new password</label>
-          <input type="password" class="form-control" id="newPasswordInput" name="new_password" placeholder="Type here..." required>
+          <input type="password" class="form-control" id="newPasswordInput" name="new_password" placeholder="Type here..." required value="<?php echo isset($editUserOld['new_password']) && $editUserOld['type']==='password' ? htmlspecialchars($editUserOld['new_password']) : ''; ?>">
+          <?php if (isset($editUserErrors['new_password'])): ?>
+            <div class="text-danger mt-1"><?php echo htmlspecialchars($editUserErrors['new_password'][0]); ?></div>
+          <?php endif; ?>
         </div>
       </div>
       <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
