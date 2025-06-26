@@ -13,12 +13,13 @@
 .custom-modal-dialog {
   background: #fff;
   border-radius: 12px;
-  max-width: 420px;
+  max-width: 340px;
   width: 100%;
   margin: auto;
   box-shadow: 0 4px 32px rgba(0,0,0,0.18);
   padding: 0;
   animation: modalIn 0.2s;
+  box-sizing: border-box;
 }
 @keyframes modalIn {
   from { transform: scale(0.95); opacity: 0; }
@@ -42,11 +43,19 @@
 .modal-form .form-floating {
   margin-bottom: 1.1rem;
 }
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
+.custom-modal .modal-footer {
+  display: flex !important;
+  justify-content: flex-start !important;
   gap: 0.5rem;
-  padding-top: 1rem;
+  padding: 1.5rem 2rem 1.5rem 2rem !important;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-top: 1px solid #eee;
+  box-sizing: border-box;
+}
+.modal-footer .btn {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
 }
 .btn-close {
   background: none;
@@ -94,6 +103,18 @@
   background: #fafbfc;
   margin-bottom: 0.2rem;
   transition: border 0.2s;
+}
+.custom-modal .custom-modal-dialog {
+  max-width: 600px;
+  width: 100%;
+}
+.custom-modal .form-control {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 40px;
+  font-size: 1rem;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
 }
 .form-control:focus {
   border-color: #2563eb;

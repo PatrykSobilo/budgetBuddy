@@ -1,5 +1,6 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 <?php $categoryErrors = $categoryErrors ?? []; $categoryOld = $categoryOld ?? []; ?>
+<?php include $this->resolve("partials/_settings_modals.php"); ?>
 
 <div class="settings-ribbon py-3" style="background-color: #f5f6fa; border-bottom: 1px solid #e0e0e0;">
   <div class="container d-flex flex-wrap gap-4 justify-content-center">
@@ -19,21 +20,21 @@
           <label class="form-label fw-bold">Email</label>
           <div class="input-group">
             <input type="text" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" readonly style="border-radius: 0.3rem;">
-            <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Edit</button>
+            <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" onclick="openCustomModal('modalEditEmail')">Edit</button>
           </div>
         </div>
         <div class="mb-3">
           <label class="form-label fw-bold">Age</label>
           <div class="input-group">
             <input type="text" class="form-control" value="<?php echo htmlspecialchars($user['age']); ?>" readonly style="border-radius: 0.3rem;">
-            <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Edit</button>
+            <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" onclick="openCustomModal('modalEditAge')">Edit</button>
           </div>
         </div>
         <div class="mb-3">
           <label class="form-label fw-bold">Password</label>
           <div class="input-group">
             <input type="password" class="form-control" value="********" readonly style="border-radius: 0.3rem;">
-            <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Edit</button>
+            <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" onclick="openCustomModal('modalEditPassword')">Edit</button>
           </div>
         </div>
       </div>
@@ -87,62 +88,6 @@
     <?php endif; ?>
   </div>
 </section>
-
-<div class="modal fade" id="addExpenseCategoryModal" tabindex="-1" aria-labelledby="addExpenseCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addExpenseCategoryModalLabel">Add Expense Category</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="addExpenseCategoryForm" method="POST" action="/settings" autocomplete="off">
-          <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
-          <div class="input-group">
-            <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;" value="<?php echo htmlspecialchars($categoryOld['name'] ?? ''); ?>">
-            <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
-          </div>
-          <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'expense'): ?>
-            <div class="text-danger mt-2">
-              <?php foreach ($categoryErrors['name'] as $err): ?>
-                <div><?php echo htmlspecialchars($err); ?></div>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
-          <input type="hidden" name="type" value="expense">
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="addIncomeCategoryModal" tabindex="-1" aria-labelledby="addIncomeCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addIncomeCategoryModalLabel">Add Income Category</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="addIncomeCategoryForm" method="POST" action="/settings" autocomplete="off">
-          <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
-          <div class="input-group">
-            <input type="text" class="form-control" name="name" placeholder="Category Name..." style="border-radius: 0.3rem;" value="<?php echo htmlspecialchars($categoryOld['name'] ?? ''); ?>">
-            <button type="submit" class="btn btn-primary fw-semibold ms-2" style="min-width:120px; background: #2563eb; color: #fff; border: none; border-radius: 0.3rem; font-weight: 500;">Save</button>
-          </div>
-          <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'income'): ?>
-            <div class="text-danger mt-2">
-              <?php foreach ($categoryErrors['name'] as $err): ?>
-                <div><?php echo htmlspecialchars($err); ?></div>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
-          <input type="hidden" name="type" value="income">
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
