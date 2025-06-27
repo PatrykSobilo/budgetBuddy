@@ -159,7 +159,10 @@
         <input type="hidden" id="editPaymentMethodId" name="category_id" value="">
         <div class="mb-3">
           <label for="editPaymentMethodInput" class="form-label fw-bold">Payment method name</label>
-          <input type="text" class="form-control" id="editPaymentMethodInput" name="category_name" placeholder="Type here..." maxlength="50" required value="">
+          <input type="text" class="form-control" id="editPaymentMethodInput" name="category_name" placeholder="Type here..." maxlength="50" required value="<?php echo isset($categoryOld['name']) && $categoryOld['type']==='payment_method_edit' ? htmlspecialchars($categoryOld['name']) : ''; ?>">
+          <?php if (isset($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'payment_method_edit'): ?>
+            <div class="text-danger mt-1"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
+          <?php endif; ?>
         </div>
       </div>
       <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
@@ -183,7 +186,10 @@
         <input type="hidden" id="editExpenseCategoryId" name="category_id" value="">
         <div class="mb-3">
           <label for="editExpenseCategoryInput" class="form-label fw-bold">Category name</label>
-          <input type="text" class="form-control" id="editExpenseCategoryInput" name="category_name" placeholder="Type here..." maxlength="50" required value="">
+          <input type="text" class="form-control" id="editExpenseCategoryInput" name="category_name" placeholder="Type here..." maxlength="50" required value="<?php echo isset($categoryOld['name']) && $categoryOld['type']==='expense_category_edit' ? htmlspecialchars($categoryOld['name']) : ''; ?>">
+          <?php if (isset($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'expense_category_edit'): ?>
+            <div class="text-danger mt-1"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
+          <?php endif; ?>
         </div>
       </div>
       <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
@@ -207,7 +213,10 @@
         <input type="hidden" id="editIncomeCategoryId" name="category_id" value="">
         <div class="mb-3">
           <label for="editIncomeCategoryInput" class="form-label fw-bold">Category name</label>
-          <input type="text" class="form-control" id="editIncomeCategoryInput" name="category_name" placeholder="Type here..." maxlength="50" required value="">
+          <input type="text" class="form-control" id="editIncomeCategoryInput" name="category_name" placeholder="Type here..." maxlength="50" required value="<?php echo isset($categoryOld['name']) && $categoryOld['type']==='income_category_edit' ? htmlspecialchars($categoryOld['name']) : ''; ?>">
+          <?php if (isset($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'income_category_edit'): ?>
+            <div class="text-danger mt-1"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
+          <?php endif; ?>
         </div>
       </div>
       <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">

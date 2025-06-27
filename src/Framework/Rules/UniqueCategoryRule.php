@@ -14,13 +14,17 @@ class UniqueCategoryRule implements RuleInterface
     public function validate(array $data, string $field, array $params): bool
     {
         $name = $data[$field] ?? '';
-        $result = $this->db->query(
-            "SELECT COUNT(*) FROM {$this->table} WHERE user_id = :user_id AND name = :name",
-            [
-                'user_id' => $this->userId,
-                'name' => $name
-            ]
-        )->count();
+        $id = $data['id'] ?? null;
+        $query = "SELECT COUNT(*) FROM {$this->table} WHERE user_id = :user_id AND name = :name";
+        $paramsArr = [
+            'user_id' => $this->userId,
+            'name' => $name
+        ];
+        if ($id) {
+            $query .= " AND id != :id";
+            $paramsArr['id'] = $id;
+        }
+        $result = $this->db->query($query, $paramsArr)->count();
         return $result == 0;
     }
 

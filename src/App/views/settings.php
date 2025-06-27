@@ -146,9 +146,17 @@
       });
     }
     <?php if (!empty($categoryErrors['name'])): ?>
-      var modalId = <?php echo json_encode(($categoryOld['type'] ?? '') === 'income' ? 'addIncomeCategoryModal' : 'addExpenseCategoryModal'); ?>;
-      var modal = new bootstrap.Modal(document.getElementById(modalId));
-      modal.show();
+      var type = <?php echo json_encode($categoryOld['type'] ?? ''); ?>;
+      var modalId = null;
+      if (type === 'income_category') modalId = 'modalAddIncomeCategory';
+      else if (type === 'expense_category') modalId = 'modalAddExpenseCategory';
+      else if (type === 'payment_method') modalId = 'modalAddPaymentMethod';
+      else if (type === 'income_category_edit') modalId = 'modalEditIncomeCategory';
+      else if (type === 'expense_category_edit') modalId = 'modalEditExpenseCategory';
+      else if (type === 'payment_method_edit') modalId = 'modalEditPaymentMethod';
+      if (modalId) {
+        openCustomModal(modalId);
+      }
     <?php endif; ?>
     <?php if (!empty($editUserErrors) && isset($editUserOld['type']) && $editUserOld['type'] === 'password'): ?>
       openCustomModal('modalEditPassword');

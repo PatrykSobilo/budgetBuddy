@@ -30,7 +30,9 @@ class SettingsController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])) {
             $type = $_POST['type'];
             $categoryName = trim($_POST['category_name'] ?? $_POST['name'] ?? '');
-            $categoryName = mb_convert_case($categoryName, MB_CASE_TITLE, "UTF-8");
+            if (in_array($type, ['expense_category', 'income_category', 'expense_category_edit', 'income_category_edit', 'expense', 'income', 'payment_method', 'payment_method_edit'])) {
+                $categoryName = mb_convert_case($categoryName, MB_CASE_TITLE, "UTF-8");
+            }
             $userId = $_SESSION['user'] ?? null;
             $errors = [];
             $old = [
@@ -38,6 +40,7 @@ class SettingsController
                 'type' => $type
             ];
             try {
+                // Przy edycji przekazujemy także id edytowanego rekordu do walidatora
                 if ($type === 'payment_method') {
                     $this->validatorService->validateCategory(
                         ['name' => $categoryName],
@@ -46,22 +49,25 @@ class SettingsController
                         $this->settingsService->getDb()
                     );
                 } elseif ($type === 'payment_method_edit') {
+                    $methodId = (int)($_POST['category_id'] ?? 0);
                     $this->validatorService->validateCategory(
-                        ['name' => $categoryName],
+                        ['name' => $categoryName, 'id' => $methodId],
                         'payment',
                         (int)$userId,
                         $this->settingsService->getDb()
                     );
                 } elseif ($type === 'expense_category_edit') {
+                    $catId = (int)($_POST['category_id'] ?? 0);
                     $this->validatorService->validateCategory(
-                        ['name' => $categoryName],
+                        ['name' => $categoryName, 'id' => $catId],
                         'expense',
                         (int)$userId,
                         $this->settingsService->getDb()
                     );
                 } elseif ($type === 'income_category_edit') {
+                    $catId = (int)($_POST['category_id'] ?? 0);
                     $this->validatorService->validateCategory(
-                        ['name' => $categoryName],
+                        ['name' => $categoryName, 'id' => $catId],
                         'income',
                         (int)$userId,
                         $this->settingsService->getDb()
