@@ -7,6 +7,7 @@
     <a href="#" class="btn btn-outline-secondary settings-tab active" data-section="profile">Profile</a>
     <a href="#" class="btn btn-outline-secondary settings-tab" data-section="expense-categories">Expense Categories</a>
     <a href="#" class="btn btn-outline-secondary settings-tab" data-section="incomes-categories">Incomes Categories</a>
+    <a href="#" class="btn btn-outline-secondary settings-tab" data-section="payment-methods">Payment Methods</a>
   </div>
 </div>
 
@@ -53,7 +54,7 @@
           <div class="mb-3 d-flex align-items-center justify-content-between">
             <div class="input-group">
               <input type="text" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" readonly style="border-radius: 0.3rem;">
-              <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Edit</button>
+              <button class="btn btn-primary ms-2 fw-semibold edit-expense-category-btn" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Edit</button>
               <button class="btn ms-2 fw-semibold" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Delete</button>
             </div>
           </div>
@@ -74,7 +75,7 @@
           <div class="mb-3 d-flex align-items-center justify-content-between">
             <div class="input-group">
               <input type="text" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" readonly style="border-radius: 0.3rem;">
-              <button class="btn btn-primary ms-2 fw-semibold" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Edit</button>
+              <button class="btn btn-primary ms-2 fw-semibold edit-income-category-btn" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Edit</button>
               <button class="btn ms-2 fw-semibold" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Delete</button>
             </div>
           </div>
@@ -85,6 +86,27 @@
       </div>
     <?php else: ?>
       <p class="text-center">No income categories found.</p>
+    <?php endif; ?>
+  </div>
+  <div id="payment-methods" class="settings-section mb-5 w-100" style="display:none; max-width: 600px;">
+    <h3 class="text-center">Payment Methods</h3>
+    <?php if (!empty($_SESSION['paymentMethods'])): ?>
+      <div class="card p-3 shadow-sm">
+        <?php foreach ($_SESSION['paymentMethods'] as $method): ?>
+          <div class="mb-3 d-flex align-items-center justify-content-between">
+            <div class="input-group">
+              <input type="text" class="form-control" value="<?php echo htmlspecialchars($method['name']); ?>" readonly style="border-radius: 0.3rem;">
+              <button class="btn btn-primary ms-2 fw-semibold edit-payment-method-btn" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($method['id']); ?>" data-name="<?php echo htmlspecialchars($method['name']); ?>">Edit</button>
+              <button class="btn ms-2 fw-semibold" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Delete</button>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <button id="newPaymentMethodBtn" class="btn btn-primary fw-semibold" type="button" style="background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500; min-width:120px;">New...</button>
+      </div>
+    <?php else: ?>
+      <p class="text-center">No payment methods found.</p>
     <?php endif; ?>
   </div>
 </section>
@@ -117,6 +139,12 @@
         openCustomModal('modalAddIncomeCategory');
       });
     }
+    const newPaymentMethodBtn = document.getElementById('newPaymentMethodBtn');
+    if (newPaymentMethodBtn) {
+      newPaymentMethodBtn.addEventListener('click', function() {
+        openCustomModal('modalAddPaymentMethod');
+      });
+    }
     <?php if (!empty($categoryErrors['name'])): ?>
       var modalId = <?php echo json_encode(($categoryOld['type'] ?? '') === 'income' ? 'addIncomeCategoryModal' : 'addExpenseCategoryModal'); ?>;
       var modal = new bootstrap.Modal(document.getElementById(modalId));
@@ -125,6 +153,35 @@
     <?php if (!empty($editUserErrors) && isset($editUserOld['type']) && $editUserOld['type'] === 'password'): ?>
       openCustomModal('modalEditPassword');
     <?php endif; ?>
+
+    document.querySelectorAll('.edit-payment-method-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var name = this.getAttribute('data-name');
+        document.getElementById('editPaymentMethodId').value = id;
+        document.getElementById('editPaymentMethodInput').value = name;
+        openCustomModal('modalEditPaymentMethod');
+      });
+    });
+
+    document.querySelectorAll('.edit-expense-category-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var name = this.getAttribute('data-name');
+        document.getElementById('editExpenseCategoryId').value = id;
+        document.getElementById('editExpenseCategoryInput').value = name;
+        openCustomModal('modalEditExpenseCategory');
+      });
+    });
+    document.querySelectorAll('.edit-income-category-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var name = this.getAttribute('data-name');
+        document.getElementById('editIncomeCategoryId').value = id;
+        document.getElementById('editIncomeCategoryInput').value = name;
+        openCustomModal('modalEditIncomeCategory');
+      });
+    });
   });
 </script>
 

@@ -11,6 +11,14 @@ class UserService
 {
   public function __construct(private Database $db) {}
 
+  public function getPaymentMethods(int $userId): array
+  {
+    return $this->db->query(
+      "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
+      ['user_id' => $userId]
+    )->findAll();
+  }
+
   public function isEmailTaken(string $email)
   {
     $emailCount = $this->db->query(

@@ -38,18 +38,63 @@ class SettingsController
                 'type' => $type
             ];
             try {
-                $this->validatorService->validateCategory(
-                    ['name' => $categoryName],
-                    ($type === 'expense_category' ? 'expense' : ($type === 'income_category' ? 'income' : $type)),
-                    (int)$userId,
-                    $this->settingsService->getDb()
-                );
+                if ($type === 'payment_method') {
+                    $this->validatorService->validateCategory(
+                        ['name' => $categoryName],
+                        'payment',
+                        (int)$userId,
+                        $this->settingsService->getDb()
+                    );
+                } elseif ($type === 'payment_method_edit') {
+                    $this->validatorService->validateCategory(
+                        ['name' => $categoryName],
+                        'payment',
+                        (int)$userId,
+                        $this->settingsService->getDb()
+                    );
+                } elseif ($type === 'expense_category_edit') {
+                    $this->validatorService->validateCategory(
+                        ['name' => $categoryName],
+                        'expense',
+                        (int)$userId,
+                        $this->settingsService->getDb()
+                    );
+                } elseif ($type === 'income_category_edit') {
+                    $this->validatorService->validateCategory(
+                        ['name' => $categoryName],
+                        'income',
+                        (int)$userId,
+                        $this->settingsService->getDb()
+                    );
+                } else {
+                    $this->validatorService->validateCategory(
+                        ['name' => $categoryName],
+                        ($type === 'expense_category' ? 'expense' : ($type === 'income_category' ? 'income' : $type)),
+                        (int)$userId,
+                        $this->settingsService->getDb()
+                    );
+                }
                 if ($userId && $categoryName !== '') {
                     if ($type === 'expense_category' || $type === 'expense') {
                         $this->settingsService->addExpenseCategory((int)$userId, $categoryName);
                         $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
                     } elseif ($type === 'income_category' || $type === 'income') {
                         $this->settingsService->addIncomeCategory((int)$userId, $categoryName);
+                        $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
+                    } elseif ($type === 'payment_method') {
+                        $this->settingsService->addPaymentMethod((int)$userId, $categoryName);
+                        $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
+                    } elseif ($type === 'payment_method_edit') {
+                        $methodId = (int)($_POST['category_id'] ?? 0);
+                        $this->settingsService->updatePaymentMethod((int)$userId, $methodId, $categoryName);
+                        $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
+                    } elseif ($type === 'expense_category_edit') {
+                        $catId = (int)($_POST['category_id'] ?? 0);
+                        $this->settingsService->updateExpenseCategory((int)$userId, $catId, $categoryName);
+                        $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
+                    } elseif ($type === 'income_category_edit') {
+                        $catId = (int)($_POST['category_id'] ?? 0);
+                        $this->settingsService->updateIncomeCategory((int)$userId, $catId, $categoryName);
                         $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
                     }
                     header('Location: /settings');

@@ -68,7 +68,15 @@ class ValidatorService
   public function validateCategory(array $formData, string $type, int $userId, Database $db)
   {
     // Dodaj regułę unikalności dynamicznie dla danego typu
-    $table = $type === 'income' ? 'incomes_category_assigned_to_users' : 'expenses_category_assigned_to_users';
+    if ($type === 'income') {
+      $table = 'incomes_category_assigned_to_users';
+    } elseif ($type === 'expense') {
+      $table = 'expenses_category_assigned_to_users';
+    } elseif ($type === 'payment') {
+      $table = 'payment_methods_assigned_to_users';
+    } else {
+      $table = 'expenses_category_assigned_to_users';
+    }
     $this->validator->add('uniqueCategory', new UniqueCategoryRule($db, $table, $userId));
     $this->validator->validate($formData, [
       'name' => ['required', 'lengthMax:50', 'uniqueCategory']
