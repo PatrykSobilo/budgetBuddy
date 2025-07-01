@@ -217,6 +217,25 @@ class UserService
     );
   }
 
+  /**
+   * Usuwa użytkownika i wszystkie powiązane z nim dane z bazy
+   */
+  public function deleteUserAndData(int $userId): void
+  {
+    // Usuń wydatki
+    $this->db->query("DELETE FROM expenses WHERE user_id = :user_id", ['user_id' => $userId]);
+    // Usuń przychody
+    $this->db->query("DELETE FROM incomes WHERE user_id = :user_id", ['user_id' => $userId]);
+    // Usuń kategorie wydatków
+    $this->db->query("DELETE FROM expenses_category_assigned_to_users WHERE user_id = :user_id", ['user_id' => $userId]);
+    // Usuń kategorie przychodów
+    $this->db->query("DELETE FROM incomes_category_assigned_to_users WHERE user_id = :user_id", ['user_id' => $userId]);
+    // Usuń metody płatności
+    $this->db->query("DELETE FROM payment_methods_assigned_to_users WHERE user_id = :user_id", ['user_id' => $userId]);
+    // Usuń użytkownika
+    $this->db->query("DELETE FROM users WHERE id = :user_id", ['user_id' => $userId]);
+  }
+
   public function getDb()
   {
     return $this->db;

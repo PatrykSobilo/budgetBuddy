@@ -59,7 +59,7 @@ if (!empty($_SESSION['settings_section'])) {
         </div>
       </div>
       <div class="d-flex justify-content-end mt-3">
-        <button class="btn fw-semibold" type="button" style="background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500; min-width:160px;">Delete Account</button>
+        <button class="btn fw-semibold" type="button" style="background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500; min-width:160px;" onclick="openCustomModal('modalDeleteAccount')">Delete Account</button>
       </div>
     <?php else: ?>
       <p class="text-center">User data not available.</p>

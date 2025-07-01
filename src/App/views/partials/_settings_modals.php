@@ -1,3 +1,22 @@
+<!-- Delete Account Modal -->
+<div id="modalDeleteAccount" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <form class="modal-form" method="POST" action="/settings/delete-account">
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <div class="custom-modal-header">
+        <h5>Delete Account</h5>
+        <button type="button" class="btn-close" onclick="closeCustomModal('modalDeleteAccount')">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <p>Are you sure you want to <span class="fw-bold text-danger">delete your account</span> and all your data? This action cannot be undone.</p>
+      </div>
+      <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
+        <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalDeleteAccount')">Cancel</button>
+        <button type="submit" class="btn btn-danger">Delete Account</button>
+      </div>
+    </form>
+  </div>
+</div>
 <!-- Delete Expense Category Modal -->
 <div id="modalDeleteExpenseCategory" class="custom-modal">
   <div class="custom-modal-dialog">

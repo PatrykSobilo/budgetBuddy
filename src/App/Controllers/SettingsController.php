@@ -90,7 +90,7 @@ class SettingsController
     {
         $userData = null;
         if (isset($_SESSION['user'])) {
-            $userData = $this->userService->getUserById($_SESSION['user']);
+            $userData = $this->userService->getUserById((int)$_SESSION['user']);
         }
         $csrfToken = $_SESSION['token'] ?? '';
 
@@ -231,5 +231,26 @@ class SettingsController
             'editUserOld' => $old,
             'csrfToken' => $csrfToken
         ]);
+    }
+
+    /**
+     * Usuwa konto użytkownika i wszystkie powiązane dane
+     */
+    public function deleteAccount()
+    {
+        if (!isset($_SESSION['user'])) {
+            header('Location: /login');
+            exit;
+        }
+        $userId = $_SESSION['user'];
+        $this->userService->deleteUserAndData($userId);
+        // Wyloguj użytkownika i wyczyść sesję
+        unset($_SESSION['user']);
+        session_destroy();
+        session_regenerate_id();
+        $params = session_get_cookie_params();
+        setcookie('PHPSESSID', '', time() - 3600, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        header('Location: /');
+        exit;
     }
 }

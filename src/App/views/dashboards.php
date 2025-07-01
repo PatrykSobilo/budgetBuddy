@@ -50,7 +50,7 @@
                     </table>
                 </div>
                 <div class="container mt-4 mb-4 text-center">
-                    <h4 class="mb-3">Wydatki vs Przychody</h4>
+                    <h4 class="mb-3">Expenses vs Incomes</h4>
                     <canvas id="summaryPieChart" width="300" height="300" style="display: block; margin: 0 auto;"></canvas>
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -87,7 +87,7 @@
                     new Chart(ctx, {
                         type: 'pie',
                         data: {
-                            labels: ['Wydatki', 'Przychody'],
+                            labels: ['Expenses', 'Incomes'],
                             datasets: [{
                                 data: [expenses, incomes],
                                 backgroundColor: ['#ff6384', '#36a2eb'],
