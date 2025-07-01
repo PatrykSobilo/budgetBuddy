@@ -12,14 +12,15 @@
 </head>
 
 <body>
-  <section id="header">
+  <section id="navbar" class="px-3 py-2 text-bg-dark border-bottom">
     <div class="container">
-      <header class="d-flex flex-wrap align-items-center justify-content-end py-3">
-        <div class="col-md-3 text-end">
-          <button type="button" class="btn btn-outline-primary me-2"><a href="login">Login</a></button>
-          <button type="button" class="btn btn-outline-primary"><a href="register">Register</a></button>
+      <div class="d-flex flex-wrap align-items-center justify-content-between">
+        <div></div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="login" class="btn btn-primary">Login</a>
+          <a href="register" class="btn btn-warning logout-btn">Register</a>
         </div>
-      </header>
+      </div>
     </div>
   </section>
 
@@ -31,17 +32,11 @@
         <p class="lead mb-4">BudgetBuddy is a user-friendly web application designed to help you manage your budget and
           expenses effortlessly. Accessible through any web browser, BudgetBuddy ensures you have control over your
           finances anytime, anywhere, without the need for downloads or installations.</p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-          <button type="button" class="btn btn-outline-primary btn-lg px-4 me-sm-3"><a
-              href="login">Login</a></button>
-          <button type="button" class="btn btn-outline-secondary btn-lg px-4"><a
-              href="register">Register</a></button>
-        </div>
       </div>
       <div class="overflow-hidden" style="max-height: 45vh;">
         <div class="container px-5">
-          <img src="./resources/ac24957224a28149c69fa5fb68da3739.png" class="img-fluid border rounded-3 shadow-lg mb-4"
-            alt="Example image" width="700" height="500" loading="lazy">
+          <img src="./resources/9055e486-97d1-4c9a-b27a-4f9b897f515f.jpg" class="img-fluid border rounded-3 shadow-lg mb-4"
+            alt="BudgetBuddy app preview" width="700" height="500" loading="lazy">
         </div>
       </div>
     </div>

@@ -11,17 +11,17 @@
     <title>Register Form</title>
 </head>
 
-<body class="align-items-center py-2 bg-body-tertiary">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <a href="/" class="btn btn-link text-decoration-none d-inline-flex align-items-center mt-2 ms-2"
-                    style="font-size:1rem;">
-                    <i class="bi bi-arrow-left" style="font-size:1.2rem;"></i>&nbsp;Back to main Page
-                </a>
+<body class="align-items-center bg-body-tertiary">
+    <section id="navbar" class="px-3 py-2 text-bg-dark border-bottom">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div></div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/" class="btn btn-primary"><i class="bi bi-arrow-left me-1"></i>Back to main page</a>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
     <main class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
         <div class="registerFormTable w-50"
             style="min-width:320px; max-width:500px; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.07); border-radius:1rem; background:#fff;">
@@ -33,45 +33,45 @@
 
                 <div class="form-floating mb-2">
                     <input type="email" value="<?php echo e($oldFormData['email'] ?? ''); ?>" name="email" class="form-control"
-                        id="" placeholder="name@example.com">
+                        id="floatingInput" placeholder="Email address">
+                    <label for="floatingInput">Email address</label>
                     <?php if (array_key_exists('email', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['email'][0]); ?>
                         </div>
                     <?php endif; ?>
-                    <label for="floatingInput">Email address</label>
                 </div>
 
                 <div class="form-floating mb-2">
                     <input type="number" step="1" value="<?php echo e($oldFormData['age'] ?? ''); ?>" name="age" class="form-control"
-                        id="" placeholder="Age">
+                        id="floatingAge" placeholder="Age">
+                    <label for="floatingAge">Age</label>
                     <?php if (array_key_exists('age', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['age'][0]); ?>
                         </div>
                     <?php endif; ?>
-                    <label for="floatingPassword">Age</label>
                 </div>
 
                 <div class="form-floating mb-2">
-                    <input type="password" value="" name="password" class="form-control" id="" placeholder="Password">
+                    <input type="password" value="" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
                     <?php if (array_key_exists('password', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['password'][0]); ?>
                         </div>
                     <?php endif; ?>
-                    <label for="floatingPassword">Password</label>
                 </div>
 
                 <div class="form-floating mb-2">
-                    <input type="password" value="" name="passwordConfirmation" class="form-control" id=""
+                    <input type="password" value="" name="passwordConfirmation" class="form-control" id="floatingPasswordConfirmation"
                         placeholder="Repeat Password">
+                    <label for="floatingPasswordConfirmation">Repeat Password</label>
                     <?php if (array_key_exists('passwordConfirmation', $errors)) : ?>
                         <div class="bg-gray-100 mt-2 p-2 text-danger">
                             <?php echo e($errors['passwordConfirmation'][0]); ?>
                         </div>
                     <?php endif; ?>
-                    <label for="floatingPassword">Repeat Password</label>
                 </div>
 
                 <div class="form-floating mb-2">

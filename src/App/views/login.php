@@ -11,17 +11,17 @@
   <title>Document</title>
 </head>
 
-<body class="align-items-center py-2 bg-body-tertiary">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <a href="/" class="btn btn-link text-decoration-none d-inline-flex align-items-center mt-2 ms-2"
-          style="font-size:1rem;">
-          <i class="bi bi-arrow-left" style="font-size:1.2rem;"></i>&nbsp;Back to main Page
-        </a>
+<body class="align-items-center bg-body-tertiary">
+  <section id="navbar" class="px-3 py-2 text-bg-dark border-bottom">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-between">
+        <div></div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="/" class="btn btn-primary"><i class="bi bi-arrow-left me-1"></i>Back to main page</a>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
   <main class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
     <div class="loginFormTable w-50" style="min-width:320px; max-width:500px; padding:2rem 1.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.07); border-radius:1rem; background:#fff;">
       <form method="POST">
@@ -31,8 +31,8 @@
         <h1 class="h4 mb-3 fw-normal text-center">Sign in</h1>
 
         <div class="form-floating mb-2">
+          <input value="<?php echo e($oldFormData['email'] ?? ''); ?>" type="email" class="form-control" id="floatingInput" placeholder="E-mail" name="email">
           <label for="floatingInput">E-mail</label>
-          <input value="<?php echo e($oldFormData['email'] ?? ''); ?>" type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
           <?php if(array_key_exists('email', $errors)) :  ?>
             <div class="bg-gray-100 mt-2 p-2 text-danger">
               <?php echo e($errors['email'][0]); ?>
@@ -40,8 +40,8 @@
           <?php endif; ?>
         </div>
         <div class="form-floating mb-2">
-          <label for="floatingPassword">Password</label>
           <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+          <label for="floatingPassword">Password</label>
           <?php if(array_key_exists('password', $errors)) :  ?>
             <div class="bg-gray-100 mt-2 p-2 text-danger">
               <?php echo e($errors['password'][0]); ?>
