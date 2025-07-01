@@ -23,6 +23,13 @@ class TransactionController
     if (isset($_SESSION['user'])) {
       $all = $this->transactionService->getUserTransactions();
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
+      // Obsługa wyszukiwania po GET
+      if (isset($_GET['s']) && trim($_GET['s']) !== '') {
+        $search = mb_strtolower(trim($_GET['s']));
+        $expenses = array_filter($expenses, function($exp) use ($search) {
+          return mb_strpos(mb_strtolower($exp['description']), $search) !== false;
+        });
+      }
     }
     echo $this->view->render("expenses.php", [
       'expenses' => $expenses
@@ -35,6 +42,13 @@ class TransactionController
     if (isset($_SESSION['user'])) {
       $all = $this->transactionService->getUserTransactions();
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
+      // Obsługa wyszukiwania po GET
+      if (isset($_GET['s']) && trim($_GET['s']) !== '') {
+        $search = mb_strtolower(trim($_GET['s']));
+        $incomes = array_filter($incomes, function($inc) use ($search) {
+          return mb_strpos(mb_strtolower($inc['description']), $search) !== false;
+        });
+      }
     }
     echo $this->view->render("incomes.php", [
       'incomes' => $incomes

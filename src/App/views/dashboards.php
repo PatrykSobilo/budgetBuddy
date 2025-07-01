@@ -15,6 +15,7 @@
             </div>
             <div class="m-5 text-center">
                 <button type="submit" class="btn btn-primary">Show Balance</button>
+                <button type="button" class="btn btn-outline-secondary ms-2" id="currentMonthBtn">Current Month</button>
             </div>
         </form>
     </div>
@@ -40,7 +41,7 @@
                                 $service = $transactionService ?? null;
                                 $startDate = $startDate ?? null;
                                 $endDate = $endDate ?? null;
-                                $summary = $service ? $service->calculateTransactions($startDate, $endDate) : ['expenses'=>0,'incomes'=>0,'balance'=>0];
+                                $summary = $service ? $service->calculateTransactions($startDate, $endDate) : ['expenses' => 0, 'incomes' => 0, 'balance' => 0];
                                 ?>
                                 <td><?php echo number_format($summary['expenses'], 2, '.', ' '); ?></td>
                                 <td><?php echo number_format($summary['incomes'], 2, '.', ' '); ?></td>
@@ -80,27 +81,50 @@
 <?php include $this->resolve("partials/_footer.php"); ?>
 
 <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var ctx = document.getElementById('summaryPieChart').getContext('2d');
-                    var expenses = <?php echo json_encode($summary['expenses']); ?>;
-                    var incomes = <?php echo json_encode($summary['incomes']); ?>;
-                    new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Expenses', 'Incomes'],
-                            datasets: [{
-                                data: [expenses, incomes],
-                                backgroundColor: ['#ff6384', '#36a2eb'],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: false,
-                            plugins: {
-                                legend: { position: 'bottom' },
-                                title: { display: false }
-                            }
-                        }
-                    });
-                });
-                </script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var currentMonthBtn = document.getElementById('currentMonthBtn');
+        var dateForm = document.getElementById('dateForm');
+        if (currentMonthBtn && dateForm) {
+            currentMonthBtn.addEventListener('click', function() {
+                var now = new Date();
+                var firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                var lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                var pad = n => n < 10 ? '0' + n : n;
+                var yyyy = now.getFullYear();
+                var mm = pad(now.getMonth() + 1);
+                document.getElementById('startingDate').value = `${yyyy}-${mm}-01`;
+                document.getElementById('endingDate').value = `${yyyy}-${mm}-${pad(lastDay.getDate())}`;
+                dateForm.submit();
+            });
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('summaryPieChart').getContext('2d');
+        var expenses = <?php echo json_encode($summary['expenses']); ?>;
+        var incomes = <?php echo json_encode($summary['incomes']); ?>;
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Expenses', 'Incomes'],
+                datasets: [{
+                    data: [expenses, incomes],
+                    backgroundColor: ['#ff6384', '#36a2eb'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+</script>
