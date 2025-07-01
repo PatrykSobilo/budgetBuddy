@@ -12,12 +12,79 @@ use Framework\Database;
 
 class SettingsController
 {
+    public function deleteCategory()
+    {
+        $userId = $_SESSION['user'] ?? null;
+        $type = $_POST['type'] ?? '';
+        $categoryId = (int)($_POST['category_id'] ?? 0);
+        $redirectUrl = '/settings';
+
+        if (!$userId || !$categoryId || !$type) {
+            $_SESSION['flash_error'] = 'Invalid request.';
+            header('Location: ' . $redirectUrl);
+            exit;
+        }
+
+        if ($type === 'expense_category_delete') {
+            $categoryName = null;
+            foreach ($_SESSION['expenseCategories'] ?? [] as $cat) {
+                if ((int)$cat['id'] === $categoryId) {
+                    $categoryName = $cat['name'];
+                    break;
+                }
+            }
+            if ($this->settingsService->isExpenseCategoryUsed($categoryId, $userId)) {
+                $_SESSION['flash_error'] = 'Cannot delete: category "' . htmlspecialchars($categoryName) . '" is used in expenses.';
+                $_SESSION['settings_section'] = 'expense-categories';
+            } else {
+                $this->settingsService->deleteExpenseCategory($categoryId, $userId);
+                $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
+            }
+        } elseif ($type === 'income_category_delete') {
+            $categoryName = null;
+            foreach ($_SESSION['incomeCategories'] ?? [] as $cat) {
+                if ((int)$cat['id'] === $categoryId) {
+                    $categoryName = $cat['name'];
+                    break;
+                }
+            }
+            if ($this->settingsService->isIncomeCategoryUsed($categoryId, $userId)) {
+                $_SESSION['flash_error'] = 'Cannot delete: category "' . htmlspecialchars($categoryName) . '" is used in incomes.';
+                $_SESSION['settings_section'] = 'incomes-categories';
+            } else {
+                $this->settingsService->deleteIncomeCategory($categoryId, $userId);
+                $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
+            }
+        } elseif ($type === 'payment_method_delete') {
+            $methodName = null;
+            foreach ($_SESSION['paymentMethods'] ?? [] as $method) {
+                if ((int)$method['id'] === $categoryId) {
+                    $methodName = $method['name'];
+                    break;
+                }
+            }
+            if ($this->settingsService->isPaymentMethodUsed($categoryId, $userId)) {
+                $_SESSION['flash_error'] = 'Cannot delete: payment method "' . htmlspecialchars($methodName) . '" is used in expenses.';
+                $_SESSION['settings_section'] = 'payment-methods';
+            } else {
+                $this->settingsService->deletePaymentMethod($categoryId, $userId);
+                $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
+            }
+        } else {
+            $_SESSION['flash_error'] = 'Invalid request type.';
+        }
+
+        header('Location: ' . $redirectUrl);
+        exit;
+    }
+
     public function __construct(
         private TemplateEngine $view,
         private UserService $userService,
         private SettingsService $settingsService,
         private ValidatorService $validatorService
     ) {}
+
 
     public function settings()
     {

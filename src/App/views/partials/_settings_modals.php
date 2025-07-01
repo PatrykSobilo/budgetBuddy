@@ -1,3 +1,68 @@
+<!-- Delete Expense Category Modal -->
+<div id="modalDeleteExpenseCategory" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <form class="modal-form" method="POST" action="/settings/delete-category">
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <input type="hidden" name="type" value="expense_category_delete">
+      <input type="hidden" id="deleteExpenseCategoryId" name="category_id" value="">
+      <div class="custom-modal-header">
+        <h5>Delete Expense Category</h5>
+        <button type="button" class="btn-close" onclick="closeCustomModal('modalDeleteExpenseCategory')">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <p>Are you sure you want to delete the expense category <span id="deleteExpenseCategoryName" class="fw-bold"></span>?<br>This action cannot be undone.</p>
+      </div>
+      <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
+        <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalDeleteExpenseCategory')">Cancel</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Income Category Modal -->
+<div id="modalDeleteIncomeCategory" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <form class="modal-form" method="POST" action="/settings/delete-category">
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <input type="hidden" name="type" value="income_category_delete">
+      <input type="hidden" id="deleteIncomeCategoryId" name="category_id" value="">
+      <div class="custom-modal-header">
+        <h5>Delete Income Category</h5>
+        <button type="button" class="btn-close" onclick="closeCustomModal('modalDeleteIncomeCategory')">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <p>Are you sure you want to delete the income category <span id="deleteIncomeCategoryName" class="fw-bold"></span>?<br>This action cannot be undone.</p>
+      </div>
+      <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
+        <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalDeleteIncomeCategory')">Cancel</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Payment Method Modal -->
+<div id="modalDeletePaymentMethod" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <form class="modal-form" method="POST" action="/settings/delete-category">
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <input type="hidden" name="type" value="payment_method_delete">
+      <input type="hidden" id="deletePaymentMethodId" name="category_id" value="">
+      <div class="custom-modal-header">
+        <h5>Delete Payment Method</h5>
+        <button type="button" class="btn-close" onclick="closeCustomModal('modalDeletePaymentMethod')">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <p>Are you sure you want to delete the payment method <span id="deletePaymentMethodName" class="fw-bold"></span>?<br>This action cannot be undone.</p>
+      </div>
+      <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
+        <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalDeletePaymentMethod')">Cancel</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
 <div id="modalEditEmail" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/edit-user">

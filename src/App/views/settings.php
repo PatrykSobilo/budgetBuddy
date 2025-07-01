@@ -11,9 +11,28 @@
   </div>
 </div>
 
+
+<?php
+$sectionToShow = 'profile';
+if (!empty($_SESSION['settings_section'])) {
+    $sectionToShow = $_SESSION['settings_section'];
+    unset($_SESSION['settings_section']);
+}
+?>
+
+<?php if (!empty($_SESSION['flash_error'])): ?>
+  <div class="alert alert-danger text-center" style="margin-top: 2rem; max-width: 600px; margin-left:auto; margin-right:auto;">
+    <?php echo htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?>
+  </div>
+<?php elseif (!empty($_SESSION['flash_success'])): ?>
+  <div class="alert alert-success text-center" style="margin-top: 2rem; max-width: 600px; margin-left:auto; margin-right:auto;">
+    <?php echo htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?>
+  </div>
+<?php endif; ?>
+
 <section class="container mt-5 d-flex flex-column align-items-center justify-content-center">
   <h1 class="mb-4 text-center">Settings</h1>
-  <div id="profile" class="settings-section mb-5 w-100" style="max-width: 600px;">
+  <div id="profile" class="settings-section mb-5 w-100" style="max-width: 600px;<?php if($sectionToShow !== 'profile') echo 'display:none;'; ?>">
     <h3 class="text-center">Profile</h3>
     <?php if (isset($user) && is_array($user)): ?>
       <div class="card p-3 shadow-sm">
@@ -46,7 +65,7 @@
       <p class="text-center">User data not available.</p>
     <?php endif; ?>
   </div>
-  <div id="expense-categories" class="settings-section mb-5 w-100" style="display:none; max-width: 600px;">
+  <div id="expense-categories" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'expense-categories') ? '' : 'display:none;'; ?> max-width: 600px;">
     <h3 class="text-center">Expense Categories</h3>
     <?php if (!empty($_SESSION['expenseCategories'])): ?>
       <div class="card p-3 shadow-sm">
@@ -54,8 +73,11 @@
           <div class="mb-3 d-flex align-items-center justify-content-between">
             <div class="input-group">
               <input type="text" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" readonly style="border-radius: 0.3rem;">
+              <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'expense_category_delete' && ($categoryOld['category_id'] ?? null) == $category['id']): ?>
+                <div class="text-danger mt-1 w-100"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
+              <?php endif; ?>
               <button class="btn btn-primary ms-2 fw-semibold edit-expense-category-btn" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Edit</button>
-              <button class="btn ms-2 fw-semibold" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Delete</button>
+              <button class="btn ms-2 fw-semibold delete-expense-category-btn" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Delete</button>
             </div>
           </div>
         <?php endforeach; ?>
@@ -67,7 +89,7 @@
       <p class="text-center">No expense categories found.</p>
     <?php endif; ?>
   </div>
-  <div id="incomes-categories" class="settings-section mb-5 w-100" style="display:none; max-width: 600px;">
+  <div id="incomes-categories" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'incomes-categories') ? '' : 'display:none;'; ?> max-width: 600px;">
     <h3 class="text-center">Incomes Categories</h3>
     <?php if (!empty($_SESSION['incomeCategories'])): ?>
       <div class="card p-3 shadow-sm">
@@ -75,8 +97,11 @@
           <div class="mb-3 d-flex align-items-center justify-content-between">
             <div class="input-group">
               <input type="text" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" readonly style="border-radius: 0.3rem;">
+              <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'income_category_delete' && ($categoryOld['category_id'] ?? null) == $category['id']): ?>
+                <div class="text-danger mt-1 w-100"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
+              <?php endif; ?>
               <button class="btn btn-primary ms-2 fw-semibold edit-income-category-btn" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Edit</button>
-              <button class="btn ms-2 fw-semibold" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Delete</button>
+              <button class="btn ms-2 fw-semibold delete-income-category-btn" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Delete</button>
             </div>
           </div>
         <?php endforeach; ?>
@@ -88,7 +113,7 @@
       <p class="text-center">No income categories found.</p>
     <?php endif; ?>
   </div>
-  <div id="payment-methods" class="settings-section mb-5 w-100" style="display:none; max-width: 600px;">
+  <div id="payment-methods" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'payment-methods') ? '' : 'display:none;'; ?> max-width: 600px;">
     <h3 class="text-center">Payment Methods</h3>
     <?php if (!empty($_SESSION['paymentMethods'])): ?>
       <div class="card p-3 shadow-sm">
@@ -96,8 +121,11 @@
           <div class="mb-3 d-flex align-items-center justify-content-between">
             <div class="input-group">
               <input type="text" class="form-control" value="<?php echo htmlspecialchars($method['name']); ?>" readonly style="border-radius: 0.3rem;">
+              <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'payment_method_delete' && ($categoryOld['category_id'] ?? null) == $method['id']): ?>
+                <div class="text-danger mt-1 w-100"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
+              <?php endif; ?>
               <button class="btn btn-primary ms-2 fw-semibold edit-payment-method-btn" type="button" style="min-width:120px; background: #2563eb; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($method['id']); ?>" data-name="<?php echo htmlspecialchars($method['name']); ?>">Edit</button>
-              <button class="btn ms-2 fw-semibold" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;">Delete</button>
+              <button class="btn ms-2 fw-semibold delete-payment-method-btn" type="button" style="min-width:120px; background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 0.3rem; font-weight: 500;" data-id="<?php echo htmlspecialchars($method['id']); ?>" data-name="<?php echo htmlspecialchars($method['name']); ?>">Delete</button>
             </div>
           </div>
         <?php endforeach; ?>
@@ -115,6 +143,21 @@
   document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.settings-tab');
     const sections = document.querySelectorAll('.settings-section');
+
+    // Ustaw aktywną sekcję na podstawie $sectionToShow
+    let sectionToShow = <?php echo json_encode($sectionToShow); ?>;
+    if (sectionToShow) {
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(section => {
+        if (section.id === sectionToShow) {
+          section.style.display = '';
+        } else {
+          section.style.display = 'none';
+        }
+      });
+      let activeTab = document.querySelector('.settings-tab[data-section="' + sectionToShow + '"]');
+      if (activeTab) activeTab.classList.add('active');
+    }
     tabs.forEach(tab => {
       tab.addEventListener('click', function(e) {
         e.preventDefault();
@@ -188,6 +231,34 @@
         document.getElementById('editIncomeCategoryId').value = id;
         document.getElementById('editIncomeCategoryInput').value = name;
         openCustomModal('modalEditIncomeCategory');
+      });
+    });
+    // Obsługa modali usuwania
+    document.querySelectorAll('.delete-expense-category-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var name = this.getAttribute('data-name');
+        document.getElementById('deleteExpenseCategoryId').value = id;
+        document.getElementById('deleteExpenseCategoryName').textContent = name;
+        openCustomModal('modalDeleteExpenseCategory');
+      });
+    });
+    document.querySelectorAll('.delete-income-category-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var name = this.getAttribute('data-name');
+        document.getElementById('deleteIncomeCategoryId').value = id;
+        document.getElementById('deleteIncomeCategoryName').textContent = name;
+        openCustomModal('modalDeleteIncomeCategory');
+      });
+    });
+    document.querySelectorAll('.delete-payment-method-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var name = this.getAttribute('data-name');
+        document.getElementById('deletePaymentMethodId').value = id;
+        document.getElementById('deletePaymentMethodName').textContent = name;
+        openCustomModal('modalDeletePaymentMethod');
       });
     });
   });
