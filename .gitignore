@@ -4,3 +4,4 @@ imaginary-file.txt
 .env
 storage/uploads/*
 !storage/uploads/.gitkeep
+TODO.md
