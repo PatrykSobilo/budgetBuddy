@@ -1,6 +1,15 @@
 function openCustomModal(id) {
   document.getElementById(id).style.display = 'flex';
 }
+
+function getTodayDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function closeCustomModal(id) {
   document.getElementById(id).style.display = 'none';
   clearAllModalsErrorsAndFields();
@@ -17,7 +26,13 @@ function clearModalErrorsAndFields(modalId) {
   if (!modal) return;
   modal.querySelectorAll('.text-danger').forEach(el => el.innerHTML = '');
   modal.querySelectorAll('input.form-control').forEach(input => {
-    if (input.type !== 'hidden') input.value = '';
+    if (input.type !== 'hidden') {
+      if (input.type === 'date') {
+        input.value = getTodayDate();
+      } else {
+        input.value = '';
+      }
+    }
   });
   modal.querySelectorAll('select.form-control').forEach(select => {
     select.selectedIndex = 0;
@@ -101,6 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
       setExpenseModalHeader(false);
       const idInput = document.getElementById('expense_id');
       if (idInput) idInput.value = '';
+      const dateInput = document.getElementById('date');
+      if (dateInput && !dateInput.value) dateInput.value = getTodayDate();
       const form = document.getElementById('expenseForm');
       if (form) form.action = '/transactions/add';
     });
@@ -113,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const amountInput = document.getElementById('income_amount');
       if (amountInput) amountInput.value = '';
       const dateInput = document.getElementById('income_date');
-      if (dateInput) dateInput.value = '';
+      if (dateInput) dateInput.value = getTodayDate();
       const descInput = document.getElementById('income_description');
       if (descInput) descInput.value = '';
       const catSelect = document.getElementById('incomesCategory');

@@ -56,7 +56,7 @@
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
+          <input value="<?php echo e($oldFormData['date'] ?? date('Y-m-d')); ?>" type="date" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
           <label for="date">Date</label>
           <?php if (isset($errors['date'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['date'][0]); ?></div>
@@ -119,7 +119,7 @@
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['date'] ?? ''); ?>" type="date" class="form-control" id="income_date" name="date" placeholder="mm/dd/yyyy">
+          <input value="<?php echo e($oldFormData['date'] ?? date('Y-m-d')); ?>" type="date" class="form-control" id="income_date" name="date" placeholder="mm/dd/yyyy">
           <label for="income_date">Date</label>
           <?php if (isset($errors['date'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['date'][0]); ?></div>
