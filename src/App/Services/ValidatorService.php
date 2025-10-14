@@ -59,7 +59,7 @@ class ValidatorService
   public function validateTransaction(array $formData)
   {
     $this->validator->validate($formData, [
-      'description' => ['required', 'lengthMax:255'],
+      'description' => ['lengthMax:255'],
       'amount' => ['required', 'numeric'],
       'date' => ['required', 'dateFormat:Y-m-d']
     ]);
