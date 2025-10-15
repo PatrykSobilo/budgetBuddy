@@ -151,24 +151,30 @@ class SettingsController
                     if ($type === 'expense_category' || $type === 'expense') {
                         $this->settingsService->addExpenseCategory((int)$userId, $categoryName);
                         $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
+                        $_SESSION['settings_section'] = 'expense-categories';
                     } elseif ($type === 'income_category' || $type === 'income') {
                         $this->settingsService->addIncomeCategory((int)$userId, $categoryName);
                         $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
+                        $_SESSION['settings_section'] = 'incomes-categories';
                     } elseif ($type === 'payment_method') {
                         $this->settingsService->addPaymentMethod((int)$userId, $categoryName);
                         $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
+                        $_SESSION['settings_section'] = 'payment-methods';
                     } elseif ($type === 'payment_method_edit') {
                         $methodId = (int)($_POST['category_id'] ?? 0);
                         $this->settingsService->updatePaymentMethod((int)$userId, $methodId, $categoryName);
                         $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
+                        $_SESSION['settings_section'] = 'payment-methods';
                     } elseif ($type === 'expense_category_edit') {
                         $catId = (int)($_POST['category_id'] ?? 0);
                         $this->settingsService->updateExpenseCategory((int)$userId, $catId, $categoryName);
                         $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
+                        $_SESSION['settings_section'] = 'expense-categories';
                     } elseif ($type === 'income_category_edit') {
                         $catId = (int)($_POST['category_id'] ?? 0);
                         $this->settingsService->updateIncomeCategory((int)$userId, $catId, $categoryName);
                         $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
+                        $_SESSION['settings_section'] = 'incomes-categories';
                     }
                     header('Location: /settings');
                     exit;

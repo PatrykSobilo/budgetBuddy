@@ -2,16 +2,6 @@
 <?php $categoryErrors = $categoryErrors ?? []; $categoryOld = $categoryOld ?? []; ?>
 <?php include $this->resolve("partials/_settings_modals.php"); ?>
 
-<div class="settings-ribbon py-3" style="background-color: #f5f6fa; border-bottom: 1px solid #e0e0e0;">
-  <div class="container d-flex flex-wrap gap-4 justify-content-center">
-    <a href="#" class="btn btn-outline-secondary settings-tab active" data-section="profile">Profile</a>
-    <a href="#" class="btn btn-outline-secondary settings-tab" data-section="expense-categories">Expense Categories</a>
-    <a href="#" class="btn btn-outline-secondary settings-tab" data-section="incomes-categories">Incomes Categories</a>
-    <a href="#" class="btn btn-outline-secondary settings-tab" data-section="payment-methods">Payment Methods</a>
-  </div>
-</div>
-
-
 <?php
 $sectionToShow = 'profile';
 if (!empty($_SESSION['settings_section'])) {
@@ -19,6 +9,16 @@ if (!empty($_SESSION['settings_section'])) {
     unset($_SESSION['settings_section']);
 }
 ?>
+
+<div class="settings-ribbon py-3" style="background-color: #f5f6fa; border-bottom: 1px solid #e0e0e0;">
+  <div class="container d-flex flex-wrap gap-4 justify-content-center">
+    <a href="#" class="btn btn-outline-secondary settings-tab <?php echo $sectionToShow === 'profile' ? 'active' : ''; ?>" data-section="profile">Profile</a>
+    <a href="#" class="btn btn-outline-secondary settings-tab <?php echo $sectionToShow === 'expense-categories' ? 'active' : ''; ?>" data-section="expense-categories">Expense Categories</a>
+    <a href="#" class="btn btn-outline-secondary settings-tab <?php echo $sectionToShow === 'incomes-categories' ? 'active' : ''; ?>" data-section="incomes-categories">Incomes Categories</a>
+    <a href="#" class="btn btn-outline-secondary settings-tab <?php echo $sectionToShow === 'payment-methods' ? 'active' : ''; ?>" data-section="payment-methods">Payment Methods</a>
+  </div>
+</div>
+
 
 <?php if (!empty($_SESSION['flash_error'])): ?>
   <div class="alert alert-danger text-center" style="margin-top: 2rem; max-width: 600px; margin-left:auto; margin-right:auto;">
@@ -144,20 +144,7 @@ if (!empty($_SESSION['settings_section'])) {
     const tabs = document.querySelectorAll('.settings-tab');
     const sections = document.querySelectorAll('.settings-section');
 
-    // Ustaw aktywną sekcję na podstawie $sectionToShow
-    let sectionToShow = <?php echo json_encode($sectionToShow); ?>;
-    if (sectionToShow) {
-      tabs.forEach(t => t.classList.remove('active'));
-      sections.forEach(section => {
-        if (section.id === sectionToShow) {
-          section.style.display = '';
-        } else {
-          section.style.display = 'none';
-        }
-      });
-      let activeTab = document.querySelector('.settings-tab[data-section="' + sectionToShow + '"]');
-      if (activeTab) activeTab.classList.add('active');
-    }
+    // Obsługa kliknięć na zakładki
     tabs.forEach(tab => {
       tab.addEventListener('click', function(e) {
         e.preventDefault();
