@@ -40,7 +40,7 @@ $errors = $errors ?? [];
         </div>
         
         <!-- Navigation menu -->
-        <div class="collapse navbar-collapse d-lg-block" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="nav col-12 col-lg-auto my-2 justify-content-start my-md-0 text-small flex-column flex-lg-row">
             <li>
               <a href="/mainPage" class="nav-link text-secondary">
@@ -80,7 +80,7 @@ $errors = $errors ?? [];
           </ul>
         </div>
         <!-- Logout button for desktop -->
-        <div class="logout-btn-wrapper d-none d-lg-block">
+        <div class="logout-btn-wrapper d-none d-lg-flex">
           <a href="/logout" class="btn btn-warning logout-btn">Logout</a>
         </div>
       </div>

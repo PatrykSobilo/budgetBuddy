@@ -12,6 +12,14 @@
   box-shadow: none;
 }
 
+/* Desktop navigation - always show */
+@media (min-width: 992px) {
+  #navbarNav {
+    display: flex !important;
+    flex-basis: auto;
+  }
+}
+
 /* Mobile navigation adjustments */
 @media (max-width: 991.98px) {
   #navbar .container {
