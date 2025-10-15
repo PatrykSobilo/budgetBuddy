@@ -6,6 +6,52 @@
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
             <h2 class="mb-4 text-center">Incomes</h2>
+            
+            <!-- Period Filter -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <form method="GET" action="/incomes" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="period" class="form-label">Period</label>
+                            <select class="form-select" id="period" name="period" onchange="toggleCustomDatesIncomes()">
+                                <option value="all" <?php echo (!isset($_GET['period']) || $_GET['period'] === 'all') ? 'selected' : ''; ?>>All Time</option>
+                                <option value="current_month" <?php echo (isset($_GET['period']) && $_GET['period'] === 'current_month') ? 'selected' : ''; ?>>Current Month</option>
+                                <option value="last_month" <?php echo (isset($_GET['period']) && $_GET['period'] === 'last_month') ? 'selected' : ''; ?>>Last Month</option>
+                                <option value="last_30_days" <?php echo (isset($_GET['period']) && $_GET['period'] === 'last_30_days') ? 'selected' : ''; ?>>Last 30 Days</option>
+                                <option value="last_90_days" <?php echo (isset($_GET['period']) && $_GET['period'] === 'last_90_days') ? 'selected' : ''; ?>>Last 90 Days</option>
+                                <option value="current_year" <?php echo (isset($_GET['period']) && $_GET['period'] === 'current_year') ? 'selected' : ''; ?>>Current Year</option>
+                                <option value="custom" <?php echo (isset($_GET['period']) && $_GET['period'] === 'custom') ? 'selected' : ''; ?>>Custom Range</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="startDateDivIncomes" style="display: <?php echo (isset($_GET['period']) && $_GET['period'] === 'custom') ? 'block' : 'none'; ?>;">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-3" id="endDateDivIncomes" style="display: <?php echo (isset($_GET['period']) && $_GET['period'] === 'custom') ? 'block' : 'none'; ?>;">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <script>
+            function toggleCustomDatesIncomes() {
+                const period = document.getElementById('period').value;
+                const startDateDiv = document.getElementById('startDateDivIncomes');
+                const endDateDiv = document.getElementById('endDateDivIncomes');
+                if (period === 'custom') {
+                    startDateDiv.style.display = 'block';
+                    endDateDiv.style.display = 'block';
+                } else {
+                    startDateDiv.style.display = 'none';
+                    endDateDiv.style.display = 'none';
+                }
+            }
+            </script>
             <table class="table table-bordered table-transactions">
                 <thead>
                     <tr>

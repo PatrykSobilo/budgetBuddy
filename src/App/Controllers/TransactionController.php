@@ -23,11 +23,49 @@ class TransactionController
     if (isset($_SESSION['user'])) {
       $all = $this->transactionService->getUserTransactions();
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
+      
+      // Filtrowanie po okresie
+      if (isset($_GET['period']) && $_GET['period'] !== 'all') {
+        $expenses = $this->filterByPeriod($expenses, $_GET['period'], $_GET['start_date'] ?? null, $_GET['end_date'] ?? null);
+      }
+      
       // Obsługa wyszukiwania po GET
       if (isset($_GET['s']) && trim($_GET['s']) !== '') {
         $search = mb_strtolower(trim($_GET['s']));
         $expenses = array_filter($expenses, function($exp) use ($search) {
-          return mb_strpos(mb_strtolower($exp['description']), $search) !== false;
+          // Wyszukiwanie w description
+          if (mb_strpos(mb_strtolower($exp['description'] ?? ''), $search) !== false) {
+            return true;
+          }
+          // Wyszukiwanie w category
+          if (!empty($_SESSION['expenseCategories'])) {
+            foreach ($_SESSION['expenseCategories'] as $cat) {
+              if ($cat['id'] == ($exp['expense_category_assigned_to_user_id'] ?? null)) {
+                if (mb_strpos(mb_strtolower($cat['name']), $search) !== false) {
+                  return true;
+                }
+              }
+            }
+          }
+          // Wyszukiwanie w payment method
+          if (!empty($_SESSION['paymentMethods'])) {
+            foreach ($_SESSION['paymentMethods'] as $method) {
+              if ($method['id'] == ($exp['payment_method_assigned_to_user_id'] ?? null)) {
+                if (mb_strpos(mb_strtolower($method['name']), $search) !== false) {
+                  return true;
+                }
+              }
+            }
+          }
+          // Wyszukiwanie w amount
+          if (mb_strpos((string)$exp['amount'], $search) !== false) {
+            return true;
+          }
+          // Wyszukiwanie w date
+          if (mb_strpos($exp['date'], $search) !== false) {
+            return true;
+          }
+          return false;
         });
       }
     }
@@ -42,17 +80,90 @@ class TransactionController
     if (isset($_SESSION['user'])) {
       $all = $this->transactionService->getUserTransactions();
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
+      
+      // Filtrowanie po okresie
+      if (isset($_GET['period']) && $_GET['period'] !== 'all') {
+        $incomes = $this->filterByPeriod($incomes, $_GET['period'], $_GET['start_date'] ?? null, $_GET['end_date'] ?? null);
+      }
+      
       // Obsługa wyszukiwania po GET
       if (isset($_GET['s']) && trim($_GET['s']) !== '') {
         $search = mb_strtolower(trim($_GET['s']));
         $incomes = array_filter($incomes, function($inc) use ($search) {
-          return mb_strpos(mb_strtolower($inc['description']), $search) !== false;
+          // Wyszukiwanie w description
+          if (mb_strpos(mb_strtolower($inc['description'] ?? ''), $search) !== false) {
+            return true;
+          }
+          // Wyszukiwanie w category
+          if (!empty($_SESSION['incomeCategories'])) {
+            foreach ($_SESSION['incomeCategories'] as $cat) {
+              if ($cat['id'] == ($inc['income_category_assigned_to_user_id'] ?? null)) {
+                if (mb_strpos(mb_strtolower($cat['name']), $search) !== false) {
+                  return true;
+                }
+              }
+            }
+          }
+          // Wyszukiwanie w amount
+          if (mb_strpos((string)$inc['amount'], $search) !== false) {
+            return true;
+          }
+          // Wyszukiwanie w date
+          if (mb_strpos($inc['date'], $search) !== false) {
+            return true;
+          }
+          return false;
         });
       }
     }
     echo $this->view->render("incomes.php", [
       'incomes' => $incomes
     ]);
+  }
+
+  private function filterByPeriod(array $transactions, string $period, ?string $startDate, ?string $endDate): array
+  {
+    $now = new \DateTime();
+    $filtered = [];
+    
+    foreach ($transactions as $transaction) {
+      $transDate = new \DateTime($transaction['date']);
+      $include = false;
+      
+      switch ($period) {
+        case 'current_month':
+          $include = $transDate->format('Y-m') === $now->format('Y-m');
+          break;
+        case 'last_month':
+          $lastMonth = (clone $now)->modify('-1 month');
+          $include = $transDate->format('Y-m') === $lastMonth->format('Y-m');
+          break;
+        case 'last_30_days':
+          $thirtyDaysAgo = (clone $now)->modify('-30 days');
+          $include = $transDate >= $thirtyDaysAgo;
+          break;
+        case 'last_90_days':
+          $ninetyDaysAgo = (clone $now)->modify('-90 days');
+          $include = $transDate >= $ninetyDaysAgo;
+          break;
+        case 'current_year':
+          $include = $transDate->format('Y') === $now->format('Y');
+          break;
+        case 'custom':
+          if ($startDate && $endDate) {
+            $start = new \DateTime($startDate);
+            $end = new \DateTime($endDate);
+            $include = $transDate >= $start && $transDate <= $end;
+          }
+          break;
+      }
+      
+      if ($include) {
+        $filtered[] = $transaction;
+      }
+    }
+    
+    return $filtered;
   }
 
   public function dashboardsView()
