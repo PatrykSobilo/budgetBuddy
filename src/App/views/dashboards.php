@@ -5,21 +5,53 @@
     <div class="container">
         <form id="dateForm" method="post" action="/dashboards" class="d-flex flex-wrap align-items-center justify-content-center">
             <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
-            <div class="m-5 text-center">
+            
+            <!-- Period Selection -->
+            <div class="m-3 text-center">
+                <label for="period">Period</label>
+                <select class="form-select" id="period" name="period" onchange="toggleCustomDatesDashboard()">
+                    <option value="all" <?php echo (!isset($_POST['period']) || $_POST['period'] === 'all') ? 'selected' : ''; ?>>All Time</option>
+                    <option value="current_month" <?php echo (isset($_POST['period']) && $_POST['period'] === 'current_month') ? 'selected' : ''; ?>>Current Month</option>
+                    <option value="last_month" <?php echo (isset($_POST['period']) && $_POST['period'] === 'last_month') ? 'selected' : ''; ?>>Last Month</option>
+                    <option value="last_30_days" <?php echo (isset($_POST['period']) && $_POST['period'] === 'last_30_days') ? 'selected' : ''; ?>>Last 30 Days</option>
+                    <option value="last_90_days" <?php echo (isset($_POST['period']) && $_POST['period'] === 'last_90_days') ? 'selected' : ''; ?>>Last 90 Days</option>
+                    <option value="current_year" <?php echo (isset($_POST['period']) && $_POST['period'] === 'current_year') ? 'selected' : ''; ?>>Current Year</option>
+                    <option value="custom" <?php echo (isset($_POST['period']) && $_POST['period'] === 'custom') ? 'selected' : ''; ?>>Custom Range</option>
+                </select>
+            </div>
+            
+            <!-- Custom Date Range -->
+            <div class="m-3 text-center" id="startingDateDiv" style="display: <?php echo (isset($_POST['period']) && $_POST['period'] === 'custom') ? 'block' : 'none'; ?>;">
                 <label for="startingDate">Starting Date</label>
-                <input type="date" class="form-control" id="startingDate" name="startingDate" placeholder="mm/dd/yyyy">
+                <input type="date" class="form-control" id="startingDate" name="startingDate" placeholder="mm/dd/yyyy" value="<?php echo htmlspecialchars($_POST['startingDate'] ?? ''); ?>">
             </div>
-            <div class="m-5 text-center">
+            <div class="m-3 text-center" id="endingDateDiv" style="display: <?php echo (isset($_POST['period']) && $_POST['period'] === 'custom') ? 'block' : 'none'; ?>;">
                 <label for="endingDate">Ending Date</label>
-                <input type="date" class="form-control" id="endingDate" name="endingDate" placeholder="mm/dd/yyyy">
+                <input type="date" class="form-control" id="endingDate" name="endingDate" placeholder="mm/dd/yyyy" value="<?php echo htmlspecialchars($_POST['endingDate'] ?? ''); ?>">
             </div>
-            <div class="m-5 text-center">
+            
+            <div class="m-3 text-center d-flex flex-column">
+                <label class="invisible">Action</label>
                 <button type="submit" class="btn btn-primary">Show Balance</button>
-                <button type="button" class="btn btn-outline-secondary ms-2" id="currentMonthBtn">Current Month</button>
             </div>
         </form>
     </div>
 </section>
+
+<script>
+function toggleCustomDatesDashboard() {
+    const period = document.getElementById('period').value;
+    const startDateDiv = document.getElementById('startingDateDiv');
+    const endDateDiv = document.getElementById('endingDateDiv');
+    if (period === 'custom') {
+        startDateDiv.style.display = 'block';
+        endDateDiv.style.display = 'block';
+    } else {
+        startDateDiv.style.display = 'none';
+        endDateDiv.style.display = 'none';
+    }
+}
+</script>
 
 <section id="summary" name="summary">
     <div id="generalSummary" class="generalSummary container d-flex flex-column align-items-center justify-content-center border">

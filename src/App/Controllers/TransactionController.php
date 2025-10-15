@@ -168,11 +168,25 @@ class TransactionController
 
   public function dashboardsView()
   {
-    $startDate = $_POST['startingDate'] ?? null;
-    $endDate = $_POST['endingDate'] ?? null;
+    $startDate = null;
+    $endDate = null;
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['token'] = bin2hex(random_bytes(32));
+      
+      $period = $_POST['period'] ?? 'all';
+      
+      if ($period === 'custom') {
+        $startDate = $_POST['startingDate'] ?? null;
+        $endDate = $_POST['endingDate'] ?? null;
+      } else {
+        // Calculate dates based on period
+        $dates = $this->calculatePeriodDates($period);
+        $startDate = $dates['start'];
+        $endDate = $dates['end'];
+      }
     }
+    
     $csrfToken = $_SESSION['token'] ?? '';
     echo $this->view->render("dashboards.php", [
       'transactionService' => $this->transactionService,
@@ -180,6 +194,43 @@ class TransactionController
       'endDate' => $endDate,
       'csrfToken' => $csrfToken
     ]);
+  }
+  
+  private function calculatePeriodDates(string $period): array
+  {
+    $now = new \DateTime();
+    $start = null;
+    $end = null;
+    
+    switch ($period) {
+      case 'current_month':
+        $start = (clone $now)->modify('first day of this month')->format('Y-m-d');
+        $end = (clone $now)->modify('last day of this month')->format('Y-m-d');
+        break;
+      case 'last_month':
+        $start = (clone $now)->modify('first day of last month')->format('Y-m-d');
+        $end = (clone $now)->modify('last day of last month')->format('Y-m-d');
+        break;
+      case 'last_30_days':
+        $start = (clone $now)->modify('-30 days')->format('Y-m-d');
+        $end = $now->format('Y-m-d');
+        break;
+      case 'last_90_days':
+        $start = (clone $now)->modify('-90 days')->format('Y-m-d');
+        $end = $now->format('Y-m-d');
+        break;
+      case 'current_year':
+        $start = (clone $now)->modify('first day of January this year')->format('Y-m-d');
+        $end = (clone $now)->modify('last day of December this year')->format('Y-m-d');
+        break;
+      case 'all':
+      default:
+        $start = null;
+        $end = null;
+        break;
+    }
+    
+    return ['start' => $start, 'end' => $end];
   }
 
   public function createView()
