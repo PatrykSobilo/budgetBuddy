@@ -141,7 +141,7 @@
   <section id="footer">
     <div class="container">
       <footer class="py-3">
-        <p class="text-center text-body-secondary">© 2024 BudgetBuddy Sp. z o.o.</p>
+        <p class="text-center text-body-secondary">© <?php echo date('Y'); ?> BudgetBuddy Sp. z o.o.</p>
       </footer>
     </div>
   </section>

@@ -20,6 +20,8 @@ class TransactionController
   public function expensesView()
   {
     $expenses = [];
+    $chartData = ['labels' => [], 'data' => []];
+    
     if (isset($_SESSION['user'])) {
       $all = $this->transactionService->getUserTransactions();
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
@@ -68,15 +70,46 @@ class TransactionController
           return false;
         });
       }
+      
+      // Przygotowanie danych do wykresów - suma po kategoriach
+      $categoryTotals = [];
+      foreach ($expenses as $expense) {
+        $catId = $expense['expense_category_assigned_to_user_id'] ?? null;
+        $catName = 'Uncategorized';
+        
+        if ($catId && !empty($_SESSION['expenseCategories'])) {
+          foreach ($_SESSION['expenseCategories'] as $cat) {
+            if ($cat['id'] == $catId) {
+              $catName = $cat['name'];
+              break;
+            }
+          }
+        }
+        
+        if (!isset($categoryTotals[$catName])) {
+          $categoryTotals[$catName] = 0;
+        }
+        $categoryTotals[$catName] += floatval($expense['amount']);
+      }
+      
+      // Sortowanie po wartości (malejąco)
+      arsort($categoryTotals);
+      
+      $chartData['labels'] = array_keys($categoryTotals);
+      $chartData['data'] = array_values($categoryTotals);
     }
+    
     echo $this->view->render("expenses.php", [
-      'expenses' => $expenses
+      'expenses' => $expenses,
+      'chartData' => $chartData
     ]);
   }
 
   public function incomesView()
   {
     $incomes = [];
+    $chartData = ['labels' => [], 'data' => []];
+    
     if (isset($_SESSION['user'])) {
       $all = $this->transactionService->getUserTransactions();
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
@@ -115,9 +148,38 @@ class TransactionController
           return false;
         });
       }
+      
+      // Przygotowanie danych do wykresów - suma po kategoriach
+      $categoryTotals = [];
+      foreach ($incomes as $income) {
+        $catId = $income['income_category_assigned_to_user_id'] ?? null;
+        $catName = 'Uncategorized';
+        
+        if ($catId && !empty($_SESSION['incomeCategories'])) {
+          foreach ($_SESSION['incomeCategories'] as $cat) {
+            if ($cat['id'] == $catId) {
+              $catName = $cat['name'];
+              break;
+            }
+          }
+        }
+        
+        if (!isset($categoryTotals[$catName])) {
+          $categoryTotals[$catName] = 0;
+        }
+        $categoryTotals[$catName] += floatval($income['amount']);
+      }
+      
+      // Sortowanie po wartości (malejąco)
+      arsort($categoryTotals);
+      
+      $chartData['labels'] = array_keys($categoryTotals);
+      $chartData['data'] = array_values($categoryTotals);
     }
+    
     echo $this->view->render("incomes.php", [
-      'incomes' => $incomes
+      'incomes' => $incomes,
+      'chartData' => $chartData
     ]);
   }
 

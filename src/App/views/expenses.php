@@ -1,6 +1,5 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
-<?php include $this->resolve("partials/_searchForm.php"); ?>
 
 <section id="historyExpensesPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
@@ -52,6 +51,123 @@
                 }
             }
             </script>
+            
+            <!-- Search Box -->
+            <?php include $this->resolve("partials/_searchForm.php"); ?>
+            
+            <!-- Charts Section -->
+            <?php if (!empty($chartData['labels'])): ?>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Bar Chart - Expenses by Categories</h5>
+                            <canvas id="expensesBarChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Pie Chart - Expenses by Category</h5>
+                            <canvas id="expensesPieChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+            // Prepare data for charts
+            const expensesLabels = <?php echo json_encode($chartData['labels']); ?>;
+            const expensesData = <?php echo json_encode($chartData['data']); ?>;
+            
+            // Generate colors
+            const colors = [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 159, 64, 0.7)',
+                'rgba(199, 199, 199, 0.7)',
+                'rgba(83, 102, 255, 0.7)',
+                'rgba(255, 99, 255, 0.7)',
+                'rgba(99, 255, 132, 0.7)'
+            ];
+            
+            // Bar Chart
+            const barCtx = document.getElementById('expensesBarChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: expensesLabels,
+                    datasets: [{
+                        label: 'Amount (PLN)',
+                        data: expensesData,
+                        backgroundColor: colors.slice(0, expensesData.length),
+                        borderColor: colors.slice(0, expensesData.length).map(c => c.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(2) + ' PLN';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Pie Chart
+            const pieCtx = document.getElementById('expensesPieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: expensesLabels,
+                    datasets: [{
+                        data: expensesData,
+                        backgroundColor: colors.slice(0, expensesData.length),
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.toFixed(2) + ' PLN';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            </script>
+            <?php endif; ?>
+            
             <table class="table table-bordered table-transactions">
                 <thead>
                     <tr>

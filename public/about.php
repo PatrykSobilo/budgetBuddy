@@ -12,6 +12,6 @@
     </ul>
     <p class="mt-3">Budget Buddy is open source and was created as a learning project to demonstrate clean code, modern PHP practices, and user-friendly UX. If you have suggestions or want to contribute, feel free to reach out!</p>
     <hr>
-    <p class="text-muted small">&copy; 2025 Budget Buddy. All rights reserved.</p>
+    <p class="text-muted small">&copy; <?php echo date('Y'); ?> Budget Buddy. All rights reserved.</p>
   </div>
 </div>
