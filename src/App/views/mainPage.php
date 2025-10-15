@@ -12,7 +12,8 @@ if (empty($transactions) && isset($this->transactionService)) {
 <section id="historyPanel" class="py-3 mb-4">
   <div class="container d-flex flex-wrap border">
     <div class="container mt-5">
-      <h2 class="mb-4 text-center">Previous 10 Incomes/Expenses</h2>
+      <h1 class="mb-4 text-center h2">Recent Transactions</h1>
+      <div class="table-responsive">
       <table class="table table-bordered table-transactions" name="balance">
         <thead>
           <tr>
@@ -60,6 +61,7 @@ if (empty($transactions) && isset($this->transactionService)) {
         <?php endif; ?>
         </tbody>
       </table>
+      </div>
   </div>
 </div>
 </section>

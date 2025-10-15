@@ -1,0 +1,291 @@
+/* ===== MOBILE RESPONSIVE STYLES ===== */
+
+/* Navigation hamburger menu */
+.navbar-toggler {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Mobile navigation adjustments */
+@media (max-width: 991.98px) {
+  #navbar .container {
+    position: relative;
+  }
+  
+  #navbar .d-flex {
+    align-items: center;
+  }
+  
+  .navbar-toggler {
+    order: -1;
+  }
+  
+  .logout-btn-wrapper.d-lg-none {
+    order: 0;
+  }
+  
+  #navbarNav {
+    width: 100%;
+    margin-top: 0.5rem;
+    order: 1;
+  }
+  
+  #navbarNav ul {
+    padding: 0;
+  }
+  
+  #navbarNav .nav-link {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Tablet and mobile table responsiveness */
+@media (max-width: 767.98px) {
+  /* Make tables scrollable horizontally */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    font-size: 0.875rem;
+  }
+  
+  table th,
+  table td {
+    padding: 0.5rem !important;
+    white-space: nowrap;
+  }
+  
+  /* Stack cards vertically */
+  .row > [class*='col-'] {
+    margin-bottom: 1rem;
+  }
+  
+  /* Charts responsive sizing */
+  canvas {
+    max-height: 250px !important;
+  }
+  
+  /* Forms and inputs */
+  .form-control,
+  .form-select,
+  .btn {
+    font-size: 0.9rem;
+  }
+  
+  /* Modal adjustments */
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  /* Settings page tabs */
+  .nav-tabs .nav-link {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Reduce heading sizes for mobile */
+  h1, .h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  h2, .h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  h3, .h3 {
+    font-size: 1.1rem !important;
+  }
+  
+  /* Dashboard balance cards */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Adjust padding for mobile */
+  .container,
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Search form adjustments */
+  .col-md-4,
+  .col-md-2 {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Period filter adjustments */
+  .period-filter-form .row {
+    flex-direction: column;
+  }
+  
+  .period-filter-form .col-md-6,
+  .period-filter-form .col-md-4,
+  .period-filter-form .col-md-2 {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Extra small devices (phones in portrait) */
+@media (max-width: 575.98px) {
+  body {
+    font-size: 0.875rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Stack all columns on small phones */
+  [class*='col-'] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Reduce card padding */
+  .card {
+    padding: 0.75rem !important;
+  }
+  
+  .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  /* Make sure charts fit */
+  canvas {
+    max-height: 200px !important;
+  }
+  
+  /* Adjust button groups */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .btn-group .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    border-radius: 0.3rem !important;
+  }
+  
+  /* Settings input groups */
+  .input-group {
+    flex-direction: column;
+  }
+  
+  .input-group .form-control {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-group .btn {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* iOS specific adjustments */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for iOS Safari viewport height issues */
+  body {
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Smooth scrolling for iOS */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Android specific adjustments */
+@media screen and (max-width: 767.98px) {
+  /* Better touch targets for Android */
+  .btn,
+  .nav-link,
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Prevent text selection on double-tap */
+  .btn,
+  .nav-link {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 991.98px) and (orientation: landscape) {
+  /* Reduce vertical spacing in landscape */
+  .mb-3,
+  .my-3 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .mb-5,
+  .my-5 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Reduce header height */
+  #navbar {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  
+  /* Compact charts in landscape */
+  canvas {
+    max-height: 180px !important;
+  }
+}
+
+/* Print styles (bonus) */
+@media print {
+  .navbar,
+  .logout-btn-wrapper,
+  .btn:not(.d-print-inline),
+  #navbarNav {
+    display: none !important;
+  }
+  
+  .container {
+    max-width: 100%;
+  }
+  
+  table {
+    page-break-inside: avoid;
+  }
+}

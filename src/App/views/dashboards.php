@@ -1,6 +1,10 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
 
+<div class="container mt-4">
+    <h1 class="text-center mb-4 h2">Dashboards</h1>
+</div>
+
 <section id="userParameters" name="userParameters">
     <div class="container">
         <form id="dateForm" method="post" action="/dashboards" class="d-flex flex-wrap align-items-center justify-content-center">
@@ -59,6 +63,7 @@ function toggleCustomDatesDashboard() {
             <div class="table-container w-auto">
                 <div class="container mt-5 text-center">
                     <h2 class="mb-4 justify-content-center">Balance</h2>
+                    <div class="table-responsive">
                     <table class="table table-bordered mx-auto" name="balance" style="width:auto;">
                         <thead>
                             <tr>
@@ -81,6 +86,7 @@ function toggleCustomDatesDashboard() {
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
                 <div class="container mt-4 mb-4 text-center">
                     <h4 class="mb-3">Expenses vs Incomes</h4>
@@ -96,6 +102,7 @@ function toggleCustomDatesDashboard() {
     <div class="container d-flex flex-column align-items-center justify-content-center border">
         <div class="container mt-5 text-center">
             <h2 class="mb-4 justify-content-center">Balance by Categories</h2>
+            <div class="table-responsive">
             <table class="table table-bordered mx-auto" name="balance" style="width:auto;">
                 <thead>
                     <tr>
@@ -106,6 +113,7 @@ function toggleCustomDatesDashboard() {
                 </thead>
                 <tbody></tbody>
             </table>
+            </div>
         </div>
     </div>
 </section>

@@ -1,7 +1,7 @@
 <div id="customAddExpenseModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">
-      <h5 id="expenseModalHeader">Expense - New</h5>
+      <div id="expenseModalHeader" class="fw-bold" style="font-size: 1.25rem;">Expense - New</div>
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddExpenseModal')">&times;</button>
     </div>
     <div class="custom-modal-body">
@@ -83,7 +83,7 @@
 <div id="customAddIncomeModal" class="custom-modal">
   <div class="custom-modal-dialog">
     <div class="custom-modal-header">
-      <h5 id="incomeModalHeader">Income - New</h5>
+      <div id="incomeModalHeader" class="fw-bold" style="font-size: 1.25rem;">Income - New</div>
       <button type="button" class="btn-close" aria-label="Close" onclick="closeCustomModal('customAddIncomeModal')">&times;</button>
     </div>
     <div class="custom-modal-body">

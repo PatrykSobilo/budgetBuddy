@@ -31,9 +31,9 @@ if (!empty($_SESSION['settings_section'])) {
 <?php endif; ?>
 
 <section class="container mt-5 d-flex flex-column align-items-center justify-content-center">
-  <h1 class="mb-4 text-center">Settings</h1>
+  <h1 class="mb-4 text-center h2">Settings</h1>
   <div id="profile" class="settings-section mb-5 w-100" style="max-width: 600px;<?php if($sectionToShow !== 'profile') echo 'display:none;'; ?>">
-    <h3 class="text-center">Profile</h3>
+    <h2 class="text-center h3">Profile</h2>
     <?php if (isset($user) && is_array($user)): ?>
       <div class="card p-3 shadow-sm">
         <div class="mb-3">
@@ -66,7 +66,7 @@ if (!empty($_SESSION['settings_section'])) {
     <?php endif; ?>
   </div>
   <div id="expense-categories" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'expense-categories') ? '' : 'display:none;'; ?> max-width: 600px;">
-    <h3 class="text-center">Expense Categories</h3>
+    <h2 class="text-center h3">Expense Categories</h2>
     <?php if (!empty($_SESSION['expenseCategories'])): ?>
       <div class="card p-3 shadow-sm">
         <?php foreach ($_SESSION['expenseCategories'] as $category): ?>
@@ -90,7 +90,7 @@ if (!empty($_SESSION['settings_section'])) {
     <?php endif; ?>
   </div>
   <div id="incomes-categories" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'incomes-categories') ? '' : 'display:none;'; ?> max-width: 600px;">
-    <h3 class="text-center">Incomes Categories</h3>
+    <h2 class="text-center h3">Incomes Categories</h2>
     <?php if (!empty($_SESSION['incomeCategories'])): ?>
       <div class="card p-3 shadow-sm">
         <?php foreach ($_SESSION['incomeCategories'] as $category): ?>
@@ -114,7 +114,7 @@ if (!empty($_SESSION['settings_section'])) {
     <?php endif; ?>
   </div>
   <div id="payment-methods" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'payment-methods') ? '' : 'display:none;'; ?> max-width: 600px;">
-    <h3 class="text-center">Payment Methods</h3>
+    <h2 class="text-center h3">Payment Methods</h2>
     <?php if (!empty($_SESSION['paymentMethods'])): ?>
       <div class="card p-3 shadow-sm">
         <?php foreach ($_SESSION['paymentMethods'] as $method): ?>

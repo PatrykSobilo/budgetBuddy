@@ -4,7 +4,7 @@
 <section id="historyExpensesPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
         <div class="container mt-5">
-            <h2 class="mb-4 text-center">Expenses</h2>
+            <h1 class="mb-4 text-center h2">Expenses</h1>
             
             <!-- Period Filter -->
             <div class="row mb-4">
@@ -61,7 +61,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title text-center">Bar Chart - Expenses by Categories</h5>
+                            <div class="fw-bold text-center mb-3" style="font-size: 1.25rem;">Bar Chart - Expenses by Categories</div>
                             <canvas id="expensesBarChart" style="max-height: 300px;"></canvas>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title text-center">Pie Chart - Expenses by Category</h5>
+                            <div class="fw-bold text-center mb-3" style="font-size: 1.25rem;">Pie Chart - Expenses by Category</div>
                             <canvas id="expensesPieChart" style="max-height: 300px;"></canvas>
                         </div>
                     </div>
@@ -168,6 +168,7 @@
             </script>
             <?php endif; ?>
             
+            <div class="table-responsive">
             <table class="table table-bordered table-transactions">
                 <thead>
                     <tr>
@@ -239,6 +240,7 @@
                 <?php endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </section>
