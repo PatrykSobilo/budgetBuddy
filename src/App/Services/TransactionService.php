@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Framework\Database;
+use App\Repositories\TransactionRepository;
 
 class TransactionService
 {
   public function __construct(
     private Database $db,
-    private BudgetCalculatorService $budgetCalculator
+    private BudgetCalculatorService $budgetCalculator,
+    private TransactionRepository $transactionRepository
   ) {}
 
   public function create(array $formData, int $userId)
@@ -33,54 +35,38 @@ class TransactionService
   public function createIncome(array $formData, int $userId)
   {
     $formattedDate = "{$formData['date']} 00:00:00";
-    $this->db->query(
-      "INSERT INTO incomes(user_id, income_category_assigned_to_user_id, amount, date_of_income, income_comment)
-      VALUES(:user_id, :income_category_assigned_to_user_id, :amount, :date_of_income, :income_comment)",
-      [
-        'user_id' => $userId,
-        'income_category_assigned_to_user_id' => $formData['incomesCategory'],
-        'amount' => $formData['amount'],
-        'date_of_income' => $formattedDate,
-        'income_comment' => $formData['description']
-      ]
-    );
+    $this->transactionRepository->createIncome([
+      'user_id' => $userId,
+      'income_category_assigned_to_user_id' => $formData['incomesCategory'],
+      'amount' => $formData['amount'],
+      'date_of_income' => $formattedDate,
+      'income_comment' => $formData['description']
+    ]);
   }
 
   public function createExpense(array $formData, int $userId)
   {
     $formattedDate = "{$formData['date']} 00:00:00";
-    $this->db->query(
-      "INSERT INTO expenses(user_id, expense_category_assigned_to_user_id, payment_method_assigned_to_user_id, amount, date_of_expense, expense_comment)
-      VALUES(:user_id, :expense_category_assigned_to_user_id, :payment_method_assigned_to_user_id, :amount, :date_of_expense, :expense_comment)",
-      [
-        'user_id' => $userId,
-        'expense_category_assigned_to_user_id' => $formData['expensesCategory'],
-        'payment_method_assigned_to_user_id' => $formData['paymentMethods'],
-        'amount' => $formData['amount'],
-        'date_of_expense' => $formattedDate,
-        'expense_comment' => $formData['description']
-      ]
-    );
+    $this->transactionRepository->createExpense([
+      'user_id' => $userId,
+      'expense_category_assigned_to_user_id' => $formData['expensesCategory'],
+      'payment_method_assigned_to_user_id' => $formData['paymentMethods'],
+      'amount' => $formData['amount'],
+      'date_of_expense' => $formattedDate,
+      'expense_comment' => $formData['description']
+    ]);
   }
 
   public function getUserTransactions(int $userId, int $limit = null, string $searchTerm = '')
   {
-    $expenses = $this->db->query(
-      "SELECT 'Expense' AS type, id, expense_comment AS description, amount, date_of_expense AS date, expense_category_assigned_to_user_id, payment_method_assigned_to_user_id
-       FROM expenses
-       WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
-    $incomes = $this->db->query(
-      "SELECT 'Income' AS type, id, income_comment AS description, amount, date_of_income AS date, income_category_assigned_to_user_id
-       FROM incomes
-       WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
+    $expenses = $this->transactionRepository->getAllExpenses($userId);
+    $incomes = $this->transactionRepository->getAllIncomes($userId);
+    
     $allTransactions = array_merge($expenses, $incomes);
     usort($allTransactions, function($a, $b) {
       return strtotime($b['date']) <=> strtotime($a['date']);
     });
+    
     if ($limit !== null && $limit > 0) {
       return array_slice($allTransactions, 0, $limit);
     }
@@ -113,24 +99,12 @@ class TransactionService
 
   public function deleteExpenseById($expenseId, int $userId)
   {
-    $this->db->query(
-      "DELETE FROM expenses WHERE id = :id AND user_id = :user_id",
-      [
-        'id' => $expenseId,
-        'user_id' => $userId
-      ]
-    );
+    $this->transactionRepository->deleteExpense((int)$expenseId, $userId);
   }
 
   public function deleteIncomeById($incomeId, int $userId)
   {
-    $this->db->query(
-      "DELETE FROM incomes WHERE id = :id AND user_id = :user_id",
-      [
-        'id' => $incomeId,
-        'user_id' => $userId
-      ]
-    );
+    $this->transactionRepository->deleteIncome((int)$incomeId, $userId);
   }
 
   public function addTransaction(array $formData, ValidatorService $validatorService, int $userId, string $csrfToken)
@@ -195,16 +169,15 @@ class TransactionService
       ];
     }
     $formattedDate = "{$formData['date']} 00:00:00";
-    $this->db->query(
-      "UPDATE expenses SET expense_category_assigned_to_user_id = :cat, payment_method_assigned_to_user_id = :pay, amount = :amount, date_of_expense = :date, expense_comment = :desc WHERE id = :id AND user_id = :user_id",
+    $this->transactionRepository->updateExpense(
+      (int)$formData['expense_id'],
+      $userId,
       [
-        'cat' => $formData['expensesCategory'],
-        'pay' => $formData['paymentMethods'],
+        'expensesCategory' => $formData['expensesCategory'],
+        'paymentMethods' => $formData['paymentMethods'],
         'amount' => $formData['amount'],
         'date' => $formattedDate,
-        'desc' => $formData['description'],
-        'id' => $formData['expense_id'],
-        'user_id' => $userId
+        'description' => $formData['description']
       ]
     );
     $csrfToken = bin2hex(random_bytes(32));
@@ -239,15 +212,14 @@ class TransactionService
       ];
     }
     $formattedDate = "{$formData['date']} 00:00:00";
-    $this->db->query(
-      "UPDATE incomes SET income_category_assigned_to_user_id = :cat, amount = :amount, date_of_income = :date, income_comment = :desc WHERE id = :id AND user_id = :user_id",
+    $this->transactionRepository->updateIncome(
+      (int)$formData['income_id'],
+      $userId,
       [
-        'cat' => $formData['incomesCategory'],
+        'incomesCategory' => $formData['incomesCategory'],
         'amount' => $formData['amount'],
         'date' => $formattedDate,
-        'desc' => $formData['description'],
-        'id' => $formData['income_id'],
-        'user_id' => $userId
+        'description' => $formData['description']
       ]
     );
     $csrfToken = bin2hex(random_bytes(32));

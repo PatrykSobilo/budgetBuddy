@@ -20,6 +20,7 @@ use App\Services\{
   AuthService,
   BudgetCalculatorService
 };
+use App\Repositories\TransactionRepository;
 
 return [
   TemplateEngine::class => fn () => new TemplateEngine(Paths::VIEW),
@@ -38,11 +39,16 @@ return [
     $db = $container->get(Database::class);
     return new BudgetCalculatorService($db);
   },
+  TransactionRepository::class => function (Container $container) {
+    $db = $container->get(Database::class);
+    return new TransactionRepository($db);
+  },
   TransactionService::class => function (Container $container) {
     $db = $container->get(Database::class);
     $budgetCalculator = $container->get(BudgetCalculatorService::class);
+    $transactionRepository = $container->get(TransactionRepository::class);
 
-    return new TransactionService($db, $budgetCalculator);
+    return new TransactionService($db, $budgetCalculator, $transactionRepository);
   },
   ReceiptService::class => function (Container $container) {
     $db = $container->get(Database::class);
