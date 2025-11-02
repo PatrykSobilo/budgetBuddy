@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Framework\TemplateEngine;
-use App\Services\{TransactionService, AuthService, Request};
+use App\Services\{TransactionService, AuthService, Request, UserService};
 
 class PlannerController
 {
@@ -13,7 +13,8 @@ class PlannerController
         private TemplateEngine $view,
         private TransactionService $transactionService,
         private AuthService $auth,
-        private Request $request
+        private Request $request,
+        private UserService $userService
     ) {}
 
     public function planner()
@@ -42,12 +43,16 @@ class PlannerController
             }
         }
         
+        $userId = $this->auth->getUserId();
         echo $this->view->render('planner.php', [
             'title' => 'Planner & Analyzer',
             'categoriesWithLimits' => $categoriesWithLimits,
             'selectedCategoryId' => $selectedCategoryId,
             'timelineData' => $timelineData,
-            'selectedCategoryName' => $selectedCategoryName
+            'selectedCategoryName' => $selectedCategoryName,
+            'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+            'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
+            'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
         ]);
     }
 }

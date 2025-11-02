@@ -183,20 +183,28 @@ class SettingsController
                 $this->session->set('token', bin2hex(random_bytes(32)));
                 $csrfToken = $this->session->get('token');
             }
+            $userId = $this->auth->getUserId();
             echo $this->view->render('settings.php', [
                 'title' => 'Settings',
                 'user' => $userData,
                 'categoryErrors' => $errors,
                 'categoryOld' => $old,
-                'csrfToken' => $csrfToken
+                'csrfToken' => $csrfToken,
+                'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+                'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
+                'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
             ]);
             return;
         }
 
+        $userId = $this->auth->getUserId();
         echo $this->view->render('settings.php', [
             'title' => 'Settings',
             'user' => $userData,
-            'csrfToken' => $csrfToken
+            'csrfToken' => $csrfToken,
+            'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+            'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
+            'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
         ]);
     }
 

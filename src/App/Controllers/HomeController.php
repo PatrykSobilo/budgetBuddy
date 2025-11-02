@@ -6,13 +6,14 @@ namespace App\Controllers;
 
 use Framework\TemplateEngine;
 use App\Config\Paths;
-use App\Services\{TransactionService, AuthService};
+use App\Services\{TransactionService, AuthService, UserService};
 
 class HomeController {
     public function __construct(
         private TemplateEngine $view,
         private TransactionService $transactionService,
-        private AuthService $auth
+        private AuthService $auth,
+        private UserService $userService
     ) {}
 
     public function home(){
@@ -31,10 +32,14 @@ class HomeController {
             $budgetSummary = $this->transactionService->getBudgetSummary($userId);
         }
         
+        $userId = $this->auth->getUserId();
         echo $this->view->render("mainPage.php", [
             'title' => 'Main page',
             'transactions' => $transactions,
-            'budgetSummary' => $budgetSummary
+            'budgetSummary' => $budgetSummary,
+            'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+            'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
+            'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
         ]);
     }
 }

@@ -16,7 +16,8 @@ use App\Services\{
   ResponseService,
   SessionService,
   Request,
-  AuthService
+  AuthService,
+  UserService
 };
 
 class TransactionController
@@ -31,7 +32,8 @@ class TransactionController
     private ResponseService $response,
     private SessionService $session,
     private Request $request,
-    private AuthService $auth
+    private AuthService $auth,
+    private UserService $userService
   ) {}
 
   public function expensesView()
@@ -65,9 +67,12 @@ class TransactionController
       $chartData = $this->viewHelper->prepareChartDataByCategory($expenses, 'expense');
     }
     
+    $userId = $this->auth->getUserId();
     echo $this->view->render("expenses.php", [
       'expenses' => $expenses,
-      'chartData' => $chartData
+      'chartData' => $chartData,
+      'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+      'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
     ]);
   }
 
@@ -102,9 +107,11 @@ class TransactionController
       $chartData = $this->viewHelper->prepareChartDataByCategory($incomes, 'income');
     }
     
+    $userId = $this->auth->getUserId();
     echo $this->view->render("incomes.php", [
       'incomes' => $incomes,
-      'chartData' => $chartData
+      'chartData' => $chartData,
+      'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : []
     ]);
   }
 
@@ -136,7 +143,10 @@ class TransactionController
       'startDate' => $startDate,
       'endDate' => $endDate,
       'csrfToken' => $csrfToken,
-      'userId' => $userId
+      'userId' => $userId,
+      'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+      'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
+      'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
     ]);
   }
 
@@ -162,7 +172,12 @@ class TransactionController
       }
       $this->response->redirect('/mainPage');
     } else {
-      echo $this->view->render('mainPage.php', $result);
+      $userId = $this->auth->getUserId();
+      echo $this->view->render('mainPage.php', array_merge($result, [
+        'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
+        'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
+        'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
+      ]));
     }
   }
 
@@ -180,7 +195,11 @@ class TransactionController
       $searchTerm = $this->request->get('s', '');
       $all = $this->transactionService->getUserTransactions($userId, null, $searchTerm);
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
-      echo $this->view->render('expenses.php', array_merge($result, ['expenses' => $expenses]));
+      echo $this->view->render('expenses.php', array_merge($result, [
+        'expenses' => $expenses,
+        'expenseCategories' => $this->userService->getExpenseCategories($userId),
+        'paymentMethods' => $this->userService->getPaymentMethods($userId)
+      ]));
     }
   }
 
@@ -198,7 +217,10 @@ class TransactionController
       $searchTerm = $this->request->get('s', '');
       $all = $this->transactionService->getUserTransactions($userId, null, $searchTerm);
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
-      echo $this->view->render('incomes.php', array_merge($result, ['incomes' => $incomes]));
+      echo $this->view->render('incomes.php', array_merge($result, [
+        'incomes' => $incomes,
+        'incomeCategories' => $this->userService->getIncomeCategories($userId)
+      ]));
     }
   }
 
