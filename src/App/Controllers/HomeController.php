@@ -6,12 +6,13 @@ namespace App\Controllers;
 
 use Framework\TemplateEngine;
 use App\Config\Paths;
-use App\Services\TransactionService;
+use App\Services\{TransactionService, AuthService};
 
 class HomeController {
     public function __construct(
         private TemplateEngine $view,
-        private TransactionService $transactionService
+        private TransactionService $transactionService,
+        private AuthService $auth
     ) {}
 
     public function home(){
@@ -24,9 +25,9 @@ class HomeController {
         $transactions = null;
         $budgetSummary = null;
         
-        if (isset($_SESSION['user'])) {
+        if ($this->auth->check()) {
             $transactions = $this->transactionService->getUserTransactions(10);
-            $budgetSummary = $this->transactionService->getBudgetSummary((int)$_SESSION['user']);
+            $budgetSummary = $this->transactionService->getBudgetSummary($this->auth->getUserId());
         }
         
         echo $this->view->render("mainPage.php", [

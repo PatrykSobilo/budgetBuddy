@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Framework\TemplateEngine;
-use App\Services\TransactionService;
+use App\Services\{TransactionService, AuthService, Request};
 
 class PlannerController
 {
     public function __construct(
         private TemplateEngine $view,
-        private TransactionService $transactionService
+        private TransactionService $transactionService,
+        private AuthService $auth,
+        private Request $request
     ) {}
 
     public function planner()
@@ -21,13 +23,13 @@ class PlannerController
         $timelineData = null;
         $selectedCategoryName = null;
         
-        if (isset($_SESSION['user'])) {
-            $userId = (int)$_SESSION['user'];
+        if ($this->auth->check()) {
+            $userId = $this->auth->getUserId();
             $categoriesWithLimits = $this->transactionService->getCategoriesWithLimits($userId);
             
             // Obsługa wyboru kategorii do wykresu timeline
-            if (isset($_GET['category_id']) && !empty($categoriesWithLimits)) {
-                $selectedCategoryId = (int)$_GET['category_id'];
+            if ($this->request->hasGet('category_id') && !empty($categoriesWithLimits)) {
+                $selectedCategoryId = (int)$this->request->get('category_id');
                 $timelineData = $this->transactionService->getCategoryTimeline($userId, $selectedCategoryId);
                 
                 // Znajdź nazwę wybranej kategorii

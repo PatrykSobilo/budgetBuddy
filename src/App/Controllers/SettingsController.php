@@ -86,18 +86,18 @@ class SettingsController
     public function settings()
     {
         $userData = null;
-        if (isset($_SESSION['user'])) {
-            $userData = $this->userService->getUserById((int)$_SESSION['user']);
+        if ($this->auth->check()) {
+            $userData = $this->userService->getUserById($this->auth->getUserId());
         }
-        $csrfToken = $_SESSION['token'] ?? '';
+        $csrfToken = $this->session->get('token', '');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])) {
-            $type = $_POST['type'];
-            $categoryName = trim($_POST['category_name'] ?? $_POST['name'] ?? '');
+        if ($this->request->isPost() && $this->request->hasPost('type')) {
+            $type = $this->request->post('type');
+            $categoryName = trim($this->request->post('category_name', $this->request->post('name', '')));
             if (in_array($type, ['expense_category', 'income_category', 'expense_category_edit', 'income_category_edit', 'expense', 'income', 'payment_method', 'payment_method_edit'])) {
                 $categoryName = mb_convert_case($categoryName, MB_CASE_TITLE, "UTF-8");
             }
-            $userId = $_SESSION['user'] ?? null;
+            $userId = $this->auth->getUserId();
             $errors = [];
             $old = [
                 'name' => $categoryName,
@@ -113,7 +113,7 @@ class SettingsController
                         $this->settingsService->getDb()
                     );
                 } elseif ($type === 'payment_method_edit') {
-                    $methodId = (int)($_POST['category_id'] ?? 0);
+                    $methodId = (int)$this->request->post('category_id', 0);
                     $this->validatorService->validateCategory(
                         ['name' => $categoryName, 'id' => $methodId],
                         'payment',
@@ -121,7 +121,7 @@ class SettingsController
                         $this->settingsService->getDb()
                     );
                 } elseif ($type === 'expense_category_edit') {
-                    $catId = (int)($_POST['category_id'] ?? 0);
+                    $catId = (int)$this->request->post('category_id', 0);
                     $this->validatorService->validateCategory(
                         ['name' => $categoryName, 'id' => $catId],
                         'expense',
@@ -129,7 +129,7 @@ class SettingsController
                         $this->settingsService->getDb()
                     );
                 } elseif ($type === 'income_category_edit') {
-                    $catId = (int)($_POST['category_id'] ?? 0);
+                    $catId = (int)$this->request->post('category_id', 0);
                     $this->validatorService->validateCategory(
                         ['name' => $categoryName, 'id' => $catId],
                         'income',
@@ -147,42 +147,41 @@ class SettingsController
                 if ($userId && $categoryName !== '') {
                     if ($type === 'expense_category' || $type === 'expense') {
                         $this->settingsService->addExpenseCategory((int)$userId, $categoryName);
-                        $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
-                        $_SESSION['settings_section'] = 'expense-categories';
+                        $this->session->set('expenseCategories', $this->userService->getExpenseCategories($userId));
+                        $this->flash->set('settings_section', 'expense-categories');
                     } elseif ($type === 'income_category' || $type === 'income') {
                         $this->settingsService->addIncomeCategory((int)$userId, $categoryName);
-                        $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
-                        $_SESSION['settings_section'] = 'incomes-categories';
+                        $this->session->set('incomeCategories', $this->userService->getIncomeCategories($userId));
+                        $this->flash->set('settings_section', 'incomes-categories');
                     } elseif ($type === 'payment_method') {
                         $this->settingsService->addPaymentMethod((int)$userId, $categoryName);
-                        $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
-                        $_SESSION['settings_section'] = 'payment-methods';
+                        $this->session->set('paymentMethods', $this->userService->getPaymentMethods($userId));
+                        $this->flash->set('settings_section', 'payment-methods');
                     } elseif ($type === 'payment_method_edit') {
-                        $methodId = (int)($_POST['category_id'] ?? 0);
+                        $methodId = (int)$this->request->post('category_id', 0);
                         $this->settingsService->updatePaymentMethod((int)$userId, $methodId, $categoryName);
-                        $_SESSION['paymentMethods'] = $this->userService->getPaymentMethods($userId);
-                        $_SESSION['settings_section'] = 'payment-methods';
+                        $this->session->set('paymentMethods', $this->userService->getPaymentMethods($userId));
+                        $this->flash->set('settings_section', 'payment-methods');
                     } elseif ($type === 'expense_category_edit') {
-                        $catId = (int)($_POST['category_id'] ?? 0);
-                        $categoryLimit = isset($_POST['category_limit']) && $_POST['category_limit'] !== '' 
-                            ? (float)$_POST['category_limit'] 
+                        $catId = (int)$this->request->post('category_id', 0);
+                        $categoryLimit = $this->request->hasPost('category_limit') && $this->request->post('category_limit') !== '' 
+                            ? (float)$this->request->post('category_limit') 
                             : null;
                         $this->settingsService->updateExpenseCategory((int)$userId, $catId, $categoryName, $categoryLimit);
-                        $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
-                        $_SESSION['settings_section'] = 'expense-categories';
+                        $this->session->set('expenseCategories', $this->userService->getExpenseCategories($userId));
+                        $this->flash->set('settings_section', 'expense-categories');
                     } elseif ($type === 'income_category_edit') {
-                        $catId = (int)($_POST['category_id'] ?? 0);
+                        $catId = (int)$this->request->post('category_id', 0);
                         $this->settingsService->updateIncomeCategory((int)$userId, $catId, $categoryName);
-                        $_SESSION['incomeCategories'] = $this->userService->getIncomeCategories($userId);
-                        $_SESSION['settings_section'] = 'incomes-categories';
+                        $this->session->set('incomeCategories', $this->userService->getIncomeCategories($userId));
+                        $this->flash->set('settings_section', 'incomes-categories');
                     }
-                    header('Location: /settings');
-                    exit;
+                    $this->response->redirect('/settings');
                 }
             } catch (\Framework\Exceptions\ValidationException $e) {
                 $errors = $e->errors;
-                $_SESSION['token'] = bin2hex(random_bytes(32));
-                $csrfToken = $_SESSION['token'];
+                $this->session->set('token', bin2hex(random_bytes(32)));
+                $csrfToken = $this->session->get('token');
             }
             echo $this->view->render('settings.php', [
                 'title' => 'Settings',
@@ -203,32 +202,29 @@ class SettingsController
 
     public function editUser()
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: /login');
-            exit;
-        }
-        $userId = $_SESSION['user'];
-        $type = $_POST['type'] ?? '';
+        $this->auth->requireAuth('/login');
+        
+        $userId = $this->auth->getUserId();
+        $type = $this->request->post('type', '');
         $errors = [];
-        $old = $_POST;
-        $csrfToken = $_SESSION['token'] ?? '';
+        $old = $this->request->postAll();
+        $csrfToken = $this->session->get('token', '');
         try {
             if ($type === 'email') {
-                $this->userService->updateEmail($userId, $_POST['email'] ?? '', $this->validatorService);
+                $this->userService->updateEmail($userId, $this->request->post('email', ''), $this->validatorService);
             } elseif ($type === 'age') {
-                $this->userService->updateAge($userId, $_POST['age'] ?? '', $this->validatorService);
+                $this->userService->updateAge($userId, $this->request->post('age', ''), $this->validatorService);
             } elseif ($type === 'password') {
-                $this->userService->updatePassword($userId, $_POST, $this->validatorService, $this->userService->getDb());
+                $this->userService->updatePassword($userId, $this->request->postAll(), $this->validatorService, $this->userService->getDb());
             }
             // Odśwież dane użytkownika w sesji
             $userData = $this->userService->getUserById($userId);
-            $_SESSION['userData'] = $userData;
-            header('Location: /settings');
-            exit;
+            $this->session->set('userData', $userData);
+            $this->response->redirect('/settings');
         } catch (\Framework\Exceptions\ValidationException $e) {
             $errors = $e->errors;
-            $_SESSION['token'] = bin2hex(random_bytes(32));
-            $csrfToken = $_SESSION['token'];
+            $this->session->set('token', bin2hex(random_bytes(32)));
+            $csrfToken = $this->session->get('token');
         }
         echo $this->view->render('settings.php', [
             'title' => 'Settings',
@@ -244,19 +240,18 @@ class SettingsController
      */
     public function deleteAccount()
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: /login');
-            exit;
-        }
-        $userId = $_SESSION['user'];
+        $this->auth->requireAuth('/login');
+        
+        $userId = $this->auth->getUserId();
         $this->userService->deleteUserAndData($userId);
+        
         // Wyloguj użytkownika i wyczyść sesję
-        unset($_SESSION['user']);
-        session_destroy();
-        session_regenerate_id();
+        $this->session->flush();
+        $this->session->regenerate(true);
+        
         $params = session_get_cookie_params();
         setcookie('PHPSESSID', '', time() - 3600, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-        header('Location: /');
-        exit;
+        
+        $this->response->redirect('/');
     }
 }

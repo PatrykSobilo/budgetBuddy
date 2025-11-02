@@ -5,13 +5,24 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Framework\TemplateEngine;
-use App\Services\{ValidatorService, UserService};
+use App\Services\{
+    ValidatorService,
+    UserService,
+    ResponseService,
+    Request
+};
 
 use function Framework\dd;
 
 class AuthController
 {
-    public function __construct(private TemplateEngine $view, private ValidatorService $validatorService, private UserService $userService) {}
+    public function __construct(
+        private TemplateEngine $view,
+        private ValidatorService $validatorService,
+        private UserService $userService,
+        private ResponseService $response,
+        private Request $request
+    ) {}
 
     public function registerView()
     {
@@ -20,13 +31,13 @@ class AuthController
 
     public function register()
     {
-        $this->validatorService->validateRegister($_POST);
+        $this->validatorService->validateRegister($this->request->postAll());
 
-        $this->userService->isEmailTaken($_POST['email']);
+        $this->userService->isEmailTaken($this->request->post('email'));
 
-        $this->userService->createUser($_POST);
+        $this->userService->createUser($this->request->postAll());
 
-        redirectTo('/mainPage');
+        $this->response->redirect('/mainPage');
     }
 
     public function loginView()
@@ -36,17 +47,17 @@ class AuthController
 
     public function login()
     {
-        $this->validatorService->validateLogin($_POST);
+        $this->validatorService->validateLogin($this->request->postAll());
 
-        $this->userService->login($_POST);
+        $this->userService->login($this->request->postAll());
 
-        redirectTo('/mainPage');
+        $this->response->redirect('/mainPage');
     }
 
     public function logout()
     {
         $this->userService->logout();
 
-        redirectTo('/');
+        $this->response->redirect('/');
     }
 }
