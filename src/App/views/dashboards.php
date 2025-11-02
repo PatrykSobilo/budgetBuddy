@@ -98,26 +98,6 @@ function toggleCustomDatesDashboard() {
     </div>
 </section>
 
-<section id="summaryByCategories" name="summaryByCategories" class="mt-5 mb-5">
-    <div class="container d-flex flex-column align-items-center justify-content-center border">
-        <div class="container mt-5 text-center">
-            <h2 class="mb-4 justify-content-center">Balance by Categories</h2>
-            <div class="table-responsive">
-            <table class="table table-bordered mx-auto" name="balance" style="width:auto;">
-                <thead>
-                    <tr>
-                        <th>Category Type</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            </div>
-        </div>
-    </div>
-</section>
-
 <?php include $this->resolve("partials/_footer.php"); ?>
 
 <script>
