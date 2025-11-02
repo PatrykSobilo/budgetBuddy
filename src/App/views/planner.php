@@ -63,7 +63,7 @@
 
       <!-- Category Timeline Chart (Opcja 3) -->
       <div class="card shadow-sm" id="timelineSection">
-        <div class="card-header bg-info text-white">
+        <div class="card-header bg-primary text-white">
           <h3 class="h5 mb-0">📈 Category Spending Timeline</h3>
         </div>
         <div class="card-body">
@@ -99,11 +99,11 @@
 
             <script>
               document.addEventListener('DOMContentLoaded', function() {
-                // Płynne przewijanie do wykresu po wyborze kategorii
+                // Natychmiastowe przewijanie do wykresu po wyborze kategorii
                 if (window.location.hash === '#timelineSection') {
                   setTimeout(() => {
                     document.getElementById('timelineSection').scrollIntoView({ 
-                      behavior: 'smooth', 
+                      behavior: 'auto', 
                       block: 'center' 
                     });
                   }, 100);
