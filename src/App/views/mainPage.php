@@ -20,7 +20,7 @@ $budgetSummary = $budgetSummary ?? null;
     ?>;">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5 class="card-title mb-0">💰 Monthly Budget Status</h5>
+          <h5 class="card-title mb-0">Monthly Budget Status</h5>
           <span class="badge bg-<?php 
             echo $percentage >= 100 ? 'danger' : ($percentage >= 80 ? 'warning' : 'success'); 
           ?> fs-6">

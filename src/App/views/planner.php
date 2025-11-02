@@ -9,7 +9,7 @@
       <!-- Progress Bars Dashboard (Opcja 1) -->
       <div class="card shadow-sm mb-5">
         <div class="card-header bg-primary text-white">
-          <h3 class="h5 mb-0">💰 Category Budget Overview</h3>
+          <h3 class="h5 mb-0">Category Budget Overview</h3>
         </div>
         <div class="card-body">
           <?php foreach ($categoriesWithLimits as $category): ?>
@@ -64,7 +64,7 @@
       <!-- Category Timeline Chart (Opcja 3) -->
       <div class="card shadow-sm" id="timelineSection">
         <div class="card-header bg-primary text-white">
-          <h3 class="h5 mb-0">📈 Category Spending Timeline</h3>
+          <h3 class="h5 mb-0">Category Spending Timeline</h3>
         </div>
         <div class="card-body">
           <form method="GET" action="/planner#timelineSection" class="mb-4">
@@ -99,14 +99,13 @@
 
             <script>
               document.addEventListener('DOMContentLoaded', function() {
-                // Natychmiastowe przewijanie do wykresu po wyborze kategorii
+                // Natychmiastowe wyśrodkowanie wykresu - bez widocznego scrollowania
                 if (window.location.hash === '#timelineSection') {
-                  setTimeout(() => {
-                    document.getElementById('timelineSection').scrollIntoView({ 
-                      behavior: 'auto', 
-                      block: 'center' 
-                    });
-                  }, 100);
+                  const element = document.getElementById('timelineSection');
+                  const elementRect = element.getBoundingClientRect();
+                  const absoluteElementTop = elementRect.top + window.pageYOffset;
+                  const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2);
+                  window.scrollTo({ top: middle, behavior: 'instant' });
                 }
                 
                 const ctx = document.getElementById('timelineChart').getContext('2d');

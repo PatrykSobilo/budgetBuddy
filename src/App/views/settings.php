@@ -84,7 +84,7 @@ if (!empty($_SESSION['settings_section'])) {
                   <td><?php echo htmlspecialchars($category['name']); ?></td>
                   <td>
                     <?php if (isset($category['category_limit']) && $category['category_limit'] !== null): ?>
-                      <span class="badge bg-success"><?php echo number_format($category['category_limit'], 2); ?> PLN</span>
+                      <span class="btn btn-warning btn-sm"><?php echo number_format($category['category_limit'], 2); ?> PLN</span>
                     <?php else: ?>
                       <span class="text-muted fst-italic">Not set</span>
                     <?php endif; ?>
