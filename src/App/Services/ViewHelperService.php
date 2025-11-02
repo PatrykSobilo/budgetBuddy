@@ -6,6 +6,8 @@ namespace App\Services;
 
 class ViewHelperService
 {
+  public function __construct(private SessionService $session) {}
+
   /**
    * Get expense category name by ID
    * 
@@ -14,11 +16,13 @@ class ViewHelperService
    */
   public function getExpenseCategoryName(?int $categoryId): string
   {
-    if (!$categoryId || empty($_SESSION['expenseCategories'])) {
+    if (!$categoryId) {
       return 'Uncategorized';
     }
 
-    foreach ($_SESSION['expenseCategories'] as $category) {
+    $expenseCategories = $this->session->get('expenseCategories', []);
+    
+    foreach ($expenseCategories as $category) {
       if ($category['id'] == $categoryId) {
         return $category['name'];
       }
@@ -35,11 +39,13 @@ class ViewHelperService
    */
   public function getIncomeCategoryName(?int $categoryId): string
   {
-    if (!$categoryId || empty($_SESSION['incomeCategories'])) {
+    if (!$categoryId) {
       return 'Uncategorized';
     }
 
-    foreach ($_SESSION['incomeCategories'] as $category) {
+    $incomeCategories = $this->session->get('incomeCategories', []);
+    
+    foreach ($incomeCategories as $category) {
       if ($category['id'] == $categoryId) {
         return $category['name'];
       }
@@ -56,11 +62,13 @@ class ViewHelperService
    */
   public function getPaymentMethodName(?int $methodId): string
   {
-    if (!$methodId || empty($_SESSION['paymentMethods'])) {
+    if (!$methodId) {
       return 'Unknown';
     }
 
-    foreach ($_SESSION['paymentMethods'] as $method) {
+    $paymentMethods = $this->session->get('paymentMethods', []);
+    
+    foreach ($paymentMethods as $method) {
       if ($method['id'] == $methodId) {
         return $method['name'];
       }
@@ -112,11 +120,9 @@ class ViewHelperService
    */
   public function findExpenseCategoryById(int $categoryId): ?array
   {
-    if (empty($_SESSION['expenseCategories'])) {
-      return null;
-    }
+    $expenseCategories = $this->session->get('expenseCategories', []);
 
-    foreach ($_SESSION['expenseCategories'] as $category) {
+    foreach ($expenseCategories as $category) {
       if ((int)$category['id'] === $categoryId) {
         return $category;
       }
@@ -133,11 +139,9 @@ class ViewHelperService
    */
   public function findIncomeCategoryById(int $categoryId): ?array
   {
-    if (empty($_SESSION['incomeCategories'])) {
-      return null;
-    }
+    $incomeCategories = $this->session->get('incomeCategories', []);
 
-    foreach ($_SESSION['incomeCategories'] as $category) {
+    foreach ($incomeCategories as $category) {
       if ((int)$category['id'] === $categoryId) {
         return $category;
       }
@@ -154,11 +158,9 @@ class ViewHelperService
    */
   public function findPaymentMethodById(int $methodId): ?array
   {
-    if (empty($_SESSION['paymentMethods'])) {
-      return null;
-    }
+    $paymentMethods = $this->session->get('paymentMethods', []);
 
-    foreach ($_SESSION['paymentMethods'] as $method) {
+    foreach ($paymentMethods as $method) {
       if ((int)$method['id'] === $methodId) {
         return $method;
       }

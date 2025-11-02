@@ -17,7 +17,8 @@ use App\Services\{
   FlashService,
   SessionService,
   Request,
-  AuthService
+  AuthService,
+  BudgetCalculatorService
 };
 
 return [
@@ -33,10 +34,15 @@ return [
 
     return new UserService($db);
   },
+  BudgetCalculatorService::class => function (Container $container) {
+    $db = $container->get(Database::class);
+    return new BudgetCalculatorService($db);
+  },
   TransactionService::class => function (Container $container) {
     $db = $container->get(Database::class);
+    $budgetCalculator = $container->get(BudgetCalculatorService::class);
 
-    return new TransactionService($db);
+    return new TransactionService($db, $budgetCalculator);
   },
   ReceiptService::class => function (Container $container) {
     $db = $container->get(Database::class);
@@ -48,7 +54,10 @@ return [
     return new \App\Services\SettingsService($db);
   },
   DatePeriodService::class => fn () => new DatePeriodService(),
-  ViewHelperService::class => fn () => new ViewHelperService(),
+  ViewHelperService::class => function (Container $container) {
+    $session = $container->get(SessionService::class);
+    return new ViewHelperService($session);
+  },
   TransactionSearchService::class => function (Container $container) {
     $viewHelper = $container->get(ViewHelperService::class);
     return new TransactionSearchService($viewHelper);

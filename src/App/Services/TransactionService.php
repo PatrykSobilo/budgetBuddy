@@ -8,7 +8,10 @@ use Framework\Database;
 
 class TransactionService
 {
-  public function __construct(private Database $db) {}
+  public function __construct(
+    private Database $db,
+    private BudgetCalculatorService $budgetCalculator
+  ) {}
 
   public function create(array $formData, int $userId)
   {
@@ -165,28 +168,8 @@ class TransactionService
   
   public function calculateTransactions(int $userId, $startDate = null, $endDate = null): array
   {
-    $expenses = 0;
-    $incomes = 0;
     $all = $this->getUserTransactions($userId);
-    foreach ($all as $t) {
-        $date = $t['date'];
-        // Extract only date part (YYYY-MM-DD) for comparison
-        $dateOnly = substr($date, 0, 10);
-        
-        $inRange = true;
-        if ($startDate && $dateOnly < $startDate) $inRange = false;
-        if ($endDate && $dateOnly > $endDate) $inRange = false;
-        
-        if ($inRange) {
-            if ($t['type'] === 'Expense') $expenses += $t['amount'];
-            if ($t['type'] === 'Income') $incomes += $t['amount'];
-        }
-    }
-    return [
-        'expenses' => $expenses,
-        'incomes' => $incomes,
-        'balance' => $incomes - $expenses
-    ];
+    return $this->budgetCalculator->calculateTransactions($all, $startDate, $endDate);
   }
 
   public function updateExpense(array $formData, $validatorService, int $userId, string $currentCsrfToken)
@@ -285,30 +268,7 @@ class TransactionService
    */
   public function getCategoryMonthlyTotal(int $userId, int $categoryId, ?int $excludeExpenseId = null): float
   {
-    $currentMonth = date('Y-m-01 00:00:00');
-    $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
-
-    $query = "SELECT COALESCE(SUM(amount), 0) as total 
-              FROM expenses 
-              WHERE user_id = :user_id 
-              AND expense_category_assigned_to_user_id = :category_id
-              AND date_of_expense >= :start_date
-              AND date_of_expense < :end_date";
-    
-    $params = [
-      'user_id' => $userId,
-      'category_id' => $categoryId,
-      'start_date' => $currentMonth,
-      'end_date' => $nextMonth
-    ];
-
-    if ($excludeExpenseId !== null) {
-      $query .= " AND id != :exclude_id";
-      $params['exclude_id'] = $excludeExpenseId;
-    }
-
-    $result = $this->db->query($query, $params)->find();
-    return (float)($result['total'] ?? 0);
+    return $this->budgetCalculator->getCategoryMonthlyTotal($userId, $categoryId, $excludeExpenseId);
   }
 
   /**
@@ -318,14 +278,7 @@ class TransactionService
    */
   public function getCategoryLimit(int $categoryId): ?float
   {
-    $result = $this->db->query(
-      "SELECT category_limit FROM expenses_category_assigned_to_users WHERE id = :id",
-      ['id' => $categoryId]
-    )->find();
-    
-    return $result && $result['category_limit'] !== null 
-      ? (float)$result['category_limit'] 
-      : null;
+    return $this->budgetCalculator->getCategoryLimit($categoryId);
   }
 
   /**
@@ -335,49 +288,7 @@ class TransactionService
    */
   public function getBudgetSummary(int $userId): array
   {
-    $currentMonth = date('Y-m-01 00:00:00');
-    $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
-
-    // Pobierz wszystkie kategorie z limitami
-    $categories = $this->db->query(
-      "SELECT id, name, category_limit 
-       FROM expenses_category_assigned_to_users 
-       WHERE user_id = :user_id AND category_limit IS NOT NULL",
-      ['user_id' => $userId]
-    )->findAll();
-
-    $totalLimit = 0;
-    $totalSpent = 0;
-    $categoriesExceeded = 0;
-    $categoriesWarning = 0;
-
-    foreach ($categories as $category) {
-      $limit = (float)$category['category_limit'];
-      $totalLimit += $limit;
-
-      // Oblicz wydatki w kategorii
-      $spent = $this->getCategoryMonthlyTotal($userId, (int)$category['id']);
-      $totalSpent += $spent;
-
-      // Sprawdź status
-      if ($limit > 0) {
-        $percentage = ($spent / $limit) * 100;
-        if ($percentage >= 100) {
-          $categoriesExceeded++;
-        } elseif ($percentage >= 80) {
-          $categoriesWarning++;
-        }
-      }
-    }
-
-    return [
-      'total_limit' => $totalLimit,
-      'total_spent' => $totalSpent,
-      'total_percentage' => $totalLimit > 0 ? ($totalSpent / $totalLimit) * 100 : 0,
-      'categories_exceeded' => $categoriesExceeded,
-      'categories_warning' => $categoriesWarning,
-      'categories_count' => count($categories)
-    ];
+    return $this->budgetCalculator->getBudgetSummary($userId);
   }
 
   /**
@@ -387,42 +298,7 @@ class TransactionService
    */
   public function getCategoriesWithLimits(int $userId): array
   {
-    // Pobierz kategorie z limitami
-    $categories = $this->db->query(
-      "SELECT id, name, category_limit 
-       FROM expenses_category_assigned_to_users 
-       WHERE user_id = :user_id AND category_limit IS NOT NULL
-       ORDER BY name ASC",
-      ['user_id' => $userId]
-    )->findAll();
-
-    $result = [];
-    foreach ($categories as $category) {
-      $categoryId = (int)$category['id'];
-      $limit = (float)$category['category_limit'];
-      $spent = $this->getCategoryMonthlyTotal($userId, $categoryId);
-      $percentage = $limit > 0 ? ($spent / $limit) * 100 : 0;
-
-      $result[] = [
-        'id' => $categoryId,
-        'name' => $category['name'],
-        'limit' => $limit,
-        'spent' => $spent,
-        'percentage' => $percentage,
-        'status' => $percentage >= 100 ? 'exceeded' : ($percentage >= 80 ? 'warning' : 'ok')
-      ];
-    }
-
-    // Sortuj: najpierw exceeded, potem warning, potem według procentu malejąco
-    usort($result, function($a, $b) {
-      if ($a['status'] === 'exceeded' && $b['status'] !== 'exceeded') return -1;
-      if ($a['status'] !== 'exceeded' && $b['status'] === 'exceeded') return 1;
-      if ($a['status'] === 'warning' && $b['status'] === 'ok') return -1;
-      if ($a['status'] === 'ok' && $b['status'] === 'warning') return 1;
-      return $b['percentage'] <=> $a['percentage'];
-    });
-
-    return $result;
+    return $this->budgetCalculator->getCategoriesWithLimits($userId);
   }
 
   /**
@@ -433,57 +309,7 @@ class TransactionService
    */
   public function getCategoryTimeline(int $userId, int $categoryId): array
   {
-    $currentMonth = date('Y-m-01 00:00:00');
-    $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
-
-    // Pobierz wszystkie wydatki w kategorii w tym miesiącu
-    $expenses = $this->db->query(
-      "SELECT amount, DATE(date_of_expense) as expense_date
-       FROM expenses
-       WHERE user_id = :user_id
-       AND expense_category_assigned_to_user_id = :category_id
-       AND date_of_expense >= :start_date
-       AND date_of_expense < :end_date
-       ORDER BY date_of_expense ASC",
-      [
-        'user_id' => $userId,
-        'category_id' => $categoryId,
-        'start_date' => $currentMonth,
-        'end_date' => $nextMonth
-      ]
-    )->findAll();
-
-    // Przygotuj dane narastające
-    $timeline = [];
-    $cumulativeAmount = 0;
-    $daysInMonth = (int)date('t'); // liczba dni w miesiącu
-
-    // Inicjalizuj wszystkie dni miesiąca
-    for ($day = 1; $day <= $daysInMonth; $day++) {
-      $date = date('Y-m-') . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
-      $timeline[$date] = 0;
-    }
-
-    // Sumuj wydatki dzień po dniu
-    foreach ($expenses as $expense) {
-      $date = $expense['expense_date'];
-      if (isset($timeline[$date])) {
-        $timeline[$date] += (float)$expense['amount'];
-      }
-    }
-
-    // Konwertuj na wartości narastające
-    $cumulativeTimeline = [];
-    $cumulative = 0;
-    foreach ($timeline as $date => $amount) {
-      $cumulative += $amount;
-      $cumulativeTimeline[] = [
-        'date' => $date,
-        'amount' => $cumulative
-      ];
-    }
-
-    return $cumulativeTimeline;
+    return $this->budgetCalculator->getCategoryTimeline($userId, $categoryId);
   }
 }
 
