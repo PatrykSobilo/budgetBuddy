@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Framework\Database;
+use App\Repositories\CategoryRepository;
 
 /**
  * BudgetCalculatorService
@@ -14,7 +15,10 @@ use Framework\Database;
  */
 class BudgetCalculatorService
 {
-    public function __construct(private Database $db) {}
+    public function __construct(
+        private Database $db,
+        private CategoryRepository $categoryRepository
+    ) {}
 
     /**
      * Calculate total expenses and incomes for a user within a date range
@@ -96,14 +100,7 @@ class BudgetCalculatorService
      */
     public function getCategoryLimit(int $categoryId): ?float
     {
-        $result = $this->db->query(
-            "SELECT category_limit FROM expenses_category_assigned_to_users WHERE id = :id",
-            ['id' => $categoryId]
-        )->find();
-        
-        return $result && $result['category_limit'] !== null 
-            ? (float)$result['category_limit'] 
-            : null;
+        return $this->categoryRepository->getCategoryLimit($categoryId);
     }
 
     /**

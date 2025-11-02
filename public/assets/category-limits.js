@@ -17,13 +17,14 @@ function debounce(func, wait) {
 }
 
 /**
- * Sprawdza limit kategorii asynchronicznie
+ * Sprawdza limit kategorii asynchronicznie z retry mechanism
  * @param {number} categoryId - ID kategorii wydatków
  * @param {number} amount - Kwota wydatku
  * @param {number|null} expenseId - ID wydatku (dla edycji, null dla nowego)
+ * @param {number} retries - Liczba ponownych prób (domyślnie 2)
  * @returns {Promise<Object>} Dane o stanie limitu
  */
-async function checkCategoryLimit(categoryId, amount, expenseId = null) {
+async function checkCategoryLimit(categoryId, amount, expenseId = null, retries = 2) {
   try {
     const params = new URLSearchParams({
       category_id: categoryId,
@@ -42,14 +43,30 @@ async function checkCategoryLimit(categoryId, amount, expenseId = null) {
     });
 
     if (!response.ok) {
+      if (response.status >= 500 && retries > 0) {
+        // Server error - retry after delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return checkCategoryLimit(categoryId, amount, expenseId, retries - 1);
+      }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
+    if (retries > 0 && error.name === 'TypeError') {
+      // Network error - retry after delay
+      console.warn(`Network error, retrying... (${retries} attempts left)`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return checkCategoryLimit(categoryId, amount, expenseId, retries - 1);
+    }
+    
     console.error('Error checking category limit:', error);
-    return null;
+    return {
+      error: true,
+      message: 'Unable to check budget limit. Please try again.',
+      details: error.message
+    };
   }
 }
 
@@ -64,6 +81,30 @@ function displayLimitWarning(containerId, limitData) {
 
   // Usuń poprzednie ostrzeżenie
   container.innerHTML = '';
+
+  // Obsługa błędu API
+  if (limitData && limitData.error) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-warning d-flex align-items-center mb-3';
+    alertDiv.setAttribute('role', 'alert');
+    
+    const icon = document.createElement('i');
+    icon.className = 'bi bi-wifi-off me-2';
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.innerHTML = `
+      <strong>Connection Issue</strong><br>
+      ${limitData.message}
+      <button type="button" class="btn btn-sm btn-link p-0 ms-2" onclick="location.reload()">
+        Retry
+      </button>
+    `;
+    
+    alertDiv.appendChild(icon);
+    alertDiv.appendChild(messageDiv);
+    container.appendChild(alertDiv);
+    return;
+  }
 
   if (!limitData || !limitData.hasLimit || limitData.status === 'ok') {
     return;

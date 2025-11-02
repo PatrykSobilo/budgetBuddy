@@ -6,38 +6,32 @@ namespace App\Services;
 
 use Framework\Database;
 use Framework\Exceptions\ValidationException;
+use App\Repositories\UserRepository;
+use App\Repositories\CategoryRepository;
 
 class UserService
 {
-  public function __construct(private Database $db) {}
+  public function __construct(
+    private Database $db,
+    private UserRepository $userRepository,
+    private CategoryRepository $categoryRepository
+  ) {}
 
   public function getPaymentMethods(int $userId): array
   {
-    return $this->db->query(
-      "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
+    return $this->categoryRepository->getPaymentMethods($userId);
   }
 
   public function isEmailTaken(string $email)
   {
-    $emailCount = $this->db->query(
-      "SELECT COUNT(*) FROM users WHERE email = :email",
-      [
-        'email' => $email
-      ]
-    )->count();
-
-    if ($emailCount > 0) {
+    if ($this->userRepository->emailExists($email)) {
       throw new ValidationException(['email' => ['Email taken']]);
     }
   }
 
   public function login(array $formData): array
   {
-    $user = $this->db->query("SELECT * FROM users WHERE email = :email", [
-      'email' => $formData['email']
-    ])->find();
+    $user = $this->userRepository->findByEmail($formData['email']);
 
     $passwordsMatch = password_verify(
       $formData['password'],
@@ -48,20 +42,9 @@ class UserService
       throw new ValidationException(['password' => ['Invalid credentials']]);
     }
 
-    $expenseCategories = $this->db->query(
-      "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $user['id']]
-    )->findAll();
-
-    $incomeCategories = $this->db->query(
-      "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $user['id']]
-    )->findAll();
-
-    $paymentMethods = $this->db->query(
-      "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $user['id']]
-    )->findAll();
+    $expenseCategories = $this->categoryRepository->getExpenseCategories($user['id']);
+    $incomeCategories = $this->categoryRepository->getIncomeCategories($user['id']);
+    $paymentMethods = $this->categoryRepository->getPaymentMethods($user['id']);
 
     return [
       'userId' => $user['id'],
@@ -75,54 +58,30 @@ class UserService
   {
     $password = password_hash($formData['password'], PASSWORD_BCRYPT, ['cost' => 12]);
 
-    $this->db->query(
-      "INSERT INTO users(email,password,age)
-      VALUES(:email, :password, :age)",
-      [
-        'email' => $formData['email'],
-        'password' => $password,
-        'age' => $formData['age'],
-      ]
-    );
+    $userId = $this->userRepository->create([
+      'email' => $formData['email'],
+      'password' => $password,
+      'age' => $formData['age'],
+    ]);
 
-    $userId = $this->db->id();
-
-    $incomesCategories = $this->db->query("SELECT name FROM incomes_category_default")->findAll();
+    $incomesCategories = $this->categoryRepository->getDefaultIncomeCategories();
     foreach ($incomesCategories as $category) {
-      $this->db->query(
-        "INSERT INTO incomes_category_assigned_to_users (user_id, name) VALUES (:user_id, :name)",
-        ['user_id' => $userId, 'name' => $category['name']]
-      );
+      $this->categoryRepository->createIncomeCategory($userId, $category['name']);
     }
 
-    $expensesCategories = $this->db->query("SELECT name FROM expenses_category_default")->findAll();
+    $expensesCategories = $this->categoryRepository->getDefaultExpenseCategories();
     foreach ($expensesCategories as $category) {
-      $this->db->query(
-        "INSERT INTO expenses_category_assigned_to_users (user_id, name) VALUES (:user_id, :name)",
-        ['user_id' => $userId, 'name' => $category['name']]
-      );
+      $this->categoryRepository->createExpenseCategory($userId, $category['name']);
     }
 
-    $paymentMethods = $this->db->query("SELECT name FROM payment_methods_default")->findAll();
+    $paymentMethods = $this->categoryRepository->getDefaultPaymentMethods();
     foreach ($paymentMethods as $method) {
-      $this->db->query(
-        "INSERT INTO payment_methods_assigned_to_users (user_id, name) VALUES (:user_id, :name)",
-        ['user_id' => $userId, 'name' => $method['name']]
-      );
+      $this->categoryRepository->createPaymentMethod($userId, $method['name']);
     }
 
-    $expenseCategories = $this->db->query(
-      "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
-    $incomeCategories = $this->db->query(
-      "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
-    $paymentMethodsData = $this->db->query(
-      "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
+    $expenseCategories = $this->categoryRepository->getExpenseCategories($userId);
+    $incomeCategories = $this->categoryRepository->getIncomeCategories($userId);
+    $paymentMethodsData = $this->categoryRepository->getPaymentMethods($userId);
 
     return [
       'userId' => $userId,
@@ -151,9 +110,7 @@ class UserService
 
   public function getUserById(int $id)
   {
-    return $this->db->query("SELECT email, age FROM users WHERE id = :id", [
-      'id' => $id
-    ])->find();
+    return $this->userRepository->findById($id);
   }
 
   /**
@@ -163,10 +120,7 @@ class UserService
    */
   public function getExpenseCategories(int $userId): array
   {
-    return $this->db->query(
-      "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
+    return $this->categoryRepository->getExpenseCategories($userId);
   }
 
   /**
@@ -176,23 +130,14 @@ class UserService
    */
   public function getIncomeCategories(int $userId): array
   {
-    return $this->db->query(
-      "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
-      ['user_id' => $userId]
-    )->findAll();
+    return $this->categoryRepository->getIncomeCategories($userId);
   }
 
   public function updateEmail(int $userId, string $email, $validatorService)
   {
     $validatorService->validateEmail(['email' => $email]);
     $this->isEmailTaken($email);
-    $this->db->query(
-      "UPDATE users SET email = :email WHERE id = :id",
-      [
-        'email' => $email,
-        'id' => $userId
-      ]
-    );
+    $this->userRepository->updateEmail($userId, $email);
   }
 
   public function updateAge(int $userId, string $age, $validatorService)
@@ -210,18 +155,12 @@ class UserService
   public function updatePassword(int $userId, array $formData, $validatorService, $db = null)
   {
     $validatorService->validatePasswordChange($formData, $userId, $db ?? $this->db);
-    $user = $this->db->query("SELECT password FROM users WHERE id = :id", ['id' => $userId])->find();
+    $user = $this->userRepository->findById($userId);
     if (!password_verify($formData['old_password'] ?? '', $user['password'] ?? '')) {
       throw new ValidationException(['old_password' => ['Current password is incorrect']]);
     }
     $newPassword = password_hash($formData['new_password'], PASSWORD_BCRYPT, ['cost' => 12]);
-    $this->db->query(
-      "UPDATE users SET password = :password WHERE id = :id",
-      [
-        'password' => $newPassword,
-        'id' => $userId
-      ]
-    );
+    $this->userRepository->updatePassword($userId, $newPassword);
   }
 
   /**
@@ -240,7 +179,7 @@ class UserService
     // Usuń metody płatności
     $this->db->query("DELETE FROM payment_methods_assigned_to_users WHERE user_id = :user_id", ['user_id' => $userId]);
     // Usuń użytkownika
-    $this->db->query("DELETE FROM users WHERE id = :user_id", ['user_id' => $userId]);
+    $this->userRepository->delete($userId);
   }
 
   public function getDb()
