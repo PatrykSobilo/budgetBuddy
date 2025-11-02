@@ -20,6 +20,10 @@
   padding: 0;
   animation: modalIn 0.2s;
   box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 @keyframes modalIn {
   from { transform: scale(0.95); opacity: 0; }
@@ -39,6 +43,8 @@
 }
 .custom-modal-body {
   padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
 }
 .modal-form .form-floating {
   margin-bottom: 1.1rem;

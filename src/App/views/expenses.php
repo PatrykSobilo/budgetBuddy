@@ -1,4 +1,7 @@
-<?php include $this->resolve("partials/_header.php"); ?>
+<?php 
+$pageScripts = ['charts-expenses-incomes.js'];
+include $this->resolve("partials/_header.php"); 
+?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
 
 <section id="historyExpensesPanel" class="py-3 mb-4">
@@ -37,20 +40,7 @@
                 </div>
             </div>
             
-            <script>
-            function toggleCustomDates() {
-                const period = document.getElementById('period').value;
-                const startDateDiv = document.getElementById('startDateDiv');
-                const endDateDiv = document.getElementById('endDateDiv');
-                if (period === 'custom') {
-                    startDateDiv.style.display = 'block';
-                    endDateDiv.style.display = 'block';
-                } else {
-                    startDateDiv.style.display = 'none';
-                    endDateDiv.style.display = 'none';
-                }
-            }
-            </script>
+
             
             <!-- Search Box -->
             <?php include $this->resolve("partials/_searchForm.php"); ?>
@@ -77,94 +67,14 @@
             </div>
             
             <script>
-            // Prepare data for charts
-            const expensesLabels = <?php echo json_encode($chartData['labels']); ?>;
-            const expensesData = <?php echo json_encode($chartData['data']); ?>;
-            
-            // Generate colors
-            const colors = [
-                'rgba(255, 99, 132, 0.7)',
-                'rgba(54, 162, 235, 0.7)',
-                'rgba(255, 206, 86, 0.7)',
-                'rgba(75, 192, 192, 0.7)',
-                'rgba(153, 102, 255, 0.7)',
-                'rgba(255, 159, 64, 0.7)',
-                'rgba(199, 199, 199, 0.7)',
-                'rgba(83, 102, 255, 0.7)',
-                'rgba(255, 99, 255, 0.7)',
-                'rgba(99, 255, 132, 0.7)'
-            ];
-            
-            // Bar Chart
-            const barCtx = document.getElementById('expensesBarChart').getContext('2d');
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: expensesLabels,
-                    datasets: [{
-                        label: 'Amount (PLN)',
-                        data: expensesData,
-                        backgroundColor: colors.slice(0, expensesData.length),
-                        borderColor: colors.slice(0, expensesData.length).map(c => c.replace('0.7', '1')),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toFixed(2) + ' PLN';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Pie Chart
-            const pieCtx = document.getElementById('expensesPieChart').getContext('2d');
-            new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: expensesLabels,
-                    datasets: [{
-                        data: expensesData,
-                        backgroundColor: colors.slice(0, expensesData.length),
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    label += context.parsed.toFixed(2) + ' PLN';
-                                    return label;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+              // Initialize charts when DOM is ready
+              document.addEventListener('DOMContentLoaded', function() {
+                initializeTransactionCharts(
+                  'expenses',
+                  <?php echo json_encode($chartData['labels']); ?>,
+                  <?php echo json_encode($chartData['data']); ?>
+                );
+              });
             </script>
             <?php endif; ?>
             

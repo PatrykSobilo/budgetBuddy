@@ -1,4 +1,7 @@
-<?php include $this->resolve("partials/_header.php"); ?>
+<?php 
+$pageScripts = ['charts-dashboards.js'];
+include $this->resolve("partials/_header.php"); 
+?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
 
 <div class="container mt-4">
@@ -42,20 +45,7 @@
     </div>
 </section>
 
-<script>
-function toggleCustomDatesDashboard() {
-    const period = document.getElementById('period').value;
-    const startDateDiv = document.getElementById('startingDateDiv');
-    const endDateDiv = document.getElementById('endingDateDiv');
-    if (period === 'custom') {
-        startDateDiv.style.display = 'block';
-        endDateDiv.style.display = 'block';
-    } else {
-        startDateDiv.style.display = 'none';
-        endDateDiv.style.display = 'none';
-    }
-}
-</script>
+
 
 <section id="summary" name="summary">
     <div id="generalSummary" class="generalSummary container d-flex flex-column align-items-center justify-content-center border">
@@ -101,50 +91,11 @@ function toggleCustomDatesDashboard() {
 <?php include $this->resolve("partials/_footer.php"); ?>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var currentMonthBtn = document.getElementById('currentMonthBtn');
-        var dateForm = document.getElementById('dateForm');
-        if (currentMonthBtn && dateForm) {
-            currentMonthBtn.addEventListener('click', function() {
-                var now = new Date();
-                var firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-                var lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                var pad = n => n < 10 ? '0' + n : n;
-                var yyyy = now.getFullYear();
-                var mm = pad(now.getMonth() + 1);
-                document.getElementById('startingDate').value = `${yyyy}-${mm}-01`;
-                document.getElementById('endingDate').value = `${yyyy}-${mm}-${pad(lastDay.getDate())}`;
-                dateForm.submit();
-            });
-        }
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('summaryPieChart').getContext('2d');
-        var expenses = <?php echo json_encode($summary['expenses']); ?>;
-        var incomes = <?php echo json_encode($summary['incomes']); ?>;
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Expenses', 'Incomes'],
-                datasets: [{
-                    data: [expenses, incomes],
-                    backgroundColor: ['#ff6384', '#36a2eb'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: false
-                    }
-                }
-            }
-        });
-    });
+  // Initialize dashboard chart when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeSummaryChart(
+      <?php echo json_encode($summary['expenses']); ?>,
+      <?php echo json_encode($summary['incomes']); ?>
+    );
+  });
 </script>

@@ -1,4 +1,7 @@
-<?php include $this->resolve("partials/_header.php"); ?>
+<?php 
+$pageScripts = ['settings-handlers.js'];
+include $this->resolve("partials/_header.php"); 
+?>
 <?php $categoryErrors = $categoryErrors ?? []; $categoryOld = $categoryOld ?? []; ?>
 <?php include $this->resolve("partials/_settings_modals.php"); ?>
 
@@ -196,41 +199,8 @@ if (!empty($_SESSION['settings_section'])) {
 </section>
 
 <script>
+  // Handle error modals - reopen if validation failed
   document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.settings-tab');
-    const sections = document.querySelectorAll('.settings-section');
-
-    // Obsługa kliknięć na zakładki
-    tabs.forEach(tab => {
-      tab.addEventListener('click', function(e) {
-        e.preventDefault();
-        tabs.forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        const sectionId = this.getAttribute('data-section');
-        sections.forEach(section => {
-          section.style.display = (section.id === sectionId) ? '' : 'none';
-        });
-      });
-    });
-
-    const newExpenseBtn = document.getElementById('newExpenseCategoryBtn');
-    if (newExpenseBtn) {
-      newExpenseBtn.addEventListener('click', function() {
-        openCustomModal('modalAddExpenseCategory');
-      });
-    }
-    const newIncomeBtn = document.getElementById('newIncomeCategoryBtn');
-    if (newIncomeBtn) {
-      newIncomeBtn.addEventListener('click', function() {
-        openCustomModal('modalAddIncomeCategory');
-      });
-    }
-    const newPaymentMethodBtn = document.getElementById('newPaymentMethodBtn');
-    if (newPaymentMethodBtn) {
-      newPaymentMethodBtn.addEventListener('click', function() {
-        openCustomModal('modalAddPaymentMethod');
-      });
-    }
     <?php if (!empty($categoryErrors['name'])): ?>
       var type = <?php echo json_encode($categoryOld['type'] ?? ''); ?>;
       var modalId = null;
@@ -247,67 +217,6 @@ if (!empty($_SESSION['settings_section'])) {
     <?php if (!empty($editUserErrors) && isset($editUserOld['type']) && $editUserOld['type'] === 'password'): ?>
       openCustomModal('modalEditPassword');
     <?php endif; ?>
-
-    document.querySelectorAll('.edit-payment-method-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = this.getAttribute('data-id');
-        var name = this.getAttribute('data-name');
-        document.getElementById('editPaymentMethodId').value = id;
-        document.getElementById('editPaymentMethodInput').value = name;
-        openCustomModal('modalEditPaymentMethod');
-      });
-    });
-
-    document.querySelectorAll('.edit-expense-category-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = this.getAttribute('data-id');
-        var name = this.getAttribute('data-name');
-        var limit = this.getAttribute('data-limit');
-        document.getElementById('editExpenseCategoryId').value = id;
-        document.getElementById('editExpenseCategoryInput').value = name;
-        document.getElementById('editExpenseCategoryLimit').value = limit || '';
-        openCustomModal('modalEditExpenseCategory');
-      });
-    });
-    document.querySelectorAll('.edit-income-category-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = this.getAttribute('data-id');
-        var name = this.getAttribute('data-name');
-        var limit = this.getAttribute('data-limit');
-        document.getElementById('editIncomeCategoryId').value = id;
-        document.getElementById('editIncomeCategoryInput').value = name;
-        document.getElementById('editIncomeCategoryLimit').value = limit || '';
-        openCustomModal('modalEditIncomeCategory');
-      });
-    });
-    // Obsługa modali usuwania
-    document.querySelectorAll('.delete-expense-category-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = this.getAttribute('data-id');
-        var name = this.getAttribute('data-name');
-        document.getElementById('deleteExpenseCategoryId').value = id;
-        document.getElementById('deleteExpenseCategoryName').textContent = name;
-        openCustomModal('modalDeleteExpenseCategory');
-      });
-    });
-    document.querySelectorAll('.delete-income-category-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = this.getAttribute('data-id');
-        var name = this.getAttribute('data-name');
-        document.getElementById('deleteIncomeCategoryId').value = id;
-        document.getElementById('deleteIncomeCategoryName').textContent = name;
-        openCustomModal('modalDeleteIncomeCategory');
-      });
-    });
-    document.querySelectorAll('.delete-payment-method-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = this.getAttribute('data-id');
-        var name = this.getAttribute('data-name');
-        document.getElementById('deletePaymentMethodId').value = id;
-        document.getElementById('deletePaymentMethodName').textContent = name;
-        openCustomModal('modalDeletePaymentMethod');
-      });
-    });
   });
 </script>
 

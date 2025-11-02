@@ -24,6 +24,11 @@ $errors = $errors ?? [];
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="/assets/transactions.js" defer></script>
   <script src="/assets/category-limits.js" defer></script>
+  <?php if (isset($pageScripts)): ?>
+    <?php foreach ($pageScripts as $script): ?>
+      <script src="/assets/<?php echo e($script); ?>" defer></script>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </head>
 
 <body>

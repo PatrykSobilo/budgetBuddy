@@ -177,9 +177,13 @@ class TransactionService
         $all = $this->getUserTransactions();
         foreach ($all as $t) {
             $date = $t['date'];
+            // Extract only date part (YYYY-MM-DD) for comparison
+            $dateOnly = substr($date, 0, 10);
+            
             $inRange = true;
-            if ($startDate && $date < $startDate) $inRange = false;
-            if ($endDate && $date > $endDate) $inRange = false;
+            if ($startDate && $dateOnly < $startDate) $inRange = false;
+            if ($endDate && $dateOnly > $endDate) $inRange = false;
+            
             if ($inRange) {
                 if ($t['type'] === 'Expense') $expenses += $t['amount'];
                 if ($t['type'] === 'Income') $incomes += $t['amount'];
