@@ -52,7 +52,7 @@ class UserService
     $_SESSION['user'] = $user['id'];
 
     $_SESSION['expenseCategories'] = $this->db->query(
-      "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
+      "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
     )->findAll();
 
@@ -111,7 +111,7 @@ class UserService
     }
 
     $_SESSION['expenseCategories'] = $this->db->query(
-      "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
+      "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
     $_SESSION['incomeCategories'] = $this->db->query(

@@ -10,37 +10,12 @@ include $this->resolve("partials/_header.php");
             <h1 class="mb-4 text-center h2">Expenses</h1>
             
             <!-- Period Filter -->
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <form method="GET" action="/expenses" class="row g-3">
-                        <div class="col-md-4">
-                            <label for="period" class="form-label">Period</label>
-                            <select class="form-select" id="period" name="period" onchange="toggleCustomDates()">
-                                <option value="all" <?php echo (!isset($_GET['period']) || $_GET['period'] === 'all') ? 'selected' : ''; ?>>All Time</option>
-                                <option value="current_month" <?php echo (isset($_GET['period']) && $_GET['period'] === 'current_month') ? 'selected' : ''; ?>>Current Month</option>
-                                <option value="last_month" <?php echo (isset($_GET['period']) && $_GET['period'] === 'last_month') ? 'selected' : ''; ?>>Last Month</option>
-                                <option value="last_30_days" <?php echo (isset($_GET['period']) && $_GET['period'] === 'last_30_days') ? 'selected' : ''; ?>>Last 30 Days</option>
-                                <option value="last_90_days" <?php echo (isset($_GET['period']) && $_GET['period'] === 'last_90_days') ? 'selected' : ''; ?>>Last 90 Days</option>
-                                <option value="current_year" <?php echo (isset($_GET['period']) && $_GET['period'] === 'current_year') ? 'selected' : ''; ?>>Current Year</option>
-                                <option value="custom" <?php echo (isset($_GET['period']) && $_GET['period'] === 'custom') ? 'selected' : ''; ?>>Custom Range</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3" id="startDateDiv" style="display: <?php echo (isset($_GET['period']) && $_GET['period'] === 'custom') ? 'block' : 'none'; ?>;">
-                            <label for="start_date" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>">
-                        </div>
-                        <div class="col-md-3" id="endDateDiv" style="display: <?php echo (isset($_GET['period']) && $_GET['period'] === 'custom') ? 'block' : 'none'; ?>;">
-                            <label for="end_date" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>">
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-
+            <?php 
+            $action = '/expenses';
+            $method = 'GET';
+            $onChangeHandler = 'toggleCustomDates';
+            include $this->resolve("partials/_periodFilter.php"); 
+            ?>
             
             <!-- Search Box -->
             <?php include $this->resolve("partials/_searchForm.php"); ?>
@@ -48,22 +23,16 @@ include $this->resolve("partials/_header.php");
             <!-- Charts Section -->
             <?php if (!empty($chartData['labels'])): ?>
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold text-center mb-3" style="font-size: 1.25rem;">Bar Chart - Expenses by Categories</div>
-                            <canvas id="expensesBarChart" style="max-height: 300px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="fw-bold text-center mb-3" style="font-size: 1.25rem;">Pie Chart - Expenses by Category</div>
-                            <canvas id="expensesPieChart" style="max-height: 300px;"></canvas>
-                        </div>
-                    </div>
-                </div>
+                <?php 
+                $title = 'Bar Chart - Expenses by Categories';
+                $canvasId = 'expensesBarChart';
+                include $this->resolve("partials/_chartCard.php"); 
+                ?>
+                <?php 
+                $title = 'Pie Chart - Expenses by Category';
+                $canvasId = 'expensesPieChart';
+                include $this->resolve("partials/_chartCard.php"); 
+                ?>
             </div>
             
             <script>

@@ -9,7 +9,10 @@ use App\Services\{
   UserService,
   TransactionService,
   ReceiptService,
-  SettingsService
+  SettingsService,
+  DatePeriodService,
+  ViewHelperService,
+  TransactionSearchService
 };
 
 return [
@@ -38,5 +41,11 @@ return [
   SettingsService::class => function (Container $container) {
     $db = $container->get(Database::class);
     return new \App\Services\SettingsService($db);
+  },
+  DatePeriodService::class => fn () => new DatePeriodService(),
+  ViewHelperService::class => fn () => new ViewHelperService(),
+  TransactionSearchService::class => function (Container $container) {
+    $viewHelper = $container->get(ViewHelperService::class);
+    return new TransactionSearchService($viewHelper);
   }
 ];

@@ -8,8 +8,8 @@
  */
 function toggleCustomDatesDashboard() {
   const period = document.getElementById('period').value;
-  const startDateDiv = document.getElementById('startingDateDiv');
-  const endDateDiv = document.getElementById('endingDateDiv');
+  const startDateDiv = document.getElementById('startDateDiv');
+  const endDateDiv = document.getElementById('endDateDiv');
   if (period === 'custom') {
     startDateDiv.style.display = 'block';
     endDateDiv.style.display = 'block';
