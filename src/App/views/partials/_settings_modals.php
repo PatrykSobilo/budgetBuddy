@@ -310,14 +310,6 @@
             <div class="text-danger mt-1"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
           <?php endif; ?>
         </div>
-        <div class="mb-3">
-          <label for="editIncomeCategoryLimit" class="form-label fw-bold">Category Limit <span class="text-muted fw-normal">(optional)</span></label>
-          <input type="number" class="form-control" id="editIncomeCategoryLimit" name="category_limit" placeholder="0.00" step="0.01" min="0">
-          <small class="text-muted">Set a monthly limit for this income category</small>
-          <?php if (isset($categoryErrors['category_limit']) && ($categoryOld['type'] ?? '') === 'income_category_edit'): ?>
-            <div class="text-danger mt-1"><?php echo htmlspecialchars($categoryErrors['category_limit'][0]); ?></div>
-          <?php endif; ?>
-        </div>
       </div>
       <div class="d-flex justify-content-center w-100" style="padding-bottom: 1.5rem;">
         <button type="button" class="btn btn-secondary me-2" onclick="closeCustomModal('modalEditIncomeCategory')">Cancel</button>

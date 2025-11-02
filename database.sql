@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS expenses_category_assigned_to_users(
   id int(11) unsigned NOT NULL AUTO_INCREMENT,
   user_id int(11) unsigned NOT NULL,
   name varchar(50) NOT NULL,
+  category_limit decimal(10,2) DEFAULT NULL COMMENT 'Monthly spending limit for this category (optional)',
   PRIMARY KEY(id),
   FOREIGN KEY(user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;

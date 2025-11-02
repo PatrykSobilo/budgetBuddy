@@ -157,7 +157,7 @@ class UserService
   public function getExpenseCategories(int $userId): array
   {
     return $this->db->query(
-      "SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
+      "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
   }

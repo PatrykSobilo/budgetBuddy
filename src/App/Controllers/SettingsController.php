@@ -167,7 +167,10 @@ class SettingsController
                         $_SESSION['settings_section'] = 'payment-methods';
                     } elseif ($type === 'expense_category_edit') {
                         $catId = (int)($_POST['category_id'] ?? 0);
-                        $this->settingsService->updateExpenseCategory((int)$userId, $catId, $categoryName);
+                        $categoryLimit = isset($_POST['category_limit']) && $_POST['category_limit'] !== '' 
+                            ? (float)$_POST['category_limit'] 
+                            : null;
+                        $this->settingsService->updateExpenseCategory((int)$userId, $catId, $categoryName, $categoryLimit);
                         $_SESSION['expenseCategories'] = $this->userService->getExpenseCategories($userId);
                         $_SESSION['settings_section'] = 'expense-categories';
                     } elseif ($type === 'income_category_edit') {

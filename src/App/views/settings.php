@@ -83,10 +83,14 @@ if (!empty($_SESSION['settings_section'])) {
                 <tr>
                   <td><?php echo htmlspecialchars($category['name']); ?></td>
                   <td>
-                    <span class="text-muted fst-italic">Not set</span>
+                    <?php if (isset($category['category_limit']) && $category['category_limit'] !== null): ?>
+                      <span class="badge bg-success"><?php echo number_format($category['category_limit'], 2); ?> PLN</span>
+                    <?php else: ?>
+                      <span class="text-muted fst-italic">Not set</span>
+                    <?php endif; ?>
                   </td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-primary fw-semibold edit-expense-category-btn" type="button" style="min-width:90px; width:90px; padding: 0.25rem 0.5rem; font-size: 0.875rem;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>" data-limit="">Edit</button>
+                    <button class="btn btn-sm btn-primary fw-semibold edit-expense-category-btn" type="button" style="min-width:90px; width:90px; padding: 0.25rem 0.5rem; font-size: 0.875rem;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>" data-limit="<?php echo isset($category['category_limit']) ? htmlspecialchars($category['category_limit']) : ''; ?>">Edit</button>
                     <button class="btn btn-sm btn-danger fw-semibold delete-expense-category-btn ms-1" type="button" style="min-width:90px; width:90px; padding: 0.25rem 0.5rem; font-size: 0.875rem;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Delete</button>
                   </td>
                 </tr>
@@ -118,7 +122,6 @@ if (!empty($_SESSION['settings_section'])) {
             <thead>
               <tr>
                 <th>Category</th>
-                <th>Category Limit</th>
                 <th class="text-end">Actions</th>
               </tr>
             </thead>
@@ -126,17 +129,14 @@ if (!empty($_SESSION['settings_section'])) {
               <?php foreach ($_SESSION['incomeCategories'] as $category): ?>
                 <tr>
                   <td><?php echo htmlspecialchars($category['name']); ?></td>
-                  <td>
-                    <span class="text-muted fst-italic">Not set</span>
-                  </td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-primary fw-semibold edit-income-category-btn" type="button" style="min-width:90px; width:90px; padding: 0.25rem 0.5rem; font-size: 0.875rem;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>" data-limit="">Edit</button>
+                    <button class="btn btn-sm btn-primary fw-semibold edit-income-category-btn" type="button" style="min-width:90px; width:90px; padding: 0.25rem 0.5rem; font-size: 0.875rem;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Edit</button>
                     <button class="btn btn-sm btn-danger fw-semibold delete-income-category-btn ms-1" type="button" style="min-width:90px; width:90px; padding: 0.25rem 0.5rem; font-size: 0.875rem;" data-id="<?php echo htmlspecialchars($category['id']); ?>" data-name="<?php echo htmlspecialchars($category['name']); ?>">Delete</button>
                   </td>
                 </tr>
                 <?php if (!empty($categoryErrors['name']) && ($categoryOld['type'] ?? '') === 'income_category_delete' && ($categoryOld['category_id'] ?? null) == $category['id']): ?>
                   <tr>
-                    <td colspan="3">
+                    <td colspan="2">
                       <div class="text-danger small"><?php echo htmlspecialchars($categoryErrors['name'][0]); ?></div>
                     </td>
                   </tr>

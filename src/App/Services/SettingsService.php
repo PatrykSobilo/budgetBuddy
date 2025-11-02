@@ -137,12 +137,13 @@ class SettingsService
         );
     }
 
-    public function updateExpenseCategory(int $userId, int $categoryId, string $name): void
+    public function updateExpenseCategory(int $userId, int $categoryId, string $name, ?float $categoryLimit = null): void
     {
         $this->db->query(
-            "UPDATE expenses_category_assigned_to_users SET name = :name WHERE id = :id AND user_id = :user_id",
+            "UPDATE expenses_category_assigned_to_users SET name = :name, category_limit = :category_limit WHERE id = :id AND user_id = :user_id",
             [
                 'name' => $name,
+                'category_limit' => $categoryLimit,
                 'id' => $categoryId,
                 'user_id' => $userId
             ]
