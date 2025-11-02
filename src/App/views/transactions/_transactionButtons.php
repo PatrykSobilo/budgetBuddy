@@ -9,6 +9,9 @@
         <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
         <input type="hidden" id="expense_id" name="expense_id" value="<?php echo e($oldFormData['expense_id'] ?? ''); ?>">
 
+        <!-- Category Limit Warning Container -->
+        <div id="addExpenseLimitWarning"></div>
+
         <div class="form-floating">
           <select class="form-control" id="expensesCategory" name="expensesCategory">
             <option value="">-- Wybierz kategorię --</option>
@@ -48,8 +51,8 @@
         </div>
 
         <div class="form-floating">
-          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="Amount">
-          <label for="amount">Amount</label>
+          <input value="<?php echo e($oldFormData['amount'] ?? ''); ?>" type="number" step="0.01" class="form-control" id="expenseAmount" name="amount" placeholder="Amount">
+          <label for="expenseAmount">Amount</label>
           <?php if (isset($errors['amount'])): ?>
             <div class="text-danger mt-1"><?php echo e($errors['amount'][0]); ?></div>
           <?php endif; ?>

@@ -405,4 +405,79 @@ class TransactionController
     header('Location: /mainPage');
     exit;
   }
+
+  /**
+   * API endpoint - sprawdza stan wykorzystania limitu kategorii
+   * GET /api/check-category-limit?category_id=X&amount=Y&expense_id=Z
+   */
+  public function checkCategoryLimit()
+  {
+    header('Content-Type: application/json');
+    
+    $categoryId = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
+    $amount = isset($_GET['amount']) ? (float)$_GET['amount'] : 0;
+    $expenseId = isset($_GET['expense_id']) ? (int)$_GET['expense_id'] : null;
+    $userId = $_SESSION['user'] ?? 0;
+
+    if (!$categoryId || !$userId) {
+      echo json_encode(['error' => 'Invalid parameters']);
+      return;
+    }
+
+    // Pobierz limit kategorii
+    $limit = $this->transactionService->getCategoryLimit($categoryId);
+    
+    // Jeśli kategoria nie ma limitu, zwróć OK
+    if ($limit === null) {
+      echo json_encode([
+        'hasLimit' => false,
+        'status' => 'ok'
+      ]);
+      return;
+    }
+
+    // Oblicz sumę wydatków w kategorii (bez edytowanego wydatku)
+    $currentTotal = $this->transactionService->getCategoryMonthlyTotal($userId, $categoryId, $expenseId);
+    
+    // Dodaj nową kwotę
+    $newTotal = $currentTotal + $amount;
+    
+    // Oblicz procent wykorzystania
+    $percentage = $limit > 0 ? ($newTotal / $limit) * 100 : 0;
+    
+    // Określ status
+    $status = 'ok';
+    $level = 'success';
+    
+    if ($percentage >= 100) {
+      $status = 'exceeded';
+      $level = 'danger';
+    } elseif ($percentage >= 80) {
+      $status = 'warning';
+      $level = 'warning';
+    }
+
+    echo json_encode([
+      'hasLimit' => true,
+      'limit' => $limit,
+      'currentTotal' => $currentTotal,
+      'newTotal' => $newTotal,
+      'percentage' => round($percentage, 1),
+      'status' => $status,
+      'level' => $level,
+      'message' => $this->getLimitMessage($status, $newTotal, $limit, $percentage)
+    ]);
+  }
+
+  private function getLimitMessage(string $status, float $newTotal, float $limit, float $percentage): string
+  {
+    if ($status === 'exceeded') {
+      $over = $newTotal - $limit;
+      return "⚠️ Warning! This expense will exceed your category limit by " . number_format($over, 2) . " PLN (". round($percentage, 1) . "% of limit).";
+    } elseif ($status === 'warning') {
+      return "⚠️ Caution! You're approaching your category limit (" . round($percentage, 1) . "% used).";
+    }
+    return "✓ Within budget (" . round($percentage, 1) . "% of limit used).";
+  }
 }
+

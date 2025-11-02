@@ -56,4 +56,7 @@ function registerRoutes(App $app)
   $app->post('/settings/delete-category', [SettingsController::class, 'deleteCategory'])->add(AuthRequiredMiddleware::class);
   $app->post('/settings/delete-account', [SettingsController::class, 'deleteAccount'])->add(AuthRequiredMiddleware::class);
 
+  // API endpoints
+  $app->get('/api/check-category-limit', [TransactionController::class, 'checkCategoryLimit'])->add(AuthRequiredMiddleware::class);
+
 }

@@ -23,6 +23,7 @@ $errors = $errors ?? [];
   <link rel="stylesheet" href="/assets/responsive.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="/assets/transactions.js" defer></script>
+  <script src="/assets/category-limits.js" defer></script>
 </head>
 
 <body>

@@ -283,4 +283,57 @@ class TransactionService
       'csrfToken' => $csrfToken
     ];
   }
+
+  /**
+   * Oblicza sumę wydatków w danej kategorii za bieżący miesiąc
+   * @param int $userId ID użytkownika
+   * @param int $categoryId ID kategorii wydatków
+   * @param int|null $excludeExpenseId ID wydatku do wykluczenia (przy edycji)
+   * @return float Suma wydatków w kategorii
+   */
+  public function getCategoryMonthlyTotal(int $userId, int $categoryId, ?int $excludeExpenseId = null): float
+  {
+    $currentMonth = date('Y-m-01 00:00:00');
+    $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
+
+    $query = "SELECT COALESCE(SUM(amount), 0) as total 
+              FROM expenses 
+              WHERE user_id = :user_id 
+              AND expense_category_assigned_to_user_id = :category_id
+              AND date_of_expense >= :start_date
+              AND date_of_expense < :end_date";
+    
+    $params = [
+      'user_id' => $userId,
+      'category_id' => $categoryId,
+      'start_date' => $currentMonth,
+      'end_date' => $nextMonth
+    ];
+
+    if ($excludeExpenseId !== null) {
+      $query .= " AND id != :exclude_id";
+      $params['exclude_id'] = $excludeExpenseId;
+    }
+
+    $result = $this->db->query($query, $params)->find();
+    return (float)($result['total'] ?? 0);
+  }
+
+  /**
+   * Pobiera limit kategorii wydatków
+   * @param int $categoryId ID kategorii
+   * @return float|null Limit kategorii lub null jeśli nie ustawiony
+   */
+  public function getCategoryLimit(int $categoryId): ?float
+  {
+    $result = $this->db->query(
+      "SELECT category_limit FROM expenses_category_assigned_to_users WHERE id = :id",
+      ['id' => $categoryId]
+    )->find();
+    
+    return $result && $result['category_limit'] !== null 
+      ? (float)$result['category_limit'] 
+      : null;
+  }
 }
+
