@@ -12,7 +12,11 @@ use App\Services\{
   TransactionService, 
   DatePeriodService, 
   ViewHelperService, 
-  TransactionSearchService
+  TransactionSearchService,
+  ResponseService,
+  SessionService,
+  Request,
+  AuthService
 };
 
 class TransactionController
@@ -23,7 +27,11 @@ class TransactionController
     private TransactionService $transactionService,
     private DatePeriodService $datePeriodService,
     private ViewHelperService $viewHelper,
-    private TransactionSearchService $searchService
+    private TransactionSearchService $searchService,
+    private ResponseService $response,
+    private SessionService $session,
+    private Request $request,
+    private AuthService $auth
   ) {}
 
   public function expensesView()
@@ -31,23 +39,24 @@ class TransactionController
     $expenses = [];
     $chartData = ['labels' => [], 'data' => []];
     
-    if (isset($_SESSION['user'])) {
+    if ($this->auth->check()) {
       $all = $this->transactionService->getUserTransactions();
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
       
       // Filtrowanie po okresie - używamy DatePeriodService
-      if (isset($_GET['period']) && $_GET['period'] !== 'all') {
+      if ($this->request->get('period') && $this->request->get('period') !== 'all') {
         $expenses = $this->datePeriodService->filterByPeriod(
           $expenses, 
-          $_GET['period'], 
-          $_GET['start_date'] ?? null, 
-          $_GET['end_date'] ?? null
+          $this->request->get('period'), 
+          $this->request->get('start_date'), 
+          $this->request->get('end_date')
         );
       }
       
       // Obsługa wyszukiwania - używamy TransactionSearchService
-      if (isset($_GET['s']) && trim($_GET['s']) !== '') {
-        $expenses = $this->searchService->filterTransactions($expenses, $_GET['s'], 'expense');
+      $searchQuery = $this->request->get('s', '');
+      if (trim($searchQuery) !== '') {
+        $expenses = $this->searchService->filterTransactions($expenses, $searchQuery, 'expense');
       }
       
       // Przygotowanie danych do wykresów - używamy ViewHelperService
@@ -65,23 +74,24 @@ class TransactionController
     $incomes = [];
     $chartData = ['labels' => [], 'data' => []];
     
-    if (isset($_SESSION['user'])) {
+    if ($this->auth->check()) {
       $all = $this->transactionService->getUserTransactions();
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
       
       // Filtrowanie po okresie - używamy DatePeriodService
-      if (isset($_GET['period']) && $_GET['period'] !== 'all') {
+      if ($this->request->get('period') && $this->request->get('period') !== 'all') {
         $incomes = $this->datePeriodService->filterByPeriod(
           $incomes, 
-          $_GET['period'], 
-          $_GET['start_date'] ?? null, 
-          $_GET['end_date'] ?? null
+          $this->request->get('period'), 
+          $this->request->get('start_date'), 
+          $this->request->get('end_date')
         );
       }
       
       // Obsługa wyszukiwania - używamy TransactionSearchService
-      if (isset($_GET['s']) && trim($_GET['s']) !== '') {
-        $incomes = $this->searchService->filterTransactions($incomes, $_GET['s'], 'income');
+      $searchQuery = $this->request->get('s', '');
+      if (trim($searchQuery) !== '') {
+        $incomes = $this->searchService->filterTransactions($incomes, $searchQuery, 'income');
       }
       
       // Przygotowanie danych do wykresów - używamy ViewHelperService
@@ -99,14 +109,14 @@ class TransactionController
     $startDate = null;
     $endDate = null;
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $_SESSION['token'] = bin2hex(random_bytes(32));
+    if ($this->request->isPost()) {
+      $this->session->set('token', bin2hex(random_bytes(32)));
       
-      $period = $_POST['period'] ?? 'all';
+      $period = $this->request->post('period', 'all');
       
       if ($period === 'custom') {
-        $startDate = $_POST['startingDate'] ?? null;
-        $endDate = $_POST['endingDate'] ?? null;
+        $startDate = $this->request->post('startingDate');
+        $endDate = $this->request->post('endingDate');
       } else {
         // Calculate dates based on period - używamy DatePeriodService
         $dates = $this->datePeriodService->calculatePeriodDates($period);
@@ -115,7 +125,7 @@ class TransactionController
       }
     }
     
-    $csrfToken = $_SESSION['token'] ?? '';
+    $csrfToken = $this->session->get('token', '');
     echo $this->view->render("dashboards.php", [
       'transactionService' => $this->transactionService,
       'startDate' => $startDate,
@@ -131,23 +141,18 @@ class TransactionController
 
   public function addTransaction()
   {
-    if (!isset($_SESSION['user'])) {
-      header('Location: /login');
-      exit;
-    }
+    $this->auth->requireAuth();
 
-    $result = $this->transactionService->addTransaction($_POST, $this->validatorService);
+    $result = $this->transactionService->addTransaction($this->request->postAll(), $this->validatorService);
+    
     if (empty($result['errors'])) {
-      if (isset($_POST['expensesCategory'])) {
-        header('Location: /expenses');
-        exit;
+      if ($this->request->hasPost('expensesCategory')) {
+        $this->response->redirect('/expenses');
       }
-      if (isset($_POST['incomesCategory'])) {
-        header('Location: /incomes');
-        exit;
+      if ($this->request->hasPost('incomesCategory')) {
+        $this->response->redirect('/incomes');
       }
-      header('Location: /mainPage');
-      exit;
+      $this->response->redirect('/mainPage');
     } else {
       echo $this->view->render('mainPage.php', $result);
     }
@@ -155,14 +160,12 @@ class TransactionController
 
   public function editExpense()
   {
-    if (!isset($_SESSION['user'])) {
-      header('Location: /login');
-      exit;
-    }
-    $result = $this->transactionService->updateExpense($_POST, $this->validatorService);
+    $this->auth->requireAuth();
+    
+    $result = $this->transactionService->updateExpense($this->request->postAll(), $this->validatorService);
+    
     if (empty($result['errors'])) {
-      header('Location: /expenses');
-      exit;
+      $this->response->redirect('/expenses');
     } else {
       $all = $this->transactionService->getUserTransactions();
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
@@ -172,14 +175,12 @@ class TransactionController
 
   public function editIncome()
   {
-    if (!isset($_SESSION['user'])) {
-      header('Location: /login');
-      exit;
-    }
-    $result = $this->transactionService->updateIncome($_POST, $this->validatorService);
+    $this->auth->requireAuth();
+    
+    $result = $this->transactionService->updateIncome($this->request->postAll(), $this->validatorService);
+    
     if (empty($result['errors'])) {
-      header('Location: /incomes');
-      exit;
+      $this->response->redirect('/incomes');
     } else {
       $all = $this->transactionService->getUserTransactions();
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
@@ -189,50 +190,38 @@ class TransactionController
 
   public function deleteExpense()
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['expense_id'])) {
-      $expenseId = $_POST['expense_id'];
+    if ($this->request->isPost() && $this->request->hasPost('expense_id')) {
+      $expenseId = $this->request->post('expense_id');
       $this->transactionService->deleteExpenseById($expenseId);
-      header('Location: /expenses');
-      exit;
     }
-    header('Location: /expenses');
-    exit;
+    $this->response->redirect('/expenses');
   }
 
   public function deleteIncome()
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income_id'])) {
-      $incomeId = $_POST['income_id'];
+    if ($this->request->isPost() && $this->request->hasPost('income_id')) {
+      $incomeId = $this->request->post('income_id');
       $this->transactionService->deleteIncomeById($incomeId);
-      header('Location: /incomes');
-      exit;
     }
-    header('Location: /incomes');
-    exit;
+    $this->response->redirect('/incomes');
   }
 
   public function deleteExpenseFromMainPage()
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['expense_id'])) {
-      $expenseId = $_POST['expense_id'];
+    if ($this->request->isPost() && $this->request->hasPost('expense_id')) {
+      $expenseId = $this->request->post('expense_id');
       $this->transactionService->deleteExpenseById($expenseId);
-      header('Location: /mainPage');
-      exit;
     }
-    header('Location: /mainPage');
-    exit;
+    $this->response->redirect('/mainPage');
   }
 
   public function deleteIncomeFromMainPage()
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income_id'])) {
-      $incomeId = $_POST['income_id'];
+    if ($this->request->isPost() && $this->request->hasPost('income_id')) {
+      $incomeId = $this->request->post('income_id');
       $this->transactionService->deleteIncomeById($incomeId);
-      header('Location: /mainPage');
-      exit;
     }
-    header('Location: /mainPage');
-    exit;
+    $this->response->redirect('/mainPage');
   }
 
   /**
@@ -241,16 +230,13 @@ class TransactionController
    */
   public function checkCategoryLimit()
   {
-    header('Content-Type: application/json');
-    
-    $categoryId = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
-    $amount = isset($_GET['amount']) ? (float)$_GET['amount'] : 0;
-    $expenseId = isset($_GET['expense_id']) ? (int)$_GET['expense_id'] : null;
-    $userId = $_SESSION['user'] ?? 0;
+    $categoryId = (int)$this->request->get('category_id', 0);
+    $amount = (float)$this->request->get('amount', 0);
+    $expenseId = $this->request->get('expense_id') ? (int)$this->request->get('expense_id') : null;
+    $userId = $this->auth->getUserId() ?? 0;
 
     if (!$categoryId || !$userId) {
-      echo json_encode(['error' => 'Invalid parameters']);
-      return;
+      $this->response->jsonError('Invalid parameters', [], 400);
     }
 
     // Pobierz limit kategorii
@@ -258,11 +244,10 @@ class TransactionController
     
     // Jeśli kategoria nie ma limitu, zwróć OK
     if ($limit === null) {
-      echo json_encode([
+      $this->response->json([
         'hasLimit' => false,
         'status' => 'ok'
       ]);
-      return;
     }
 
     // Oblicz sumę wydatków w kategorii (bez edytowanego wydatku)
@@ -286,7 +271,7 @@ class TransactionController
       $level = 'warning';
     }
 
-    echo json_encode([
+    $this->response->json([
       'hasLimit' => true,
       'limit' => $limit,
       'currentTotal' => $currentTotal,

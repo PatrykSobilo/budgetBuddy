@@ -12,7 +12,12 @@ use App\Services\{
   SettingsService,
   DatePeriodService,
   ViewHelperService,
-  TransactionSearchService
+  TransactionSearchService,
+  ResponseService,
+  FlashService,
+  SessionService,
+  Request,
+  AuthService
 };
 
 return [
@@ -47,5 +52,13 @@ return [
   TransactionSearchService::class => function (Container $container) {
     $viewHelper = $container->get(ViewHelperService::class);
     return new TransactionSearchService($viewHelper);
+  },
+  ResponseService::class => fn () => new ResponseService(),
+  FlashService::class => fn () => new FlashService(),
+  SessionService::class => fn () => new SessionService(),
+  Request::class => fn () => new Request(),
+  AuthService::class => function (Container $container) {
+    $session = $container->get(SessionService::class);
+    return new AuthService($session);
   }
 ];

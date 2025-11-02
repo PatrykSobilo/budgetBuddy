@@ -103,4 +103,67 @@ class ViewHelperService
       'data' => array_values($categoryTotals)
     ];
   }
+
+  /**
+   * Find expense category by ID
+   * 
+   * @param int $categoryId Category ID
+   * @return array|null Category data or null if not found
+   */
+  public function findExpenseCategoryById(int $categoryId): ?array
+  {
+    if (empty($_SESSION['expenseCategories'])) {
+      return null;
+    }
+
+    foreach ($_SESSION['expenseCategories'] as $category) {
+      if ((int)$category['id'] === $categoryId) {
+        return $category;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Find income category by ID
+   * 
+   * @param int $categoryId Category ID
+   * @return array|null Category data or null if not found
+   */
+  public function findIncomeCategoryById(int $categoryId): ?array
+  {
+    if (empty($_SESSION['incomeCategories'])) {
+      return null;
+    }
+
+    foreach ($_SESSION['incomeCategories'] as $category) {
+      if ((int)$category['id'] === $categoryId) {
+        return $category;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Find payment method by ID
+   * 
+   * @param int $methodId Payment method ID
+   * @return array|null Payment method data or null if not found
+   */
+  public function findPaymentMethodById(int $methodId): ?array
+  {
+    if (empty($_SESSION['paymentMethods'])) {
+      return null;
+    }
+
+    foreach ($_SESSION['paymentMethods'] as $method) {
+      if ((int)$method['id'] === $methodId) {
+        return $method;
+      }
+    }
+
+    return null;
+  }
 }
