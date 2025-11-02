@@ -22,12 +22,17 @@ class HomeController {
 
     public function mainPageView(){
         $transactions = null;
+        $budgetSummary = null;
+        
         if (isset($_SESSION['user'])) {
             $transactions = $this->transactionService->getUserTransactions(10);
+            $budgetSummary = $this->transactionService->getBudgetSummary((int)$_SESSION['user']);
         }
+        
         echo $this->view->render("mainPage.php", [
             'title' => 'Main page',
-            'transactions' => $transactions
+            'transactions' => $transactions,
+            'budgetSummary' => $budgetSummary
         ]);
     }
 }

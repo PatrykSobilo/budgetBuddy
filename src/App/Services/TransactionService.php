@@ -335,5 +335,163 @@ class TransactionService
       ? (float)$result['category_limit'] 
       : null;
   }
+
+  /**
+   * Pobiera podsumowanie budżetu dla wszystkich kategorii z limitami
+   * @param int $userId ID użytkownika
+   * @return array Dane o budżecie: total_limit, total_spent, categories_exceeded, categories_warning
+   */
+  public function getBudgetSummary(int $userId): array
+  {
+    $currentMonth = date('Y-m-01 00:00:00');
+    $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
+
+    // Pobierz wszystkie kategorie z limitami
+    $categories = $this->db->query(
+      "SELECT id, name, category_limit 
+       FROM expenses_category_assigned_to_users 
+       WHERE user_id = :user_id AND category_limit IS NOT NULL",
+      ['user_id' => $userId]
+    )->findAll();
+
+    $totalLimit = 0;
+    $totalSpent = 0;
+    $categoriesExceeded = 0;
+    $categoriesWarning = 0;
+
+    foreach ($categories as $category) {
+      $limit = (float)$category['category_limit'];
+      $totalLimit += $limit;
+
+      // Oblicz wydatki w kategorii
+      $spent = $this->getCategoryMonthlyTotal($userId, (int)$category['id']);
+      $totalSpent += $spent;
+
+      // Sprawdź status
+      if ($limit > 0) {
+        $percentage = ($spent / $limit) * 100;
+        if ($percentage >= 100) {
+          $categoriesExceeded++;
+        } elseif ($percentage >= 80) {
+          $categoriesWarning++;
+        }
+      }
+    }
+
+    return [
+      'total_limit' => $totalLimit,
+      'total_spent' => $totalSpent,
+      'total_percentage' => $totalLimit > 0 ? ($totalSpent / $totalLimit) * 100 : 0,
+      'categories_exceeded' => $categoriesExceeded,
+      'categories_warning' => $categoriesWarning,
+      'categories_count' => count($categories)
+    ];
+  }
+
+  /**
+   * Pobiera szczegółowe dane o kategoriach z limitami dla progress bars
+   * @param int $userId ID użytkownika
+   * @return array Lista kategorii z danymi o wydatkach i limitach
+   */
+  public function getCategoriesWithLimits(int $userId): array
+  {
+    // Pobierz kategorie z limitami
+    $categories = $this->db->query(
+      "SELECT id, name, category_limit 
+       FROM expenses_category_assigned_to_users 
+       WHERE user_id = :user_id AND category_limit IS NOT NULL
+       ORDER BY name ASC",
+      ['user_id' => $userId]
+    )->findAll();
+
+    $result = [];
+    foreach ($categories as $category) {
+      $categoryId = (int)$category['id'];
+      $limit = (float)$category['category_limit'];
+      $spent = $this->getCategoryMonthlyTotal($userId, $categoryId);
+      $percentage = $limit > 0 ? ($spent / $limit) * 100 : 0;
+
+      $result[] = [
+        'id' => $categoryId,
+        'name' => $category['name'],
+        'limit' => $limit,
+        'spent' => $spent,
+        'percentage' => $percentage,
+        'status' => $percentage >= 100 ? 'exceeded' : ($percentage >= 80 ? 'warning' : 'ok')
+      ];
+    }
+
+    // Sortuj: najpierw exceeded, potem warning, potem według procentu malejąco
+    usort($result, function($a, $b) {
+      if ($a['status'] === 'exceeded' && $b['status'] !== 'exceeded') return -1;
+      if ($a['status'] !== 'exceeded' && $b['status'] === 'exceeded') return 1;
+      if ($a['status'] === 'warning' && $b['status'] === 'ok') return -1;
+      if ($a['status'] === 'ok' && $b['status'] === 'warning') return 1;
+      return $b['percentage'] <=> $a['percentage'];
+    });
+
+    return $result;
+  }
+
+  /**
+   * Pobiera dane timeline dla kategorii (wydatki dzień po dniu w miesiącu)
+   * @param int $userId ID użytkownika
+   * @param int $categoryId ID kategorii
+   * @return array Dane dla wykresu timeline
+   */
+  public function getCategoryTimeline(int $userId, int $categoryId): array
+  {
+    $currentMonth = date('Y-m-01 00:00:00');
+    $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
+
+    // Pobierz wszystkie wydatki w kategorii w tym miesiącu
+    $expenses = $this->db->query(
+      "SELECT amount, DATE(date_of_expense) as expense_date
+       FROM expenses
+       WHERE user_id = :user_id
+       AND expense_category_assigned_to_user_id = :category_id
+       AND date_of_expense >= :start_date
+       AND date_of_expense < :end_date
+       ORDER BY date_of_expense ASC",
+      [
+        'user_id' => $userId,
+        'category_id' => $categoryId,
+        'start_date' => $currentMonth,
+        'end_date' => $nextMonth
+      ]
+    )->findAll();
+
+    // Przygotuj dane narastające
+    $timeline = [];
+    $cumulativeAmount = 0;
+    $daysInMonth = (int)date('t'); // liczba dni w miesiącu
+
+    // Inicjalizuj wszystkie dni miesiąca
+    for ($day = 1; $day <= $daysInMonth; $day++) {
+      $date = date('Y-m-') . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
+      $timeline[$date] = 0;
+    }
+
+    // Sumuj wydatki dzień po dniu
+    foreach ($expenses as $expense) {
+      $date = $expense['expense_date'];
+      if (isset($timeline[$date])) {
+        $timeline[$date] += (float)$expense['amount'];
+      }
+    }
+
+    // Konwertuj na wartości narastające
+    $cumulativeTimeline = [];
+    $cumulative = 0;
+    foreach ($timeline as $date => $amount) {
+      $cumulative += $amount;
+      $cumulativeTimeline[] = [
+        'date' => $date,
+        'amount' => $cumulative
+      ];
+    }
+
+    return $cumulativeTimeline;
+  }
 }
 
