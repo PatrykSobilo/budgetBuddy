@@ -3,9 +3,7 @@
 
 <section id="plannerPanel" class="py-4">
   <div class="container">
-    <h1 class="mb-4 text-center h2">📊 Budget Planner & Analyzer</h1>
-    <p class="text-center text-muted mb-5">Track your spending against category limits - <?php echo date('F Y'); ?></p>
-
+    <h1 class="mb-5 text-center h2">Planner & Analyzer</h1>
     <?php if (!empty($categoriesWithLimits)): ?>
       
       <!-- Progress Bars Dashboard (Opcja 1) -->
@@ -64,12 +62,12 @@
       </div>
 
       <!-- Category Timeline Chart (Opcja 3) -->
-      <div class="card shadow-sm">
+      <div class="card shadow-sm" id="timelineSection">
         <div class="card-header bg-info text-white">
           <h3 class="h5 mb-0">📈 Category Spending Timeline</h3>
         </div>
         <div class="card-body">
-          <form method="GET" action="/planner" class="mb-4">
+          <form method="GET" action="/planner#timelineSection" class="mb-4">
             <div class="row">
               <div class="col-md-8">
                 <label for="category_id" class="form-label fw-bold">Select Category to Analyze:</label>
@@ -101,6 +99,16 @@
 
             <script>
               document.addEventListener('DOMContentLoaded', function() {
+                // Płynne przewijanie do wykresu po wyborze kategorii
+                if (window.location.hash === '#timelineSection') {
+                  setTimeout(() => {
+                    document.getElementById('timelineSection').scrollIntoView({ 
+                      behavior: 'smooth', 
+                      block: 'center' 
+                    });
+                  }, 100);
+                }
+                
                 const ctx = document.getElementById('timelineChart').getContext('2d');
                 
                 // Dane z PHP

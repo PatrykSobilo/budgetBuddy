@@ -72,7 +72,7 @@ $budgetSummary = $budgetSummary ?? null;
               <span class="badge bg-success">✓ All categories within budget</span>
             <?php endif; ?>
           </div>
-          <a href="/planner" class="btn btn-sm btn-outline-primary">
+          <a href="/planner" class="btn btn-sm btn-primary">
             View Details →
           </a>
         </div>
