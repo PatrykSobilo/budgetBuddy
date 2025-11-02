@@ -48,6 +48,36 @@ class SessionService
     }
 
     /**
+     * Set user session data after login/registration
+     * 
+     * @param int $userId User ID
+     * @param array $expenseCategories Expense categories
+     * @param array $incomeCategories Income categories
+     * @param array $paymentMethods Payment methods
+     * @return void
+     */
+    public function setUserData(int $userId, array $expenseCategories, array $incomeCategories, array $paymentMethods): void
+    {
+        $_SESSION['user'] = $userId;
+        $_SESSION['expenseCategories'] = $expenseCategories;
+        $_SESSION['incomeCategories'] = $incomeCategories;
+        $_SESSION['paymentMethods'] = $paymentMethods;
+    }
+
+    /**
+     * Clear all user session data on logout
+     * 
+     * @return void
+     */
+    public function clearUserData(): void
+    {
+        $this->remove('user');
+        $this->remove('expenseCategories');
+        $this->remove('incomeCategories');
+        $this->remove('paymentMethods');
+    }
+
+    /**
      * Remove a session key
      * 
      * @param string $key Session key

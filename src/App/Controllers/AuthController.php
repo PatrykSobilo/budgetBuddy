@@ -9,6 +9,7 @@ use App\Services\{
     ValidatorService,
     UserService,
     ResponseService,
+    SessionService,
     Request
 };
 
@@ -21,6 +22,7 @@ class AuthController
         private ValidatorService $validatorService,
         private UserService $userService,
         private ResponseService $response,
+        private SessionService $session,
         private Request $request
     ) {}
 
@@ -35,7 +37,15 @@ class AuthController
 
         $this->userService->isEmailTaken($this->request->post('email'));
 
-        $this->userService->createUser($this->request->postAll());
+        $userData = $this->userService->createUser($this->request->postAll());
+        
+        session_regenerate_id();
+        $this->session->setUserData(
+            $userData['userId'],
+            $userData['expenseCategories'],
+            $userData['incomeCategories'],
+            $userData['paymentMethods']
+        );
 
         $this->response->redirect('/mainPage');
     }
@@ -49,13 +59,22 @@ class AuthController
     {
         $this->validatorService->validateLogin($this->request->postAll());
 
-        $this->userService->login($this->request->postAll());
+        $userData = $this->userService->login($this->request->postAll());
+        
+        session_regenerate_id();
+        $this->session->setUserData(
+            $userData['userId'],
+            $userData['expenseCategories'],
+            $userData['incomeCategories'],
+            $userData['paymentMethods']
+        );
 
         $this->response->redirect('/mainPage');
     }
 
     public function logout()
     {
+        $this->session->clearUserData();
         $this->userService->logout();
 
         $this->response->redirect('/');

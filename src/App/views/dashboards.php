@@ -46,7 +46,8 @@ include $this->resolve("partials/_header.php");
                                 $service = $transactionService ?? null;
                                 $startDate = $startDate ?? null;
                                 $endDate = $endDate ?? null;
-                                $summary = $service ? $service->calculateTransactions($startDate, $endDate) : ['expenses' => 0, 'incomes' => 0, 'balance' => 0];
+                                $userId = $userId ?? null;
+                                $summary = ($service && $userId) ? $service->calculateTransactions($userId, $startDate, $endDate) : ['expenses' => 0, 'incomes' => 0, 'balance' => 0];
                                 ?>
                                 <td><?php echo number_format($summary['expenses'], 2, '.', ' '); ?></td>
                                 <td><?php echo number_format($summary['incomes'], 2, '.', ' '); ?></td>

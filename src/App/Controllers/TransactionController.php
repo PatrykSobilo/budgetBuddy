@@ -40,7 +40,9 @@ class TransactionController
     $chartData = ['labels' => [], 'data' => []];
     
     if ($this->auth->check()) {
-      $all = $this->transactionService->getUserTransactions();
+      $userId = $this->auth->getUserId();
+      $searchTerm = $this->request->get('s', '');
+      $all = $this->transactionService->getUserTransactions($userId, null, $searchTerm);
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
       
       // Filtrowanie po okresie - używamy DatePeriodService
@@ -75,7 +77,9 @@ class TransactionController
     $chartData = ['labels' => [], 'data' => []];
     
     if ($this->auth->check()) {
-      $all = $this->transactionService->getUserTransactions();
+      $userId = $this->auth->getUserId();
+      $searchTerm = $this->request->get('s', '');
+      $all = $this->transactionService->getUserTransactions($userId, null, $searchTerm);
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
       
       // Filtrowanie po okresie - używamy DatePeriodService
@@ -126,11 +130,13 @@ class TransactionController
     }
     
     $csrfToken = $this->session->get('token', '');
+    $userId = $this->auth->getUserId();
     echo $this->view->render("dashboards.php", [
       'transactionService' => $this->transactionService,
       'startDate' => $startDate,
       'endDate' => $endDate,
-      'csrfToken' => $csrfToken
+      'csrfToken' => $csrfToken,
+      'userId' => $userId
     ]);
   }
 
@@ -143,7 +149,9 @@ class TransactionController
   {
     $this->auth->requireAuth();
 
-    $result = $this->transactionService->addTransaction($this->request->postAll(), $this->validatorService);
+    $userId = $this->auth->getUserId();
+    $csrfToken = $this->session->get('token', '');
+    $result = $this->transactionService->addTransaction($this->request->postAll(), $this->validatorService, $userId, $csrfToken);
     
     if (empty($result['errors'])) {
       if ($this->request->hasPost('expensesCategory')) {
@@ -162,12 +170,15 @@ class TransactionController
   {
     $this->auth->requireAuth();
     
-    $result = $this->transactionService->updateExpense($this->request->postAll(), $this->validatorService);
+    $userId = $this->auth->getUserId();
+    $currentCsrfToken = $this->session->get('token', '');
+    $result = $this->transactionService->updateExpense($this->request->postAll(), $this->validatorService, $userId, $currentCsrfToken);
     
     if (empty($result['errors'])) {
       $this->response->redirect('/expenses');
     } else {
-      $all = $this->transactionService->getUserTransactions();
+      $searchTerm = $this->request->get('s', '');
+      $all = $this->transactionService->getUserTransactions($userId, null, $searchTerm);
       $expenses = array_filter($all, fn($t) => $t['type'] === 'Expense');
       echo $this->view->render('expenses.php', array_merge($result, ['expenses' => $expenses]));
     }
@@ -177,12 +188,15 @@ class TransactionController
   {
     $this->auth->requireAuth();
     
-    $result = $this->transactionService->updateIncome($this->request->postAll(), $this->validatorService);
+    $userId = $this->auth->getUserId();
+    $currentCsrfToken = $this->session->get('token', '');
+    $result = $this->transactionService->updateIncome($this->request->postAll(), $this->validatorService, $userId, $currentCsrfToken);
     
     if (empty($result['errors'])) {
       $this->response->redirect('/incomes');
     } else {
-      $all = $this->transactionService->getUserTransactions();
+      $searchTerm = $this->request->get('s', '');
+      $all = $this->transactionService->getUserTransactions($userId, null, $searchTerm);
       $incomes = array_filter($all, fn($t) => $t['type'] === 'Income');
       echo $this->view->render('incomes.php', array_merge($result, ['incomes' => $incomes]));
     }
@@ -192,7 +206,8 @@ class TransactionController
   {
     if ($this->request->isPost() && $this->request->hasPost('expense_id')) {
       $expenseId = $this->request->post('expense_id');
-      $this->transactionService->deleteExpenseById($expenseId);
+      $userId = $this->auth->getUserId();
+      $this->transactionService->deleteExpenseById($expenseId, $userId);
     }
     $this->response->redirect('/expenses');
   }
@@ -201,7 +216,8 @@ class TransactionController
   {
     if ($this->request->isPost() && $this->request->hasPost('income_id')) {
       $incomeId = $this->request->post('income_id');
-      $this->transactionService->deleteIncomeById($incomeId);
+      $userId = $this->auth->getUserId();
+      $this->transactionService->deleteIncomeById($incomeId, $userId);
     }
     $this->response->redirect('/incomes');
   }
@@ -210,7 +226,8 @@ class TransactionController
   {
     if ($this->request->isPost() && $this->request->hasPost('expense_id')) {
       $expenseId = $this->request->post('expense_id');
-      $this->transactionService->deleteExpenseById($expenseId);
+      $userId = $this->auth->getUserId();
+      $this->transactionService->deleteExpenseById($expenseId, $userId);
     }
     $this->response->redirect('/mainPage');
   }
@@ -219,7 +236,8 @@ class TransactionController
   {
     if ($this->request->isPost() && $this->request->hasPost('income_id')) {
       $incomeId = $this->request->post('income_id');
-      $this->transactionService->deleteIncomeById($incomeId);
+      $userId = $this->auth->getUserId();
+      $this->transactionService->deleteIncomeById($incomeId, $userId);
     }
     $this->response->redirect('/mainPage');
   }

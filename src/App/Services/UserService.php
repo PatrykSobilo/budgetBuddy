@@ -33,7 +33,7 @@ class UserService
     }
   }
 
-  public function login(array $formData)
+  public function login(array $formData): array
   {
     $user = $this->db->query("SELECT * FROM users WHERE email = :email", [
       'email' => $formData['email']
@@ -48,26 +48,30 @@ class UserService
       throw new ValidationException(['password' => ['Invalid credentials']]);
     }
 
-    session_regenerate_id();
-    $_SESSION['user'] = $user['id'];
-
-    $_SESSION['expenseCategories'] = $this->db->query(
+    $expenseCategories = $this->db->query(
       "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
     )->findAll();
 
-    $_SESSION['incomeCategories'] = $this->db->query(
+    $incomeCategories = $this->db->query(
       "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
     )->findAll();
 
-    $_SESSION['paymentMethods'] = $this->db->query(
+    $paymentMethods = $this->db->query(
       "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $user['id']]
     )->findAll();
+
+    return [
+      'userId' => $user['id'],
+      'expenseCategories' => $expenseCategories,
+      'incomeCategories' => $incomeCategories,
+      'paymentMethods' => $paymentMethods
+    ];
   }
 
-  public function createUser(array $formData)
+  public function createUser(array $formData): array
   {
     $password = password_hash($formData['password'], PASSWORD_BCRYPT, ['cost' => 12]);
 
@@ -81,9 +85,6 @@ class UserService
       ]
     );
 
-    session_regenerate_id();
-
-    $_SESSION['user'] = $this->db->id();
     $userId = $this->db->id();
 
     $incomesCategories = $this->db->query("SELECT name FROM incomes_category_default")->findAll();
@@ -110,23 +111,29 @@ class UserService
       );
     }
 
-    $_SESSION['expenseCategories'] = $this->db->query(
+    $expenseCategories = $this->db->query(
       "SELECT id, name, category_limit FROM expenses_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
-    $_SESSION['incomeCategories'] = $this->db->query(
+    $incomeCategories = $this->db->query(
       "SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
-    $_SESSION['paymentMethods'] = $this->db->query(
+    $paymentMethodsData = $this->db->query(
       "SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id",
       ['user_id' => $userId]
     )->findAll();
+
+    return [
+      'userId' => $userId,
+      'expenseCategories' => $expenseCategories,
+      'incomeCategories' => $incomeCategories,
+      'paymentMethods' => $paymentMethodsData
+    ];
   }
 
-  public function logout()
+  public function logout(): void
   {
-    unset($_SESSION['user']);
     session_destroy();
 
     session_regenerate_id();

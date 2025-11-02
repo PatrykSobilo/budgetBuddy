@@ -10,7 +10,7 @@ class TransactionService
 {
   public function __construct(private Database $db) {}
 
-  public function create(array $formData)
+  public function create(array $formData, int $userId)
   {
     $formattedDate = "{$formData['date']} 00:00:00";
 
@@ -18,7 +18,7 @@ class TransactionService
       "INSERT INTO transactions(user_id, description, amount, date)
       VALUES(:user_id, :description, :amount, :date)",
       [
-        'user_id' => $_SESSION['user'],
+        'user_id' => $userId,
         'description' => $formData['description'],
         'amount' => $formData['amount'],
         'date_of_expense' => $formattedDate,
@@ -27,14 +27,14 @@ class TransactionService
     );
   }
 
-  public function createIncome(array $formData)
+  public function createIncome(array $formData, int $userId)
   {
     $formattedDate = "{$formData['date']} 00:00:00";
     $this->db->query(
       "INSERT INTO incomes(user_id, income_category_assigned_to_user_id, amount, date_of_income, income_comment)
       VALUES(:user_id, :income_category_assigned_to_user_id, :amount, :date_of_income, :income_comment)",
       [
-        'user_id' => $_SESSION['user'],
+        'user_id' => $userId,
         'income_category_assigned_to_user_id' => $formData['incomesCategory'],
         'amount' => $formData['amount'],
         'date_of_income' => $formattedDate,
@@ -43,14 +43,14 @@ class TransactionService
     );
   }
 
-  public function createExpense(array $formData)
+  public function createExpense(array $formData, int $userId)
   {
     $formattedDate = "{$formData['date']} 00:00:00";
     $this->db->query(
       "INSERT INTO expenses(user_id, expense_category_assigned_to_user_id, payment_method_assigned_to_user_id, amount, date_of_expense, expense_comment)
       VALUES(:user_id, :expense_category_assigned_to_user_id, :payment_method_assigned_to_user_id, :amount, :date_of_expense, :expense_comment)",
       [
-        'user_id' => $_SESSION['user'],
+        'user_id' => $userId,
         'expense_category_assigned_to_user_id' => $formData['expensesCategory'],
         'payment_method_assigned_to_user_id' => $formData['paymentMethods'],
         'amount' => $formData['amount'],
@@ -60,11 +60,8 @@ class TransactionService
     );
   }
 
-  public function getUserTransactions(int $limit = null)
+  public function getUserTransactions(int $userId, int $limit = null, string $searchTerm = '')
   {
-    $searchTerm = $_GET['s'] ?? '';
-
-    $userId = $_SESSION['user'];
     $expenses = $this->db->query(
       "SELECT 'Expense' AS type, id, expense_comment AS description, amount, date_of_expense AS date, expense_category_assigned_to_user_id, payment_method_assigned_to_user_id
        FROM expenses
@@ -87,7 +84,7 @@ class TransactionService
     return $allTransactions;
   }
 
-  public function getUserTransaction(string $id)
+  public function getUserTransaction(string $id, int $userId)
   {
     return $this->db->query(
       "SELECT *, DATE_FORMAT(date, '%Y-%m-%d') as formatted_date
@@ -95,45 +92,45 @@ class TransactionService
       WHERE id = :id AND user_id = :user_id",
       [
         'id' => $id,
-        'user_id' => $_SESSION['user']
+        'user_id' => $userId
       ]
     )->find();
   }
 
-  public function delete(int $id)
+  public function delete(int $id, int $userId)
   {
     $this->db->query(
       "DELETE FROM transactions WHERE id = :id AND user_id = :user_id",
       [
         'id' => $id,
-        'user_id' => $_SESSION['user']
+        'user_id' => $userId
       ]
     );
   }
 
-  public function deleteExpenseById($expenseId)
+  public function deleteExpenseById($expenseId, int $userId)
   {
     $this->db->query(
       "DELETE FROM expenses WHERE id = :id AND user_id = :user_id",
       [
         'id' => $expenseId,
-        'user_id' => $_SESSION['user']
+        'user_id' => $userId
       ]
     );
   }
 
-  public function deleteIncomeById($incomeId)
+  public function deleteIncomeById($incomeId, int $userId)
   {
     $this->db->query(
       "DELETE FROM incomes WHERE id = :id AND user_id = :user_id",
       [
         'id' => $incomeId,
-        'user_id' => $_SESSION['user']
+        'user_id' => $userId
       ]
     );
   }
 
-  public function addTransaction(array $formData, ValidatorService $validatorService)
+  public function addTransaction(array $formData, ValidatorService $validatorService, int $userId, string $csrfToken)
   {
     $openModal = null;
     if (isset($formData['expensesCategory'])) {
@@ -144,50 +141,45 @@ class TransactionService
     try {
       $validatorService->validateTransaction($formData);
     } catch (\Framework\Exceptions\ValidationException $e) {
-      $csrfToken = bin2hex(random_bytes(32));
-      $_SESSION['token'] = $csrfToken;
+      $newCsrfToken = bin2hex(random_bytes(32));
       return [
         'oldFormData' => $formData,
         'errors' => $e->errors,
         'openModal' => $openModal,
-        'csrfToken' => $csrfToken
+        'csrfToken' => $newCsrfToken
       ];
     }
     if (isset($formData['expensesCategory'])) {
-      $this->createExpense($formData);
+      $this->createExpense($formData, $userId);
     } elseif (isset($formData['incomesCategory'])) {
-      $this->createIncome($formData);
+      $this->createIncome($formData, $userId);
     }
-    $csrfToken = bin2hex(random_bytes(32));
-    $_SESSION['token'] = $csrfToken;
+    $newCsrfToken = bin2hex(random_bytes(32));
     return [
       'oldFormData' => [],
       'errors' => [],
       'openModal' => null,
-      'csrfToken' => $csrfToken
+      'csrfToken' => $newCsrfToken
     ];
   }
   
-  public function calculateTransactions($startDate = null, $endDate = null): array
+  public function calculateTransactions(int $userId, $startDate = null, $endDate = null): array
   {
     $expenses = 0;
     $incomes = 0;
-    $userId = $_SESSION['user'] ?? null;
-    if ($userId) {
-        $all = $this->getUserTransactions();
-        foreach ($all as $t) {
-            $date = $t['date'];
-            // Extract only date part (YYYY-MM-DD) for comparison
-            $dateOnly = substr($date, 0, 10);
-            
-            $inRange = true;
-            if ($startDate && $dateOnly < $startDate) $inRange = false;
-            if ($endDate && $dateOnly > $endDate) $inRange = false;
-            
-            if ($inRange) {
-                if ($t['type'] === 'Expense') $expenses += $t['amount'];
-                if ($t['type'] === 'Income') $incomes += $t['amount'];
-            }
+    $all = $this->getUserTransactions($userId);
+    foreach ($all as $t) {
+        $date = $t['date'];
+        // Extract only date part (YYYY-MM-DD) for comparison
+        $dateOnly = substr($date, 0, 10);
+        
+        $inRange = true;
+        if ($startDate && $dateOnly < $startDate) $inRange = false;
+        if ($endDate && $dateOnly > $endDate) $inRange = false;
+        
+        if ($inRange) {
+            if ($t['type'] === 'Expense') $expenses += $t['amount'];
+            if ($t['type'] === 'Income') $incomes += $t['amount'];
         }
     }
     return [
@@ -197,7 +189,7 @@ class TransactionService
     ];
   }
 
-  public function updateExpense(array $formData, $validatorService)
+  public function updateExpense(array $formData, $validatorService, int $userId, string $currentCsrfToken)
   {
     $openModal = null;
     if (!isset($formData['expense_id'])) {
@@ -205,14 +197,13 @@ class TransactionService
         'oldFormData' => $formData,
         'errors' => ['global' => ['Brak ID wydatku do edycji']],
         'openModal' => $openModal,
-        'csrfToken' => $_SESSION['token'] ?? ''
+        'csrfToken' => $currentCsrfToken
       ];
     }
     try {
       $validatorService->validateTransaction($formData);
     } catch (\Framework\Exceptions\ValidationException $e) {
       $csrfToken = bin2hex(random_bytes(32));
-      $_SESSION['token'] = $csrfToken;
       return [
         'oldFormData' => $formData,
         'errors' => $e->errors,
@@ -230,11 +221,10 @@ class TransactionService
         'date' => $formattedDate,
         'desc' => $formData['description'],
         'id' => $formData['expense_id'],
-        'user_id' => $_SESSION['user']
+        'user_id' => $userId
       ]
     );
     $csrfToken = bin2hex(random_bytes(32));
-    $_SESSION['token'] = $csrfToken;
     return [
       'oldFormData' => [],
       'errors' => [],
@@ -243,7 +233,7 @@ class TransactionService
     ];
   }
 
-  public function updateIncome(array $formData, $validatorService)
+  public function updateIncome(array $formData, $validatorService, int $userId, string $currentCsrfToken)
   {
     $openModal = null;
     if (!isset($formData['income_id'])) {
@@ -251,14 +241,13 @@ class TransactionService
         'oldFormData' => $formData,
         'errors' => ['global' => ['Brak ID przychodu do edycji']],
         'openModal' => $openModal,
-        'csrfToken' => $_SESSION['token'] ?? ''
+        'csrfToken' => $currentCsrfToken
       ];
     }
     try {
       $validatorService->validateTransaction($formData);
     } catch (\Framework\Exceptions\ValidationException $e) {
       $csrfToken = bin2hex(random_bytes(32));
-      $_SESSION['token'] = $csrfToken;
       return [
         'oldFormData' => $formData,
         'errors' => $e->errors,
@@ -275,11 +264,10 @@ class TransactionService
         'date' => $formattedDate,
         'desc' => $formData['description'],
         'id' => $formData['income_id'],
-        'user_id' => $_SESSION['user']
+        'user_id' => $userId
       ]
     );
     $csrfToken = bin2hex(random_bytes(32));
-    $_SESSION['token'] = $csrfToken;
     return [
       'oldFormData' => [],
       'errors' => [],

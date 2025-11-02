@@ -26,8 +26,9 @@ class HomeController {
         $budgetSummary = null;
         
         if ($this->auth->check()) {
-            $transactions = $this->transactionService->getUserTransactions(10);
-            $budgetSummary = $this->transactionService->getBudgetSummary($this->auth->getUserId());
+            $userId = $this->auth->getUserId();
+            $transactions = $this->transactionService->getUserTransactions($userId, 10);
+            $budgetSummary = $this->transactionService->getBudgetSummary($userId);
         }
         
         echo $this->view->render("mainPage.php", [
