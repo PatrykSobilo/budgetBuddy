@@ -6,7 +6,7 @@
     </div>
     <div class="custom-modal-body">
       <form method="POST" action="/transactions/add" class="modal-form" id="expenseForm">
-        <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+        <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
         <input type="hidden" id="expense_id" name="expense_id" value="<?php echo e($oldFormData['expense_id'] ?? ''); ?>">
 
         <!-- Category Limit Warning Container -->
@@ -15,8 +15,8 @@
         <div class="form-floating">
           <select class="form-control" id="expensesCategory" name="expensesCategory">
             <option value="">-- Wybierz kategorię --</option>
-            <?php if (!empty($_SESSION['expenseCategories'])): ?>
-              <?php foreach ($_SESSION['expenseCategories'] as $cat): ?>
+            <?php if (!empty($expenseCategories)): ?>
+              <?php foreach ($expenseCategories as $cat): ?>
                 <option value="<?php echo htmlspecialchars($cat['id']); ?>" <?php if (($oldFormData['expensesCategory'] ?? '') == $cat['id']) echo 'selected'; ?>>
                   <?php echo htmlspecialchars($cat['name']); ?>
                 </option>
@@ -34,8 +34,8 @@
         <div class="form-floating">
           <select class="form-control" id="paymentMethods" name="paymentMethods">
             <option value="">-- Wybierz metodę --</option>
-            <?php if (!empty($_SESSION['paymentMethods'])): ?>
-              <?php foreach ($_SESSION['paymentMethods'] as $method): ?>
+            <?php if (!empty($paymentMethods)): ?>
+              <?php foreach ($paymentMethods as $method): ?>
                 <option value="<?php echo htmlspecialchars($method['id']); ?>" <?php if (($oldFormData['paymentMethods'] ?? '') == $method['id']) echo 'selected'; ?>>
                   <?php echo htmlspecialchars($method['name']); ?>
                 </option>
@@ -91,14 +91,14 @@
     </div>
     <div class="custom-modal-body">
       <form method="POST" action="/transactions/add" class="modal-form" id="incomeForm">
-        <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+        <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
         <input type="hidden" id="income_id" name="income_id" value="<?php echo e($oldFormData['income_id'] ?? ''); ?>">
 
         <div class="form-floating">
           <select class="form-control" id="incomesCategory" name="incomesCategory">
             <option value="">-- Wybierz kategorię --</option>
-            <?php if (!empty($_SESSION['incomeCategories'])): ?>
-              <?php foreach ($_SESSION['incomeCategories'] as $cat): ?>
+            <?php if (!empty($incomeCategories)): ?>
+              <?php foreach ($incomeCategories as $cat): ?>
                 <option value="<?php echo htmlspecialchars($cat['id']); ?>" <?php if (($oldFormData['incomesCategory'] ?? '') == $cat['id']) echo 'selected'; ?>>
                   <?php echo htmlspecialchars($cat['name']); ?>
                 </option>

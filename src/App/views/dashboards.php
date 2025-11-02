@@ -2,7 +2,7 @@
 $pageScripts = ['charts-dashboards.js'];
 include $this->resolve("partials/_header.php"); 
 ?>
-<?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+<?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken]); ?>
 
 <div class="container mt-4">
     <h1 class="text-center mb-4 h2">Dashboards</h1>
@@ -13,7 +13,6 @@ include $this->resolve("partials/_header.php");
         <?php 
         $action = '/dashboards';
         $method = 'POST';
-        $csrfToken = $csrfToken ?? ($_SESSION['token'] ?? '');
         $startDateName = 'startingDate';
         $endDateName = 'endingDate';
         $submitLabel = 'Show Balance';

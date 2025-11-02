@@ -2,7 +2,7 @@
 $pageScripts = ['charts-expenses-incomes.js'];
 include $this->resolve("partials/_header.php"); 
 ?>
-<?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+<?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken]); ?>
 
 <section id="historyExpensesPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
@@ -66,8 +66,8 @@ include $this->resolve("partials/_header.php");
                             <td><?php echo htmlspecialchars($expense['description']); ?></td>
                             <td><?php
                                 $catName = '';
-                                if (!empty($_SESSION['expenseCategories'])) {
-                                    foreach ($_SESSION['expenseCategories'] as $cat) {
+                                if (!empty($expenseCategories)) {
+                                    foreach ($expenseCategories as $cat) {
                                         if ($cat['id'] == ($expense['expense_category_assigned_to_user_id'] ?? null)) {
                                             $catName = $cat['name'];
                                             break;
@@ -78,8 +78,8 @@ include $this->resolve("partials/_header.php");
                             ?></td>
                             <td><?php
                                 $payName = '';
-                                if (!empty($_SESSION['paymentMethods'])) {
-                                    foreach ($_SESSION['paymentMethods'] as $method) {
+                                if (!empty($paymentMethods)) {
+                                    foreach ($paymentMethods as $method) {
                                         if ($method['id'] == ($expense['payment_method_assigned_to_user_id'] ?? null)) {
                                             $payName = $method['name'];
                                             break;
@@ -125,7 +125,7 @@ include $this->resolve("partials/_header.php");
 </section>
 
 <form id="deleteExpenseForm" method="POST" action="/expenses/delete" style="display:none;">
-  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
   <input type="hidden" name="expense_id" id="deleteExpenseId" value="">
 </form>
 

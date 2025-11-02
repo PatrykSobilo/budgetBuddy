@@ -2,7 +2,7 @@
 $pageScripts = ['charts-expenses-incomes.js'];
 include $this->resolve("partials/_header.php"); 
 ?>
-<?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+<?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken]); ?>
 
 <section id="historyPanel" class="py-3 mb-4">
     <div class="container d-flex flex-wrap border">
@@ -65,8 +65,8 @@ include $this->resolve("partials/_header.php");
                             <td><?php echo htmlspecialchars($income['description']); ?></td>
                             <td><?php
                                 $catName = '';
-                                if (!empty($_SESSION['incomeCategories'])) {
-                                    foreach ($_SESSION['incomeCategories'] as $cat) {
+                                if (!empty($incomeCategories)) {
+                                    foreach ($incomeCategories as $cat) {
                                         if ($cat['id'] == ($income['income_category_assigned_to_user_id'] ?? null)) {
                                             $catName = $cat['name'];
                                             break;
@@ -110,7 +110,7 @@ include $this->resolve("partials/_header.php");
 </section>
 
 <form id="deleteIncomeForm" method="POST" action="/incomes/delete" style="display:none;">
-  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
   <input type="hidden" name="income_id" id="deleteIncomeId" value="">
 </form>
 

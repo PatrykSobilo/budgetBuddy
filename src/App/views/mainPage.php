@@ -140,11 +140,11 @@ $budgetSummary = $budgetSummary ?? null;
 </section>
 
 <form id="deleteExpenseForm" method="POST" action="/mainPage/delete-expense" style="display:none;">
-  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
   <input type="hidden" name="expense_id" id="deleteExpenseId" value="">
 </form>
 <form id="deleteIncomeForm" method="POST" action="/mainPage/delete-income" style="display:none;">
-  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+  <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
   <input type="hidden" name="income_id" id="deleteIncomeId" value="">
 </form>
 

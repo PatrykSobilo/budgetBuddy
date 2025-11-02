@@ -6,11 +6,7 @@ include $this->resolve("partials/_header.php");
 <?php include $this->resolve("partials/_settings_modals.php"); ?>
 
 <?php
-$sectionToShow = 'profile';
-if (!empty($_SESSION['settings_section'])) {
-    $sectionToShow = $_SESSION['settings_section'];
-    unset($_SESSION['settings_section']);
-}
+$sectionToShow = $settings_section ?? 'profile';
 ?>
 
 <div class="settings-ribbon py-3" style="background-color: #f5f6fa; border-bottom: 1px solid #e0e0e0;">
@@ -23,13 +19,13 @@ if (!empty($_SESSION['settings_section'])) {
 </div>
 
 
-<?php if (!empty($_SESSION['flash_error'])): ?>
+<?php if (!empty($flash_error)): ?>
   <div class="alert alert-danger text-center" style="margin-top: 2rem; max-width: 600px; margin-left:auto; margin-right:auto;">
-    <?php echo htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?>
+    <?php echo htmlspecialchars($flash_error); ?>
   </div>
-<?php elseif (!empty($_SESSION['flash_success'])): ?>
+<?php elseif (!empty($flash_success)): ?>
   <div class="alert alert-success text-center" style="margin-top: 2rem; max-width: 600px; margin-left:auto; margin-right:auto;">
-    <?php echo htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?>
+    <?php echo htmlspecialchars($flash_success); ?>
   </div>
 <?php endif; ?>
 
@@ -70,7 +66,7 @@ if (!empty($_SESSION['settings_section'])) {
   </div>
   <div id="expense-categories" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'expense-categories') ? '' : 'display:none;'; ?> max-width: 800px;">
     <h2 class="text-center h3">Expense Categories</h2>
-    <?php if (!empty($_SESSION['expenseCategories'])): ?>
+    <?php if (!empty($expenseCategories)): ?>
       <div class="card p-3 shadow-sm">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
@@ -82,7 +78,7 @@ if (!empty($_SESSION['settings_section'])) {
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($_SESSION['expenseCategories'] as $category): ?>
+              <?php foreach ($expenseCategories as $category): ?>
                 <tr>
                   <td><?php echo htmlspecialchars($category['name']); ?></td>
                   <td>
@@ -118,7 +114,7 @@ if (!empty($_SESSION['settings_section'])) {
   </div>
   <div id="incomes-categories" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'incomes-categories') ? '' : 'display:none;'; ?> max-width: 800px;">
     <h2 class="text-center h3">Incomes Categories</h2>
-    <?php if (!empty($_SESSION['incomeCategories'])): ?>
+    <?php if (!empty($incomeCategories)): ?>
       <div class="card p-3 shadow-sm">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
@@ -129,7 +125,7 @@ if (!empty($_SESSION['settings_section'])) {
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($_SESSION['incomeCategories'] as $category): ?>
+              <?php foreach ($incomeCategories as $category): ?>
                 <tr>
                   <td><?php echo htmlspecialchars($category['name']); ?></td>
                   <td class="text-end">
@@ -158,7 +154,7 @@ if (!empty($_SESSION['settings_section'])) {
   </div>
   <div id="payment-methods" class="settings-section mb-5 w-100" style="<?php echo ($sectionToShow === 'payment-methods') ? '' : 'display:none;'; ?> max-width: 800px;">
     <h2 class="text-center h3">Payment Methods</h2>
-    <?php if (!empty($_SESSION['paymentMethods'])): ?>
+    <?php if (!empty($paymentMethods)): ?>
       <div class="card p-3 shadow-sm">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
@@ -169,7 +165,7 @@ if (!empty($_SESSION['settings_section'])) {
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($_SESSION['paymentMethods'] as $method): ?>
+              <?php foreach ($paymentMethods as $method): ?>
                 <tr>
                   <td><?php echo htmlspecialchars($method['name']); ?></td>
                   <td class="text-end">

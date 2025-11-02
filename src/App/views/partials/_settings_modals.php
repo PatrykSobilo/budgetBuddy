@@ -2,7 +2,7 @@
 <div id="modalDeleteAccount" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/delete-account">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Delete Account</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalDeleteAccount')">&times;</button>
@@ -21,7 +21,7 @@
 <div id="modalDeleteExpenseCategory" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/delete-category">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <input type="hidden" name="type" value="expense_category_delete">
       <input type="hidden" id="deleteExpenseCategoryId" name="category_id" value="">
       <div class="custom-modal-header">
@@ -43,7 +43,7 @@
 <div id="modalDeleteIncomeCategory" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/delete-category">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <input type="hidden" name="type" value="income_category_delete">
       <input type="hidden" id="deleteIncomeCategoryId" name="category_id" value="">
       <div class="custom-modal-header">
@@ -65,7 +65,7 @@
 <div id="modalDeletePaymentMethod" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/delete-category">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <input type="hidden" name="type" value="payment_method_delete">
       <input type="hidden" id="deletePaymentMethodId" name="category_id" value="">
       <div class="custom-modal-header">
@@ -85,7 +85,7 @@
 <div id="modalEditEmail" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/edit-user">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Set new e-mail</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalEditEmail')">&times;</button>
@@ -108,7 +108,7 @@
 <div id="modalEditAge" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/edit-user">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Set Age</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalEditAge')">&times;</button>
@@ -131,7 +131,7 @@
 <div id="modalEditPassword" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings/edit-user">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Set new password</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalEditPassword')">&times;</button>
@@ -164,7 +164,7 @@
 <div id="modalAddExpenseCategory" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Add Expense Category</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalAddExpenseCategory')">&times;</button>
@@ -187,7 +187,7 @@
 <div id="modalAddIncomeCategory" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Add Income Category</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalAddIncomeCategory')">&times;</button>
@@ -210,7 +210,7 @@
 <div id="modalAddPaymentMethod" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Add Payment Method</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalAddPaymentMethod')">&times;</button>
@@ -233,7 +233,7 @@
 <div id="modalEditPaymentMethod" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Edit Payment Method</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalEditPaymentMethod')">&times;</button>
@@ -260,7 +260,7 @@
 <div id="modalEditExpenseCategory" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Edit Expense Category</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalEditExpenseCategory')">&times;</button>
@@ -295,7 +295,7 @@
 <div id="modalEditIncomeCategory" class="custom-modal">
   <div class="custom-modal-dialog">
     <form class="modal-form" method="POST" action="/settings">
-      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken ?? ($_SESSION['token'] ?? '')]); ?>
+      <?php include $this->resolve("partials/_csrf.php", ['csrfToken' => $csrfToken]); ?>
       <div class="custom-modal-header">
         <h5>Edit Income Category</h5>
         <button type="button" class="btn-close" onclick="closeCustomModal('modalEditIncomeCategory')">&times;</button>
