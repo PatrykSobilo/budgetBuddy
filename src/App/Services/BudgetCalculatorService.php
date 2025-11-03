@@ -206,12 +206,13 @@ class BudgetCalculatorService
      * @param int $categoryId Category ID
      * @return array Timeline data for charts (date and cumulative amount)
      */
-    public function getCategoryTimeline(int $userId, int $categoryId): array
+    public function getCategoryTimeline(int $userId, int $categoryId, ?string $month = null): array
     {
-        $currentMonth = date('Y-m-01 00:00:00');
-        $nextMonth = date('Y-m-01 00:00:00', strtotime('+1 month'));
+        $month = $month ?? date('Y-m');
+        $currentMonth = $month . '-01 00:00:00';
+        $nextMonth = date('Y-m-01 00:00:00', strtotime($currentMonth . ' +1 month'));
 
-        // Get all expenses in category for current month
+        // Get all expenses in category for selected month
         $expenses = $this->db->query(
             "SELECT amount, DATE(date_of_expense) as expense_date
              FROM expenses
@@ -230,11 +231,11 @@ class BudgetCalculatorService
 
         // Prepare cumulative data
         $timeline = [];
-        $daysInMonth = (int)date('t'); // number of days in month
+        $daysInMonth = (int)date('t', strtotime($currentMonth)); // number of days in month
 
         // Initialize all days in month
         for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = date('Y-m-') . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
+            $date = $month . '-' . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
             $timeline[$date] = 0;
         }
 
@@ -258,5 +259,90 @@ class BudgetCalculatorService
         }
 
         return $cumulativeTimeline;
+    }
+
+    /**
+     * Pobiera timeline dla wszystkich kategorii z limitami
+     */
+    public function getAllCategoriesTimeline(int $userId, ?string $month = null): array
+    {
+        $month = $month ?? date('Y-m');
+        $currentMonth = $month . '-01 00:00:00';
+        $nextMonth = date('Y-m-01 00:00:00', strtotime($currentMonth . ' +1 month'));
+
+        // Get categories with limits
+        $categories = $this->db->query(
+            "SELECT id, name, category_limit
+             FROM expenses_category_assigned_to_users
+             WHERE user_id = :user_id
+             AND category_limit IS NOT NULL
+             ORDER BY name ASC",
+            ['user_id' => $userId]
+        )->findAll();
+
+        $daysInMonth = (int)date('t', strtotime($currentMonth));
+        $allTimelines = [];
+
+        foreach ($categories as $category) {
+            $categoryId = (int)$category['id'];
+            
+            // Get expenses for this category
+            $expenses = $this->db->query(
+                "SELECT amount, DATE(date_of_expense) as expense_date
+                 FROM expenses
+                 WHERE user_id = :user_id
+                 AND expense_category_assigned_to_user_id = :category_id
+                 AND date_of_expense >= :start_date
+                 AND date_of_expense < :end_date
+                 ORDER BY date_of_expense ASC",
+                [
+                    'user_id' => $userId,
+                    'category_id' => $categoryId,
+                    'start_date' => $currentMonth,
+                    'end_date' => $nextMonth
+                ]
+            )->findAll();
+
+            // Initialize timeline for this category
+            $timeline = [];
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = $month . '-' . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
+                $timeline[$date] = 0;
+            }
+
+            // Sum expenses day by day
+            foreach ($expenses as $expense) {
+                $date = $expense['expense_date'];
+                if (isset($timeline[$date])) {
+                    $timeline[$date] += (float)$expense['amount'];
+                }
+            }
+
+            // Convert to cumulative values
+            $cumulativeData = [];
+            $cumulative = 0;
+            foreach ($timeline as $date => $amount) {
+                $cumulative += $amount;
+                $cumulativeData[] = $cumulative;
+            }
+
+            $allTimelines[] = [
+                'id' => $categoryId,
+                'name' => $category['name'],
+                'limit' => (float)$category['category_limit'],
+                'data' => $cumulativeData
+            ];
+        }
+
+        // Create dates array (only once for all categories)
+        $dates = [];
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $dates[] = $month . '-' . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
+        }
+
+        return [
+            'dates' => $dates,
+            'categories' => $allTimelines
+        ];
     }
 }

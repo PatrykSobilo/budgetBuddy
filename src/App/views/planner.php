@@ -71,11 +71,14 @@ include $this->resolve("partials/_header.php");
         </div>
         <div class="card-body">
           <form method="GET" action="/planner#timelineSection" class="mb-4">
-            <div class="row">
-              <div class="col-md-8">
+            <div class="row g-3">
+              <div class="col-md-6">
                 <label for="category_id" class="form-label fw-bold">Select Category to Analyze:</label>
                 <select class="form-select" id="category_id" name="category_id" onchange="this.form.submit()">
                   <option value="">-- Choose a category --</option>
+                  <option value="all" <?php echo ($selectedCategoryId === 'all') ? 'selected' : ''; ?>>
+                    🎯 All Categories (Overview)
+                  </option>
                   <?php foreach ($categoriesWithLimits as $category): ?>
                     <option value="<?php echo $category['id']; ?>" 
                       <?php echo ($selectedCategoryId === $category['id']) ? 'selected' : ''; ?>>
@@ -85,24 +88,49 @@ include $this->resolve("partials/_header.php");
                   <?php endforeach; ?>
                 </select>
               </div>
+              <div class="col-md-6">
+                <label for="timeline_month" class="form-label fw-bold">Select Month:</label>
+                <select class="form-select" id="timeline_month" name="timeline_month" onchange="this.form.submit()">
+                  <?php
+                  $currentMonth = $selectedMonth ?? date('Y-m');
+                  for ($i = 0; $i < 12; $i++) {
+                    $monthDate = date('Y-m', strtotime("-$i months"));
+                    $monthLabel = date('F Y', strtotime($monthDate . '-01'));
+                    $selected = ($monthDate === $currentMonth) ? 'selected' : '';
+                    echo "<option value=\"{$monthDate}\" {$selected}>{$monthLabel}</option>";
+                  }
+                  ?>
+                </select>
+              </div>
             </div>
           </form>
 
           <?php if ($selectedCategoryId && $timelineData): ?>
             <div class="mb-3">
               <h5 class="text-center">
-                <?php echo htmlspecialchars($selectedCategoryName); ?> - Monthly Spending Trend
+                <?php echo $selectedCategoryId === 'all' ? 'All Categories' : htmlspecialchars($selectedCategoryName); ?> - Monthly Spending Trend
               </h5>
               <p class="text-center text-muted">
-                Cumulative spending throughout <?php echo date('F Y'); ?>
+                Cumulative spending throughout <?php echo date('F Y', strtotime($selectedMonth . '-01')); ?>
               </p>
             </div>
             
-            <canvas id="timelineChart" width="400" height="150"></canvas>
+            <canvas id="timelineChart" width="400" height="<?php echo $selectedCategoryId === 'all' ? '250' : '150'; ?>"></canvas>
 
             <script>
               document.addEventListener('DOMContentLoaded', function() {
                 const timelineData = <?php echo json_encode($timelineData); ?>;
+                console.log('Timeline Data:', timelineData);
+                <?php if ($selectedCategoryId === 'all'): ?>
+                const categoriesData = <?php echo json_encode($categoriesWithLimits); ?>;
+                console.log('Categories Data:', categoriesData);
+                console.log('Calling initializeMultiCategoryChart');
+                if (typeof initializeMultiCategoryChart === 'function') {
+                  initializeMultiCategoryChart(timelineData, categoriesData);
+                } else {
+                  console.error('initializeMultiCategoryChart is not defined!');
+                }
+                <?php else: ?>
                 const categoryLimit = <?php 
                   foreach ($categoriesWithLimits as $cat) {
                     if ($cat['id'] === $selectedCategoryId) {
@@ -112,6 +140,7 @@ include $this->resolve("partials/_header.php");
                   }
                 ?>;
                 initializePlannerChart(timelineData, categoryLimit);
+                <?php endif; ?>
               });
             </script>
           <?php else: ?>

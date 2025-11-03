@@ -279,9 +279,20 @@ class TransactionService
    * @param int $categoryId ID kategorii
    * @return array Dane dla wykresu timeline
    */
-  public function getCategoryTimeline(int $userId, int $categoryId): array
+  public function getCategoryTimeline(int $userId, int $categoryId, ?string $month = null): array
   {
-    return $this->budgetCalculator->getCategoryTimeline($userId, $categoryId);
+    return $this->budgetCalculator->getCategoryTimeline($userId, $categoryId, $month);
+  }
+
+  /**
+   * Pobiera dane timeline dla wszystkich kategorii z limitami
+   * 
+   * @param int $userId ID użytkownika
+   * @param string|null $month Miesiąc w formacie 'Y-m' (opcjonalnie)
+   * @return array Dane dla wykresu multi-category timeline
+   */
+  public function getAllCategoriesTimeline(int $userId, ?string $month = null): array
+  {
+    return $this->budgetCalculator->getAllCategoriesTimeline($userId, $month);
   }
 }
-

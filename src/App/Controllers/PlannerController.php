@@ -23,6 +23,7 @@ class PlannerController
         $selectedCategoryId = null;
         $timelineData = null;
         $selectedCategoryName = null;
+        $selectedMonth = $this->request->get('timeline_month') ?? date('Y-m');
         
         if ($this->auth->check()) {
             $userId = $this->auth->getUserId();
@@ -30,14 +31,22 @@ class PlannerController
             
             // Obsługa wyboru kategorii do wykresu timeline
             if ($this->request->hasGet('category_id') && !empty($categoriesWithLimits)) {
-                $selectedCategoryId = (int)$this->request->get('category_id');
-                $timelineData = $this->transactionService->getCategoryTimeline($userId, $selectedCategoryId);
+                $selectedCategoryId = $this->request->get('category_id');
                 
-                // Znajdź nazwę wybranej kategorii
-                foreach ($categoriesWithLimits as $cat) {
-                    if ($cat['id'] === $selectedCategoryId) {
-                        $selectedCategoryName = $cat['name'];
-                        break;
+                if ($selectedCategoryId === 'all') {
+                    // Pobierz dane dla wszystkich kategorii
+                    $timelineData = $this->transactionService->getAllCategoriesTimeline($userId, $selectedMonth);
+                } else {
+                    // Pobierz dane dla jednej kategorii
+                    $selectedCategoryId = (int)$selectedCategoryId;
+                    $timelineData = $this->transactionService->getCategoryTimeline($userId, $selectedCategoryId, $selectedMonth);
+                    
+                    // Znajdź nazwę wybranej kategorii
+                    foreach ($categoriesWithLimits as $cat) {
+                        if ($cat['id'] === $selectedCategoryId) {
+                            $selectedCategoryName = $cat['name'];
+                            break;
+                        }
                     }
                 }
             }
@@ -50,6 +59,7 @@ class PlannerController
             'selectedCategoryId' => $selectedCategoryId,
             'timelineData' => $timelineData,
             'selectedCategoryName' => $selectedCategoryName,
+            'selectedMonth' => $selectedMonth,
             'expenseCategories' => $userId ? $this->userService->getExpenseCategories($userId) : [],
             'incomeCategories' => $userId ? $this->userService->getIncomeCategories($userId) : [],
             'paymentMethods' => $userId ? $this->userService->getPaymentMethods($userId) : []
