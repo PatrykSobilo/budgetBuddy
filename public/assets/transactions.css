@@ -139,3 +139,62 @@ label {
   width: 120px;
   white-space: nowrap;
 }
+.actions-col {
+  width: 80px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Row background colors - override Bootstrap table variables */
+.table-transactions tbody tr[style*="#fff9e6"] {
+  --bs-table-bg: #fffbf0 !important;
+  --bs-table-accent-bg: transparent !important;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+.table-transactions tbody tr[style*="#e6f7e6"] {
+  --bs-table-bg: #f5fdf5 !important;
+  --bs-table-accent-bg: transparent !important;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+/* Hover effects */
+.table-transactions tbody tr[style*="#fff9e6"]:hover {
+  --bs-table-bg: #fff9e6 !important;
+  border-left-color: #ffc107;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+}
+.table-transactions tbody tr[style*="#e6f7e6"]:hover {
+  --bs-table-bg: #e6f7e6 !important;
+  border-left-color: #198754;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(25, 135, 84, 0.15);
+}
+
+/* Table header styling - light blue background */
+.table-transactions thead th {
+  background: linear-gradient(135deg, #cfe2ff 0%, #e7f1ff 100%) !important;
+  color: #052c65 !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #0d6efd !important;
+  padding: 0.75rem 0.5rem !important;
+}
+
+/* Hide horizontal scrollbar in table-responsive */
+.table-responsive {
+  overflow-x: hidden !important;
+}
+
+/* For tables that actually need scrolling, show it only when necessary */
+.table-responsive::-webkit-scrollbar {
+  display: none;
+}
+.table-responsive {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -89,21 +89,26 @@ $budgetSummary = $budgetSummary ?? null;
   <div class="container d-flex flex-wrap border">
     <div class="container mt-5">
       <h1 class="mb-4 text-center h2">Recent Transactions</h1>
-      <div class="table-responsive">
-      <table class="table table-bordered table-transactions" name="balance">
-        <thead>
-          <tr>
-            <th class="type-col">Type</th>
-            <th class="description-col">Description</th>
-            <th class="amount-col">Amount</th>
-            <th class="date-col">Date</th>
-            <th class="actions-col">Actions</th>
-          </tr>
-        </thead>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="h5 mb-0">Transactions Table</h3>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-bordered table-transactions mb-0" name="balance">
+              <thead>
+                <tr>
+                  <th class="type-col">Type</th>
+                  <th class="description-col">Description</th>
+                  <th class="amount-col">Amount</th>
+                  <th class="date-col">Date</th>
+                  <th class="actions-col">Actions</th>
+                </tr>
+              </thead>
         <tbody>
         <?php if (!empty($transactions)): ?>
           <?php foreach ($transactions as $transaction): ?>
-            <tr>
+            <tr style="background-color: <?php echo $transaction['type'] === 'Expense' ? '#fff9e6 !important' : '#e6f7e6 !important'; ?>;">
               <td><?php echo htmlspecialchars($transaction['type']); ?></td>
               <td><?php echo htmlspecialchars($transaction['description']); ?></td>
               <td class="amount-col"><?php echo number_format($transaction['amount'], 2, '.', ' '); ?></td>
@@ -138,6 +143,8 @@ $budgetSummary = $budgetSummary ?? null;
         </tbody>
       </table>
       </div>
+    </div>
+  </div>
   </div>
 </div>
 </section>

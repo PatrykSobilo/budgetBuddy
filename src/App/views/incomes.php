@@ -9,16 +9,22 @@ include $this->resolve("partials/_header.php");
         <div class="container mt-5">
             <h1 class="mb-4 text-center h2">Incomes</h1>
             
-            <!-- Period Filter -->
-            <?php 
-            $action = '/incomes';
-            $method = 'GET';
-            $onChangeHandler = 'toggleCustomDates';
-            include $this->resolve("partials/_periodFilter.php"); 
-            ?>
-            
-            <!-- Search Box -->
-            <?php include $this->resolve("partials/_searchForm.php"); ?>
+            <!-- Period Filter and Search Box in one row -->
+            <div class="row mb-3">
+              <div class="col-md-8">
+                <!-- Period Filter -->
+                <?php 
+                $action = '/incomes';
+                $method = 'GET';
+                $onChangeHandler = 'toggleCustomDates';
+                include $this->resolve("partials/_periodFilter.php"); 
+                ?>
+              </div>
+              <div class="col-md-4">
+                <!-- Search Box -->
+                <?php include $this->resolve("partials/_searchForm.php"); ?>
+              </div>
+            </div>
             
             <!-- Charts Section -->
             <?php if (!empty($chartData['labels'])): ?>
@@ -47,21 +53,26 @@ include $this->resolve("partials/_header.php");
             </script>
             <?php endif; ?>
             
-            <div class="table-responsive">
-            <table class="table table-bordered table-transactions">
-                <thead>
-                    <tr>
+            <div class="card shadow-sm mb-4">
+              <div class="card-header bg-primary text-white">
+                <h3 class="h5 mb-0">Incomes Table</h3>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-transactions mb-0">
+                    <thead>
+                      <tr>
                         <th>Description</th>
                         <th>Category</th>
                         <th class="amount-col">Amount</th>
                         <th class="date-col">Date</th>
                         <th class="actions-col">Actions</th>
-                    </tr>
-                </thead>
+                      </tr>
+                    </thead>
                 <tbody>
                 <?php if (!empty($incomes)): ?>
                     <?php foreach ($incomes as $income): ?>
-                        <tr>
+                        <tr style="background-color: #e6f7e6 !important;">
                             <td><?php echo htmlspecialchars($income['description']); ?></td>
                             <td><?php
                                 $catName = '';
@@ -103,8 +114,10 @@ include $this->resolve("partials/_header.php");
                     </tr>
                 <?php endif; ?>
                 </tbody>
-            </table>
+              </table>
             </div>
+          </div>
+        </div>
         </div>
     </div>
 </section>

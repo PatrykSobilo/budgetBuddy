@@ -29,31 +29,37 @@ include $this->resolve("partials/_header.php");
         <div class="d-flex flex-column align-items-center w-100">
             <div class="table-container w-auto">
                 <div class="container mt-5 text-center">
-                    <h2 class="mb-4 justify-content-center">Balance</h2>
-                    <div class="table-responsive">
-                    <table class="table table-bordered mx-auto" name="balance" style="width:auto;">
-                        <thead>
-                            <tr>
-                                <th>Expenses</th>
-                                <th>Incomes</th>
-                                <th>Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <?php
-                                $service = $transactionService ?? null;
-                                $startDate = $startDate ?? null;
-                                $endDate = $endDate ?? null;
-                                $userId = $userId ?? null;
-                                $summary = ($service && $userId) ? $service->calculateTransactions($userId, $startDate, $endDate) : ['expenses' => 0, 'incomes' => 0, 'balance' => 0];
-                                ?>
-                                <td><?php echo number_format($summary['expenses'], 2, '.', ' '); ?></td>
-                                <td><?php echo number_format($summary['incomes'], 2, '.', ' '); ?></td>
-                                <td><?php echo number_format($summary['balance'], 2, '.', ' '); ?></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="h5 mb-0">Balance Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered mx-auto mb-0" name="balance" style="width:auto;">
+                                    <thead>
+                                        <tr>
+                                            <th>Expenses</th>
+                                            <th>Incomes</th>
+                                            <th>Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <?php
+                                            $service = $transactionService ?? null;
+                                            $startDate = $startDate ?? null;
+                                            $endDate = $endDate ?? null;
+                                            $userId = $userId ?? null;
+                                            $summary = ($service && $userId) ? $service->calculateTransactions($userId, $startDate, $endDate) : ['expenses' => 0, 'incomes' => 0, 'balance' => 0];
+                                            ?>
+                                            <td><?php echo number_format($summary['expenses'], 2, '.', ' '); ?></td>
+                                            <td><?php echo number_format($summary['incomes'], 2, '.', ' '); ?></td>
+                                            <td><?php echo number_format($summary['balance'], 2, '.', ' '); ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="container mt-4 mb-4 text-center">
