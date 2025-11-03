@@ -93,10 +93,10 @@ class UserService
 
   public function logout(): void
   {
-    session_destroy();
-
-    session_regenerate_id();
     $params = session_get_cookie_params();
+    
+    session_destroy();
+    
     setcookie(
       'PHPSESSID',
       '',

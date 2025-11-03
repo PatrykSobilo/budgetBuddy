@@ -37,7 +37,7 @@ class TransactionService
     $formattedDate = "{$formData['date']} 00:00:00";
     $this->transactionRepository->createIncome([
       'user_id' => $userId,
-      'income_category_assigned_to_user_id' => $formData['incomesCategory'],
+      'income_category_assigned_to_user_id' => !empty($formData['incomesCategory']) ? (int)$formData['incomesCategory'] : null,
       'amount' => $formData['amount'],
       'date_of_income' => $formattedDate,
       'income_comment' => $formData['description']
@@ -49,8 +49,8 @@ class TransactionService
     $formattedDate = "{$formData['date']} 00:00:00";
     $this->transactionRepository->createExpense([
       'user_id' => $userId,
-      'expense_category_assigned_to_user_id' => $formData['expensesCategory'],
-      'payment_method_assigned_to_user_id' => $formData['paymentMethods'],
+      'expense_category_assigned_to_user_id' => !empty($formData['expensesCategory']) ? (int)$formData['expensesCategory'] : null,
+      'payment_method_assigned_to_user_id' => !empty($formData['paymentMethods']) ? (int)$formData['paymentMethods'] : null,
       'amount' => $formData['amount'],
       'date_of_expense' => $formattedDate,
       'expense_comment' => $formData['description']
@@ -173,8 +173,8 @@ class TransactionService
       (int)$formData['expense_id'],
       $userId,
       [
-        'expensesCategory' => $formData['expensesCategory'],
-        'paymentMethods' => $formData['paymentMethods'],
+        'expensesCategory' => !empty($formData['expensesCategory']) ? (int)$formData['expensesCategory'] : null,
+        'paymentMethods' => !empty($formData['paymentMethods']) ? (int)$formData['paymentMethods'] : null,
         'amount' => $formData['amount'],
         'date' => $formattedDate,
         'description' => $formData['description']
@@ -216,7 +216,7 @@ class TransactionService
       (int)$formData['income_id'],
       $userId,
       [
-        'incomesCategory' => $formData['incomesCategory'],
+        'incomesCategory' => !empty($formData['incomesCategory']) ? (int)$formData['incomesCategory'] : null,
         'amount' => $formData['amount'],
         'date' => $formattedDate,
         'description' => $formData['description']

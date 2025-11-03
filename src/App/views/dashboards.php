@@ -1,5 +1,5 @@
 <?php 
-$pageScripts = ['charts-dashboards.js'];
+$pageScripts = ['charts-dashboards.js', 'category-limits.js'];
 include $this->resolve("partials/_header.php"); 
 ?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken]); ?>

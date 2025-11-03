@@ -5,3 +5,5 @@ imaginary-file.txt
 storage/uploads/*
 !storage/uploads/.gitkeep
 TODO.md
+.env-db-copy
+TODO.txt

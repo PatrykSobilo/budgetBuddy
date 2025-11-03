@@ -1,4 +1,7 @@
-<?php include $this->resolve("partials/_header.php"); ?>
+<?php 
+$pageScripts = ['category-limits.js'];
+include $this->resolve("partials/_header.php"); 
+?>
 <?php include $this->resolve("transactions/_transactionButtons.php"); ?>
 
 <?php

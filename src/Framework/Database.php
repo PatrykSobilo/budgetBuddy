@@ -46,7 +46,8 @@ class Database
 
   public function find()
   {
-    return $this->stmt->fetch();
+    $result = $this->stmt->fetch();
+    return $result === false ? null : $result;
   }
 
   public function id()
