@@ -18,7 +18,8 @@ use App\Services\{
   SessionService,
   Request,
   AuthService,
-  BudgetCalculatorService
+  BudgetCalculatorService,
+  GeminiService
 };
 use App\Repositories\{TransactionRepository, CategoryRepository, UserRepository};
 
@@ -86,5 +87,10 @@ return [
   AuthService::class => function (Container $container) {
     $session = $container->get(SessionService::class);
     return new AuthService($session);
+  },
+  GeminiService::class => function (Container $container) {
+    $db = $container->get(Database::class);
+    $apiKey = $_ENV['GEMINI_API_KEY'] ?? '';
+    return new GeminiService($db, $apiKey);
   }
 ];

@@ -91,6 +91,28 @@ CREATE TABLE IF NOT EXISTS expenses(
   FOREIGN KEY(payment_method_assigned_to_user_id) REFERENCES payment_methods_assigned_to_users(id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS ai_insights(
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  user_id int(11) unsigned NOT NULL,
+  insight_type varchar(50) NOT NULL COMMENT 'Type of insight: spending_insights, alerts, tips',
+  content text NOT NULL COMMENT 'AI-generated insight content (JSON format)',
+  generated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  valid_until datetime NOT NULL COMMENT 'When this insight expires (typically 24h)',
+  PRIMARY KEY(id),
+  KEY idx_user_type_valid (user_id, insight_type, valid_until),
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS ai_chat_sessions(
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  user_id int(11) unsigned NOT NULL,
+  role varchar(10) NOT NULL COMMENT 'user or model',
+  message text NOT NULL,
+  created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id),
+  KEY idx_user_created (user_id, created_at),
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 
 

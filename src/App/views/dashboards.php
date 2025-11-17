@@ -1,5 +1,5 @@
 <?php 
-$pageScripts = ['charts-dashboards.js', 'category-limits.js'];
+$pageScripts = ['charts-dashboards.js', 'category-limits.js', 'ai-advisor.js'];
 include $this->resolve("partials/_header.php"); 
 ?>
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken]); ?>
@@ -72,9 +72,128 @@ include $this->resolve("partials/_header.php");
     </div>
 </section>
 
+<!-- AI Financial Advisor Section -->
+<section id="ai-advisor" class="mt-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3">🤖 AI Financial Advisor</h2>
+            <div>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshInsights()">
+                    🔄 Refresh Insights
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#chatModal">
+                    💬 Chat with Advisor
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-3" id="insightsContainer">
+            <!-- Spending Insights Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">💡 Spending Insights</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="spending-insights-content">
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block mt-3" id="spending-insights-time">Loading...</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">⚠️ Alerts</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="alerts-content">
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-warning" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block mt-3" id="alerts-time">Loading...</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saving Tips Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">🎯 Saving Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="tips-content">
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block mt-3" id="tips-time">Loading...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chat Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 70%;">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="chatModalLabel">💬 Chat with AI Financial Advisor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 500px; overflow-y: auto;" id="chatMessages">
+                <div class="text-center text-muted py-5">
+                    <h5>Ask me anything about your finances!</h5>
+                    <p>Try the quick actions below or type your own question.</p>
+                </div>
+            </div>
+            <div class="modal-footer flex-column align-items-stretch">
+                <!-- Quick Actions -->
+                <div class="d-flex gap-2 mb-2 flex-wrap">
+                    <button class="btn btn-sm btn-outline-primary" onclick="sendQuickQuestion('Analyze my spending this month')">
+                        📊 Analyze my spending
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="sendQuickQuestion('Where can I save money?')">
+                        💰 Where to save?
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="sendQuickQuestion('Am I overspending in any category?')">
+                        ⚠️ Check overspending
+                    </button>
+                </div>
+                <!-- Message Input -->
+                <div class="input-group">
+                    <input type="text" class="form-control" id="chatInput" placeholder="Type your question..." 
+                           onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                    <button class="btn btn-primary" type="button" onclick="sendChatMessage()">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php include $this->resolve("partials/_footer.php"); ?>
 
 <script>
+  // CSRF token for AJAX requests
+  window.csrfToken = <?php echo json_encode($csrfToken ?? ''); ?>;
+  
   // Initialize dashboard chart when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
     initializeSummaryChart(

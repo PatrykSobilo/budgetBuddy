@@ -136,7 +136,12 @@ class TransactionController
       }
     }
     
-    $csrfToken = $this->session->get('token', '');
+    // Ensure CSRF token always exists
+    $csrfToken = $this->session->get('token');
+    if (empty($csrfToken)) {
+      $csrfToken = bin2hex(random_bytes(32));
+      $this->session->set('token', $csrfToken);
+    }
     $userId = $this->auth->getUserId();
     echo $this->view->render("dashboards.php", [
       'transactionService' => $this->transactionService,

@@ -59,4 +59,10 @@ function registerRoutes(App $app)
   // API endpoints
   $app->get('/api/check-category-limit', [TransactionController::class, 'checkCategoryLimit'])->add(AuthRequiredMiddleware::class);
 
+  // AI Advisor endpoints
+  $app->get('/ai/insights', [HomeController::class, 'getInsights'])->add(AuthRequiredMiddleware::class);
+  $app->post('/ai/insights/refresh', [HomeController::class, 'getInsights'])->add(AuthRequiredMiddleware::class);
+  $app->post('/ai/chat', [HomeController::class, 'chatMessage'])->add(AuthRequiredMiddleware::class);
+  $app->post('/ai/chat/clear', [HomeController::class, 'clearChat'])->add(AuthRequiredMiddleware::class);
+
 }
