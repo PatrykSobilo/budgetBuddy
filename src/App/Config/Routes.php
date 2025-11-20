@@ -64,5 +64,6 @@ function registerRoutes(App $app)
   $app->post('/ai/insights/refresh', [HomeController::class, 'getInsights'])->add(AuthRequiredMiddleware::class);
   $app->post('/ai/chat', [HomeController::class, 'chatMessage'])->add(AuthRequiredMiddleware::class);
   $app->post('/ai/chat/clear', [HomeController::class, 'clearChat'])->add(AuthRequiredMiddleware::class);
+  $app->get('/ai/summary', [HomeController::class, 'getMonthlySummary'])->add(AuthRequiredMiddleware::class);
 
 }

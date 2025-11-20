@@ -1,10 +1,13 @@
 // AI Advisor Functions
 let chatHistory = [];
+let currentSummaryYear = new Date().getFullYear();
+let currentSummaryMonth = new Date().getMonth() + 1; // JavaScript months are 0-indexed
 
 // Load insights on page load
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('insightsContainer')) {
         loadInsights();
+        loadMonthlySummary(currentSummaryYear, currentSummaryMonth);
     }
 });
 
@@ -332,6 +335,160 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+// Monthly Summary Functions
+function loadMonthlySummary(year, month) {
+    const content = document.getElementById('monthly-summary-content');
+    content.innerHTML = '<div class="text-center py-3"><div class="spinner-border" role="status"></div></div>';
+    
+    fetch(`/ai/summary?year=${year}&month=${month}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                displayMonthlySummary(data.data);
+            } else {
+                content.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <p>No summary available for ${getMonthName(month)} ${year}</p>
+                        <small>Summaries are generated automatically at the end of each month</small>
+                    </div>
+                `;
+            }
+            updateMonthNavigation(year, month);
+        })
+        .catch(error => {
+            console.error('Error loading summary:', error);
+            content.innerHTML = '<div class="alert alert-danger">Failed to load summary</div>';
+        });
+}
+
+function displayMonthlySummary(summary) {
+    const content = document.getElementById('monthly-summary-content');
+    
+    if (!summary.is_finalized) {
+        content.innerHTML = `
+            <div class="alert alert-info">
+                <h6>Current Month - In Progress</h6>
+                <p class="mb-0">This month is still active. Summary will be generated automatically at month end.</p>
+                <small>Total Expenses so far: $${parseFloat(summary.total_expenses).toFixed(2)}</small>
+            </div>
+        `;
+        return;
+    }
+    
+    const balance = parseFloat(summary.total_income) - parseFloat(summary.total_expenses);
+    const balanceClass = balance >= 0 ? 'text-success' : 'text-danger';
+    
+    content.innerHTML = `
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <small class="text-muted">Income</small>
+                    <h4 class="text-success mb-0">$${parseFloat(summary.total_income).toFixed(2)}</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <small class="text-muted">Expenses</small>
+                    <h4 class="text-danger mb-0">$${parseFloat(summary.total_expenses).toFixed(2)}</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <small class="text-muted">Balance</small>
+                    <h4 class="${balanceClass} mb-0">$${balance.toFixed(2)}</h4>
+                </div>
+            </div>
+        </div>
+        
+        ${summary.top_expense_category ? `
+            <div class="alert alert-warning mb-3">
+                <strong>Top Spending Category:</strong> ${summary.top_expense_category} - $${parseFloat(summary.top_expense_amount).toFixed(2)}
+            </div>
+        ` : ''}
+        
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">📝 AI Summary</h6>
+            </div>
+            <div class="card-body">
+                <p>${summary.ai_summary || 'No summary generated yet'}</p>
+            </div>
+        </div>
+        
+        <div class="card mb-3">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0">⚠️ Key Issues Identified</h6>
+            </div>
+            <div class="card-body">
+                <div class="issues-list">${formatTextAsList(summary.key_issues)}</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0">💡 Recommendations for Next Month</h6>
+            </div>
+            <div class="card-body">
+                <div class="recommendations-list">${formatTextAsList(summary.recommendations)}</div>
+            </div>
+        </div>
+        
+        <small class="text-muted d-block mt-3">
+            Generated: ${new Date(summary.created_at).toLocaleDateString()} | 
+            Transactions: ${summary.transaction_count}
+        </small>
+    `;
+}
+
+function formatTextAsList(text) {
+    if (!text) return '<p class="text-muted">None</p>';
+    
+    // Split by lines and format as list
+    const lines = text.split('\n').filter(line => line.trim());
+    return '<ul class="mb-0">' + lines.map(line => {
+        // Remove leading dash if present
+        const cleanLine = line.trim().replace(/^-\s*/, '');
+        return `<li>${cleanLine}</li>`;
+    }).join('') + '</ul>';
+}
+
+function updateMonthNavigation(year, month) {
+    const monthName = getMonthName(month);
+    document.getElementById('summaryMonthTitle').textContent = `📊 ${monthName} ${year}`;
+    
+    // Disable next button if current or future month
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const isCurrentOrFuture = (year > currentYear) || (year === currentYear && month >= currentMonth);
+    
+    document.getElementById('nextMonthBtn').disabled = isCurrentOrFuture;
+}
+
+function previousMonth() {
+    currentSummaryMonth--;
+    if (currentSummaryMonth < 1) {
+        currentSummaryMonth = 12;
+        currentSummaryYear--;
+    }
+    loadMonthlySummary(currentSummaryYear, currentSummaryMonth);
+}
+
+function nextMonth() {
+    currentSummaryMonth++;
+    if (currentSummaryMonth > 12) {
+        currentSummaryMonth = 1;
+        currentSummaryYear++;
+    }
+    loadMonthlySummary(currentSummaryYear, currentSummaryMonth);
+}
+
+function getMonthName(month) {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    return months[month - 1];
 }
 
 // Clear chat when modal is closed (optional)

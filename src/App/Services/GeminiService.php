@@ -872,5 +872,61 @@ Be helpful, empathetic, and specific. Reference previous advice when relevant. I
             ['user_id' => $userId]
         );
     }
+
+    /**
+     * Get monthly summary for specific month
+     */
+    public function getMonthlySummary(int $userId, int $year, int $month): ?array
+    {
+        $summary = $this->db->query(
+            "SELECT 
+                year,
+                month,
+                total_income,
+                total_expenses,
+                transaction_count,
+                top_expense_category,
+                top_expense_amount,
+                ai_summary,
+                key_issues,
+                recommendations,
+                is_finalized,
+                created_at,
+                updated_at
+             FROM ai_monthly_summaries
+             WHERE user_id = :user_id
+             AND year = :year
+             AND month = :month",
+            [
+                'user_id' => $userId,
+                'year' => $year,
+                'month' => $month
+            ]
+        )->find();
+
+        if (!$summary) {
+            return null;
+        }
+
+        // Format month name
+        $summary['month_name'] = date('F Y', mktime(0, 0, 0, $month, 1, $year));
+        
+        return $summary;
+    }
+
+    /**
+     * Get list of available months with summaries
+     */
+    public function getAvailableMonths(int $userId): array
+    {
+        return $this->db->query(
+            "SELECT year, month, is_finalized
+             FROM ai_monthly_summaries
+             WHERE user_id = :user_id
+             ORDER BY year DESC, month DESC",
+            ['user_id' => $userId]
+        )->findAll();
+    }
 }
+
 

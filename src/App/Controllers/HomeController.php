@@ -120,4 +120,31 @@ class HomeController {
             ]);
         }
     }
+
+    public function getMonthlySummary(){
+        header('Content-Type: application/json');
+        $userId = $this->auth->getUserId();
+        
+        // Get year and month from request, default to current
+        $year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+        $month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('n');
+        
+        try {
+            $summary = $this->geminiService->getMonthlySummary($userId, $year, $month);
+            echo json_encode([
+                'success' => true,
+                'data' => $summary,
+                'csrfToken' => $_SESSION['token'] ?? ''
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to load summary',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }
+
+

@@ -145,6 +145,30 @@ include $this->resolve("partials/_header.php");
                 </div>
             </div>
         </div>
+
+        <!-- Monthly Summaries Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                        <button class="btn btn-sm btn-light" onclick="previousMonth()" id="prevMonthBtn">
+                            ← Previous
+                        </button>
+                        <h5 class="mb-0" id="summaryMonthTitle">📊 Monthly Summary</h5>
+                        <button class="btn btn-sm btn-light" onclick="nextMonth()" id="nextMonthBtn">
+                            Next →
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="monthly-summary-content">
+                            <div class="text-center py-5 text-muted">
+                                <p>Select a month to view AI-generated summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
