@@ -69,12 +69,29 @@ class AuthController
             $userData['paymentMethods']
         );
 
+        // Handle "Remember Me" - extend session cookie lifetime if checked
+        $remember = $this->request->post('remember');
+        if ($remember) {
+            // Extend session cookie to 30 days
+            $lifetime = time() + (60 * 60 * 24 * 30); // 30 days from now
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                session_id(),
+                $lifetime,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
+        }
+
         $this->response->redirect('/mainPage');
     }
 
     public function logout()
     {
-        $this->session->clearUserData();
+        // UserService::logout() handles full session cleanup
         $this->userService->logout();
 
         $this->response->redirect('/');

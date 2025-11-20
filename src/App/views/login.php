@@ -50,7 +50,7 @@
         </div>
 
         <div class="form-check text-start my-2">
-          <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+          <input class="form-check-input" type="checkbox" name="remember" value="1" id="flexCheckDefault">
           <label class="form-check-label" for="flexCheckDefault">
             Remember me
           </label>

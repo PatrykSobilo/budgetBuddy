@@ -277,6 +277,63 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Clear chat history function
+function clearChatHistory() {
+    if (!confirm('Are you sure you want to clear the entire chat history? This cannot be undone.')) {
+        return;
+    }
+
+    fetch('/ai/chat/clear', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.csrfToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update CSRF token
+            if (data.csrfToken) {
+                window.csrfToken = data.csrfToken;
+            }
+            
+            // Clear chat display
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <h5>Chat history cleared!</h5>
+                    <p>Ask me anything about your finances!</p>
+                </div>
+            `;
+            
+            // Reset chat history array
+            chatHistory = [];
+            
+            // Show success message
+            showNotification('Chat history cleared successfully', 'success');
+        } else {
+            showNotification('Failed to clear chat history', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error clearing chat:', error);
+        showNotification('Error clearing chat history', 'danger');
+    });
+}
+
+// Helper function to show notifications
+function showNotification(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+    toast.style.zIndex = '9999';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
 // Clear chat when modal is closed (optional)
 const chatModal = document.getElementById('chatModal');
 if (chatModal) {

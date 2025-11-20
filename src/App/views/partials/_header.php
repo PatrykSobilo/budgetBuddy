@@ -65,7 +65,7 @@ $errors = $errors ?? [];
             </li>
             <li>
               <a href="/dashboards" class="nav-link text-white">
-                Dashboards
+                Dashboards & AI Advisor
               </a>
             </li>
             <li>

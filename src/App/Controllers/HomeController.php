@@ -18,6 +18,11 @@ class HomeController {
     ) {}
 
     public function home(){
+        // If user is already logged in, redirect to main page
+        if ($this->auth->check()) {
+            redirectTo('/mainPage');
+        }
+        
         echo $this->view->render("index.php", [
             'title' => 'Home page'
         ]);
@@ -96,13 +101,15 @@ class HomeController {
     }
 
     public function clearChat(){
+        header('Content-Type: application/json');
         $userId = $this->auth->getUserId();
         
         try {
             $this->geminiService->clearChatHistory($userId);
             echo json_encode([
                 'success' => true,
-                'message' => 'Chat history cleared'
+                'message' => 'Chat history cleared',
+                'csrfToken' => $_SESSION['token'] ?? ''
             ]);
         } catch (\Exception $e) {
             http_response_code(500);

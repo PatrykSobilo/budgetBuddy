@@ -114,6 +114,27 @@ CREATE TABLE IF NOT EXISTS ai_chat_sessions(
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS ai_monthly_summaries(
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  user_id int(11) unsigned NOT NULL,
+  year int(4) NOT NULL,
+  month int(2) NOT NULL,
+  total_income decimal(10,2) NOT NULL DEFAULT 0,
+  total_expenses decimal(10,2) NOT NULL DEFAULT 0,
+  transaction_count int(11) NOT NULL DEFAULT 0,
+  top_expense_category varchar(50),
+  top_expense_amount decimal(10,2),
+  ai_summary text COMMENT 'AI-generated monthly summary with advice',
+  key_issues text COMMENT 'Main problems identified (e.g., "Too much FastFood spending")',
+  recommendations text COMMENT 'AI recommendations for next month',
+  is_finalized tinyint(1) NOT NULL DEFAULT 0 COMMENT '1 when month is completed and AI summary generated',
+  created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY(id),
+  UNIQUE KEY unique_user_month (user_id, year, month),
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 
 
 

@@ -93,12 +93,18 @@ class UserService
 
   public function logout(): void
   {
+    // Clear all session variables first
+    $_SESSION = [];
+    
+    // Get cookie parameters before destroying session
     $params = session_get_cookie_params();
     
+    // Destroy the session
     session_destroy();
     
+    // Delete the session cookie
     setcookie(
-      'PHPSESSID',
+      session_name(),
       '',
       time() - 3600,
       $params['path'],

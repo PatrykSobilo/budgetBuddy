@@ -28,28 +28,28 @@ function registerRoutes(App $app)
   $app->post('/login', [AuthController::class, 'login'])->add(GuestOnlyMiddleware::class);
   $app->get('/logout', [AuthController::class, 'logout'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/about', [AboutController::class, 'about']);
+  $app->get('/about', [AboutController::class, 'about'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/mainPage', [HomeController::class, 'mainPageView']);
+  $app->get('/mainPage', [HomeController::class, 'mainPageView'])->add(AuthRequiredMiddleware::class);
   $app->post('/mainPage', [TransactionController::class, 'addTransaction'])->add(AuthRequiredMiddleware::class);
   $app->post('/transactions/add', [TransactionController::class, 'addTransaction'])->add(AuthRequiredMiddleware::class);
   $app->post('/mainPage/delete-expense', [TransactionController::class, 'deleteExpenseFromMainPage'])->add(AuthRequiredMiddleware::class);
   $app->post('/mainPage/delete-income', [TransactionController::class, 'deleteIncomeFromMainPage'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/expenses', [TransactionController::class, 'expensesView']);
+  $app->get('/expenses', [TransactionController::class, 'expensesView'])->add(AuthRequiredMiddleware::class);
   $app->post('/expenses/edit', [TransactionController::class, 'editExpense'])->add(AuthRequiredMiddleware::class);
   $app->post('/expenses/delete', [TransactionController::class, 'deleteExpense'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/incomes', [TransactionController::class, 'incomesView']);
+  $app->get('/incomes', [TransactionController::class, 'incomesView'])->add(AuthRequiredMiddleware::class);
   $app->post('/incomes/edit', [TransactionController::class, 'editIncome'])->add(AuthRequiredMiddleware::class);
   $app->post('/incomes/delete', [TransactionController::class, 'deleteIncome'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/dashboards', [TransactionController::class, 'dashboardsView']);
-  $app->post('/dashboards', [TransactionController::class, 'dashboardsView']);
+  $app->get('/dashboards', [TransactionController::class, 'dashboardsView'])->add(AuthRequiredMiddleware::class);
+  $app->post('/dashboards', [TransactionController::class, 'dashboardsView'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/planner', [PlannerController::class, 'planner']);
+  $app->get('/planner', [PlannerController::class, 'planner'])->add(AuthRequiredMiddleware::class);
 
-  $app->get('/settings', [SettingsController::class, 'settings']);
+  $app->get('/settings', [SettingsController::class, 'settings'])->add(AuthRequiredMiddleware::class);
   $app->post('/settings', [SettingsController::class, 'settings'])->add(AuthRequiredMiddleware::class);
   $app->post('/settings/edit-user', [SettingsController::class, 'editUser'])->add(AuthRequiredMiddleware::class);
 

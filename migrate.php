@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// Skrypt migracji bazy danych - Category Limits
+// Skrypt migracji bazy danych - AI Monthly Summaries
 // Uruchom: php migrate.php
 
 require __DIR__ . '/vendor/autoload.php';
@@ -27,49 +27,71 @@ try {
 
     echo "✓ Połączono z bazą danych\n\n";
 
-    // Sprawdź czy kolumna już istnieje w expenses_category_assigned_to_users
-    $checkExpenses = $db->query(
+    // Sprawdź czy tabela ai_monthly_summaries już istnieje
+    $checkTable = $db->query(
         "SELECT COUNT(*) as cnt 
-         FROM INFORMATION_SCHEMA.COLUMNS 
+         FROM INFORMATION_SCHEMA.TABLES 
          WHERE TABLE_SCHEMA = :dbname 
-         AND TABLE_NAME = 'expenses_category_assigned_to_users' 
-         AND COLUMN_NAME = 'category_limit'",
+         AND TABLE_NAME = 'ai_monthly_summaries'",
         ['dbname' => $_ENV['DB_NAME']]
     )->find();
 
-    if ($checkExpenses['cnt'] > 0) {
-        echo "⚠ Kolumna 'category_limit' już istnieje w tabeli 'expenses_category_assigned_to_users'\n";
+    if ($checkTable['cnt'] > 0) {
+        echo "⚠ Tabela 'ai_monthly_summaries' już istnieje\n";
+        
+        // Sprawdź czy nowe kolumny istnieją
+        $checkColumns = $db->query(
+            "SELECT COUNT(*) as cnt 
+             FROM INFORMATION_SCHEMA.COLUMNS 
+             WHERE TABLE_SCHEMA = :dbname 
+             AND TABLE_NAME = 'ai_monthly_summaries' 
+             AND COLUMN_NAME IN ('ai_summary', 'key_issues', 'recommendations', 'is_finalized')",
+            ['dbname' => $_ENV['DB_NAME']]
+        )->find();
+        
+        if ($checkColumns['cnt'] < 4) {
+            echo "→ Dodawanie nowych kolumn do tabeli 'ai_monthly_summaries'...\n";
+            $db->query(
+                "ALTER TABLE ai_monthly_summaries
+                 ADD COLUMN IF NOT EXISTS ai_summary TEXT COMMENT 'AI-generated monthly summary with advice',
+                 ADD COLUMN IF NOT EXISTS key_issues TEXT COMMENT 'Main problems identified (e.g., Too much FastFood spending)',
+                 ADD COLUMN IF NOT EXISTS recommendations TEXT COMMENT 'AI recommendations for next month',
+                 ADD COLUMN IF NOT EXISTS is_finalized TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 when month is completed and AI summary generated'"
+            );
+            echo "✓ Kolumny dodane pomyślnie!\n";
+        } else {
+            echo "✓ Wszystkie kolumny już istnieją\n";
+        }
     } else {
-        echo "→ Dodawanie kolumny 'category_limit' do tabeli 'expenses_category_assigned_to_users'...\n";
+        echo "→ Tworzenie tabeli 'ai_monthly_summaries'...\n";
         $db->query(
-            "ALTER TABLE expenses_category_assigned_to_users
-             ADD COLUMN category_limit DECIMAL(10,2) NULL DEFAULT NULL
-             COMMENT 'Monthly spending limit for this category (optional)'"
+            "CREATE TABLE ai_monthly_summaries(
+              id int(11) unsigned NOT NULL AUTO_INCREMENT,
+              user_id int(11) unsigned NOT NULL,
+              year int(4) NOT NULL,
+              month int(2) NOT NULL,
+              total_income decimal(10,2) NOT NULL DEFAULT 0,
+              total_expenses decimal(10,2) NOT NULL DEFAULT 0,
+              transaction_count int(11) NOT NULL DEFAULT 0,
+              top_expense_category varchar(50),
+              top_expense_amount decimal(10,2),
+              ai_summary TEXT COMMENT 'AI-generated monthly summary with advice',
+              key_issues TEXT COMMENT 'Main problems identified (e.g., Too much FastFood spending)',
+              recommendations TEXT COMMENT 'AI recommendations for next month',
+              is_finalized TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 when month is completed and AI summary generated',
+              created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              PRIMARY KEY(id),
+              UNIQUE KEY unique_user_month (user_id, year, month),
+              FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB"
         );
-        echo "✓ Kolumna dodana pomyślnie!\n";
-    }
-
-    // Usuń kolumnę category_limit z incomes_category_assigned_to_users (jeśli istnieje)
-    $checkIncomes = $db->query(
-        "SELECT COUNT(*) as cnt 
-         FROM INFORMATION_SCHEMA.COLUMNS 
-         WHERE TABLE_SCHEMA = :dbname 
-         AND TABLE_NAME = 'incomes_category_assigned_to_users' 
-         AND COLUMN_NAME = 'category_limit'",
-        ['dbname' => $_ENV['DB_NAME']]
-    )->find();
-
-    if ($checkIncomes['cnt'] > 0) {
-        echo "→ Usuwanie kolumny 'category_limit' z tabeli 'incomes_category_assigned_to_users'...\n";
-        $db->query("ALTER TABLE incomes_category_assigned_to_users DROP COLUMN category_limit");
-        echo "✓ Kolumna usunięta pomyślnie!\n";
-    } else {
-        echo "⚠ Kolumna 'category_limit' nie istnieje w tabeli 'incomes_category_assigned_to_users' (OK)\n";
+        echo "✓ Tabela utworzona pomyślnie!\n";
     }
 
     echo "\n✓✓✓ MIGRACJA ZAKOŃCZONA POMYŚLNIE! ✓✓✓\n";
-    echo "\nMożesz teraz używać funkcji Category Limits w aplikacji!\n";
-    echo "Przejdź do: http://localhost:8000/settings\n";
+    echo "\nAI Advisor będzie teraz generować pełne podsumowania miesięczne z poradami!\n";
+    echo "Tabela będzie automatycznie wypełniana przy generowaniu insights.\n";
 
 } catch (Exception $e) {
     echo "✗ BŁĄD: " . $e->getMessage() . "\n";

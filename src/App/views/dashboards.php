@@ -5,7 +5,7 @@ include $this->resolve("partials/_header.php");
 <?php include $this->resolve("transactions/_transactionButtons.php", ['csrfToken' => $csrfToken]); ?>
 
 <div class="container mt-4">
-    <h1 class="text-center mb-4 h2">Dashboards</h1>
+    <h1 class="text-center mb-4 h2">Dashboards & AI Advisor</h1>
 </div>
 
 <section id="userParameters" name="userParameters">
@@ -153,8 +153,15 @@ include $this->resolve("partials/_header.php");
     <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 70%;">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="chatModalLabel">💬 Chat with AI Financial Advisor</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title me-auto" id="chatModalLabel">💬 Chat with AI Financial Advisor</h5>
+                <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-sm btn-outline-light" onclick="clearChatHistory()" title="Clear chat history">
+                        <i class="bi bi-trash"></i> Clear History
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal" aria-label="Close">
+                        ✕
+                    </button>
+                </div>
             </div>
             <div class="modal-body" style="height: 500px; overflow-y: auto;" id="chatMessages">
                 <div class="text-center text-muted py-5">
